@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.config.security;
+package io.github.shirohoo.realworld.application.config;
 
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class JwtProvider {
+class JwtProvider {
     private final JwtEncoder jwtEncoder;
 
     public String provide(String subject) {

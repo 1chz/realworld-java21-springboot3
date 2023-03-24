@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.config.security;
+package io.github.shirohoo.realworld.application.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.shirohoo.realworld.domain.user.User;
@@ -9,11 +9,13 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
-public class UsernamePasswordAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final ObjectMapper objectMapper;
+class UsernamePasswordAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(

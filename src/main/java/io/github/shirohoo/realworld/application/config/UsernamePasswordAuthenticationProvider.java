@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.config.security;
+package io.github.shirohoo.realworld.application.config;
 
 import io.github.shirohoo.realworld.domain.user.User;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
-public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
+class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 

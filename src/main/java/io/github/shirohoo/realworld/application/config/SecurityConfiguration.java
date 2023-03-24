@@ -1,16 +1,13 @@
-package io.github.shirohoo.realworld.application.config.security;
+package io.github.shirohoo.realworld.application.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import io.github.shirohoo.realworld.application.config.web.ExceptionResolveFilter;
-import io.github.shirohoo.realworld.domain.user.UserRepository;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
@@ -25,7 +22,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -44,7 +40,7 @@ class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             ExceptionResolveFilter exceptionResolveFilter,
-            UsernamePasswordAuthenticationProcessingFilter usernamePasswordAuthenticationProcessingFilter)
+            UsernamePasswordAuthenticationProcessingFilter usernameAuthFilter)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -58,8 +54,7 @@ class SecurityConfiguration {
                 .exceptionHandling(
                         handler -> handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                                 .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                .addFilterBefore(
-                        usernamePasswordAuthenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(usernameAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionResolveFilter, UsernamePasswordAuthenticationProcessingFilter.class)
                 .build();
     }
@@ -72,35 +67,6 @@ class SecurityConfiguration {
     @Bean
     AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
         return new ProviderManager(List.of(authenticationProvider));
-    }
-
-    @Bean
-    AuthenticationProvider authenticationProvider(
-            PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        return new UsernamePasswordAuthenticationProvider(passwordEncoder, userDetailsService);
-    }
-
-    @Bean
-    UserDetailsService userDetailsService(UserRepository userRepository) {
-        return new UsernamePasswordUserDetailsService(userRepository);
-    }
-
-    @Bean
-    UsernamePasswordAuthenticationProcessingFilter usernamePasswordAuthenticationProcessingFilter(
-            ObjectMapper objectMapper,
-            AuthenticationManager authenticationManager,
-            UsernamePasswordAuthenticationSuccessHandler successHandler) {
-        UsernamePasswordAuthenticationProcessingFilter filter =
-                new UsernamePasswordAuthenticationProcessingFilter(objectMapper);
-        filter.setAuthenticationManager(authenticationManager);
-        filter.setAuthenticationSuccessHandler(successHandler);
-        return filter;
-    }
-
-    @Bean
-    UsernamePasswordAuthenticationSuccessHandler usernamePasswordAuthenticationSuccessHandler(
-            ObjectMapper objectMapper, JwtProvider jwtProvider) {
-        return new UsernamePasswordAuthenticationSuccessHandler(objectMapper, jwtProvider);
     }
 
     @Bean

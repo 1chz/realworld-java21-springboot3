@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.config.security;
+package io.github.shirohoo.realworld.application.config;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;

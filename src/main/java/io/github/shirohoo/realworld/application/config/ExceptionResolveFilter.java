@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.config.web;
+package io.github.shirohoo.realworld.application.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-public class ExceptionResolveFilter extends OncePerRequestFilter {
+class ExceptionResolveFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override
