@@ -9,6 +9,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import io.github.shirohoo.realworld.application.config.web.ExceptionResolveFilter;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -42,7 +43,7 @@ class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            UsernamePasswordExceptionResolveFilter usernamePasswordExceptionResolveFilter,
+            ExceptionResolveFilter exceptionResolveFilter,
             UsernamePasswordAuthenticationProcessingFilter usernamePasswordAuthenticationProcessingFilter)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
@@ -59,8 +60,7 @@ class SecurityConfiguration {
                                 .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .addFilterBefore(
                         usernamePasswordAuthenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(
-                        usernamePasswordExceptionResolveFilter, UsernamePasswordAuthenticationProcessingFilter.class)
+                .addFilterBefore(exceptionResolveFilter, UsernamePasswordAuthenticationProcessingFilter.class)
                 .build();
     }
 
@@ -95,11 +95,6 @@ class SecurityConfiguration {
         filter.setAuthenticationManager(authenticationManager);
         filter.setAuthenticationSuccessHandler(successHandler);
         return filter;
-    }
-
-    @Bean
-    UsernamePasswordExceptionResolveFilter usernamePasswordExceptionHandleFilter(ObjectMapper objectMapper) {
-        return new UsernamePasswordExceptionResolveFilter(objectMapper);
     }
 
     @Bean

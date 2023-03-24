@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.config.security;
+package io.github.shirohoo.realworld.application.config.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -9,10 +9,12 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Component
 @RequiredArgsConstructor
-public class UsernamePasswordExceptionResolveFilter extends OncePerRequestFilter {
+public class ExceptionResolveFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override

@@ -15,7 +15,7 @@ For more information on how to this works with other frontends/backends, head ov
 
 # How it works
 
-> Describe the general architecture of your app here
+> **Note:** This project is a work in progress. It is not yet ready for production use.
 
 # Getting started
 
