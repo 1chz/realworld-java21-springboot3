@@ -15,16 +15,16 @@ import org.springframework.web.servlet.View;
 
 @RestController
 @RequiredArgsConstructor
-public class UserRegisterController {
-    private final UserRegisterService userRegisterService;
+public class RegisterController {
+    private final RegisterService registerService;
 
     @PostMapping("/api/users")
     public ModelAndView register(@RequestBody @Valid UserRequest requests, HttpServletRequest httpServletRequest) {
-        userRegisterService.registerUser(requests.toUser());
+        registerService.register(requests.toUser());
 
-        UserResponse response = new UserResponse(requests);
+        UserResponse loginRequest = new UserResponse(requests);
         httpServletRequest.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
-        return new ModelAndView("redirect:/api/users/login", "user", response);
+        return new ModelAndView("redirect:/api/users/login", "user", loginRequest);
     }
 
     private record UserRequest(@Valid UserRequestDetails user) {

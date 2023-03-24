@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserRegisterControllerTests {
+class RegisterControllerTests {
     @Autowired
     MockMvc mockMvc;
 
