@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class SignUpController {
+class SignUpController {
     private final SignUpService signUpService;
 
     @PostMapping("/api/users")
