@@ -96,4 +96,32 @@ public class User implements UserDetails {
         this.token = token;
         return this;
     }
+
+    public boolean sameUsername(String username) {
+        return this.username.equals(username);
+    }
+
+    public boolean sameEmail(String email) {
+        return this.email.equals(email);
+    }
+
+    public User update(PasswordEncoder passwordEncoder, User updateRequests) {
+        if (updateRequests.username != null) {
+            this.username = updateRequests.username;
+        }
+
+        if (updateRequests.password != null) {
+            this.password = passwordEncoder.encode(updateRequests.password);
+        }
+
+        if (updateRequests.email != null) {
+            this.email = updateRequests.email;
+        }
+
+        this.bio = updateRequests.bio;
+
+        this.image = updateRequests.image;
+
+        return this;
+    }
 }

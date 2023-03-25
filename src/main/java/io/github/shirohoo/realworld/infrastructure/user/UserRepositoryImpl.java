@@ -21,11 +21,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsByUsernameAndEmail(String username, String email) {
-        return userJpaRepository.existsByUsernameAndEmail(username, email);
-    }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         return userJpaRepository.findByEmail(email);
     }
@@ -33,5 +28,20 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByGuid(UUID guid) {
         return userJpaRepository.findByGuid(guid);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userJpaRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByUsernameAndEmail(String username, String email) {
+        return userJpaRepository.existsByUsernameAndEmail(username, email);
     }
 }

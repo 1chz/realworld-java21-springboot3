@@ -2,6 +2,7 @@ package io.github.shirohoo.realworld.application.user;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -50,20 +51,28 @@ class UserControllerTests {
                 .bio("I work at statefarm")
                 .build();
 
+        User james = User.builder()
+                .email("james@james.james")
+                .password(passwordEncoder.encode("jamesjames"))
+                .username("james")
+                .bio("I work at statefarm")
+                .build();
+
         userJpaRepository.save(jake);
+        userJpaRepository.save(james);
 
         MockHttpServletResponse response = mockMvc.perform(
                         post("/api/users/login")
                                 .header("Content-Type", "application/json")
                                 .content(
                                         """
-                                                {
-                                                  "user":{
-                                                    "email": "jake@jake.jake",
-                                                    "password": "jakejake"
-                                                  }
-                                                }
-                                                """))
+                        {
+                          "user":{
+                            "email": "jake@jake.jake",
+                            "password": "jakejake"
+                          }
+                        }
+                        """))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -105,5 +114,67 @@ class UserControllerTests {
         mockMvc.perform(get("/api/user").header("Content-Type", "application/json"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldSuccessWhenUpdateUser() throws Exception {
+        mockMvc.perform(
+                        put("/api/user")
+                                .header("Content-Type", "application/json")
+                                .header("Authorization", "Bearer " + token)
+                                .content(
+                                        """
+                        {
+                          "user":{
+                            "email": "jake@jake.jake",
+                            "bio": "I like to skateboard",
+                            "image": "https://i.stack.imgur.com/xHWG8.jpg"
+                          }
+                        }
+                        """))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.user.email").value("jake@jake.jake"))
+                .andExpect(jsonPath("$.user.token").isNotEmpty())
+                .andExpect(jsonPath("$.user.username").value("jake"))
+                .andExpect(jsonPath("$.user.bio").value("I like to skateboard"))
+                .andExpect(jsonPath("$.user.image").value("https://i.stack.imgur.com/xHWG8.jpg"));
+    }
+
+    @Test
+    void shouldFailureIfDuplicatedUsername() throws Exception {
+        mockMvc.perform(
+                        put("/api/user")
+                                .header("Content-Type", "application/json")
+                                .header("Authorization", "Bearer " + token)
+                                .content(
+                                        """
+                {
+                  "user":{
+                    "username": "james"
+                  }
+                }
+                """))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldFailureIfDuplicatedEmail() throws Exception {
+        mockMvc.perform(
+                        put("/api/user")
+                                .header("Content-Type", "application/json")
+                                .header("Authorization", "Bearer " + token)
+                                .content(
+                                        """
+                {
+                  "user":{
+                    "email": "james@james.james"
+                  }
+                }
+                """))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
