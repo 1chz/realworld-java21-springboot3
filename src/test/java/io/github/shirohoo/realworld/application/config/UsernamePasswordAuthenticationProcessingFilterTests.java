@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.application.config;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,6 +61,7 @@ class UsernamePasswordAuthenticationProcessingFilterTests {
                                   }
                                 }
                                 """))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.user.email").value("jake@jake.jake"))
@@ -82,6 +84,7 @@ class UsernamePasswordAuthenticationProcessingFilterTests {
                                   }
                                 }
                                 """))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 }

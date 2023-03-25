@@ -1,11 +1,15 @@
 package io.github.shirohoo.realworld.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
@@ -23,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Getter
 @Builder
 @AllArgsConstructor
+@JsonRootName("user")
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
@@ -34,11 +39,15 @@ public class User implements UserDetails {
     @Column(unique = true)
     private UUID guid = UUID.randomUUID();
 
+    @NotBlank
     @Column(unique = true)
     private String username;
 
+    @NotBlank
     private String password;
 
+    @Email
+    @NotBlank
     @Column(unique = true)
     private String email;
 
@@ -46,10 +55,8 @@ public class User implements UserDetails {
 
     private String image;
 
-    public User encryptPasswords(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(this.password);
-        return this;
-    }
+    @Transient
+    private String token;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -74,5 +81,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User encryptPasswords(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+        return this;
+    }
+
+    public User withToken(String token) {
+        this.token = token;
+        return this;
     }
 }

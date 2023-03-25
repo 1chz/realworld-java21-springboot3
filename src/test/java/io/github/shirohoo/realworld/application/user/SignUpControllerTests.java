@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.application.user;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.github.shirohoo.realworld.infrastructure.user.UserJpaRepository;
@@ -13,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class RegisterControllerTests {
+class SignUpControllerTests {
     @Autowired
     MockMvc mockMvc;
 
@@ -23,11 +24,10 @@ class RegisterControllerTests {
     @BeforeEach
     void tearDown() {
         userJpaRepository.deleteAll();
-        // Real world backend API built in Java 17 and Spring Boot 3
     }
 
     @Test
-    void shouldSuccessWhenRegisterUser() throws Exception {
+    void shouldSuccessWhenSignUpUser() throws Exception {
         mockMvc.perform(
                         post("/api/users")
                                 .contentType("application/json")
@@ -41,6 +41,7 @@ class RegisterControllerTests {
                                                   }
                                                 }
                                                 """))
+                .andDo(print())
                 .andExpect(status().isTemporaryRedirect());
     }
 
@@ -59,6 +60,7 @@ class RegisterControllerTests {
                                                   }
                                                 }
                                                 """))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -77,6 +79,7 @@ class RegisterControllerTests {
                                                   }
                                                 }
                                                 """))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -95,6 +98,7 @@ class RegisterControllerTests {
                                                   }
                                                 }
                                                 """))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -113,6 +117,7 @@ class RegisterControllerTests {
                                                   }
                                                 }
                                                 """))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 }

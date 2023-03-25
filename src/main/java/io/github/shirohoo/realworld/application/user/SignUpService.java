@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class RegisterService {
+public class SignUpService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void register(User newUser) {
+    public void signUp(User newUser) {
         if (userRepository.existsByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())) {
             throw new IllegalArgumentException("User already exists.");
         }

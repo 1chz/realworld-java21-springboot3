@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.application.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.shirohoo.realworld.domain.user.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,28 +37,14 @@ class UsernamePasswordAuthenticationProcessingFilter extends AbstractAuthenticat
             throw new IllegalArgumentException("Content-Type must be application/json");
         }
 
-        AuthRequest authRequest = objectMapper.readValue(request.getReader(), AuthRequest.class);
-        AuthRequestDetails authRequestDetails = authRequest.user;
-        Authentication unauthenticatedToken = UsernamePasswordAuthenticationToken.unauthenticated(
-                authRequestDetails.email, authRequestDetails.password);
+        User user = objectMapper.readValue(request.getReader(), User.class);
+        Authentication unauthenticatedToken =
+                UsernamePasswordAuthenticationToken.unauthenticated(user.getEmail(), user.getPassword());
 
         return getAuthenticationManager().authenticate(unauthenticatedToken);
     }
 
     private boolean isNotApplicationJson(HttpServletRequest request) {
         return !MediaType.APPLICATION_JSON_VALUE.equals(request.getContentType());
-    }
-
-    private record AuthRequest(AuthRequestDetails user) {}
-
-    private record AuthRequestDetails(String email, String password) {
-        private AuthRequestDetails {
-            if (email == null || email.isBlank()) {
-                throw new IllegalArgumentException("email is required");
-            }
-            if (password == null || password.isBlank()) {
-                throw new IllegalArgumentException("password is required");
-            }
-        }
     }
 }
