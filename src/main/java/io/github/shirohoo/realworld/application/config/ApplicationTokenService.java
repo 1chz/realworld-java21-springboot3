@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-class TokenService {
+class ApplicationTokenService {
     private final JwtEncoder jwtEncoder;
 
     public String provide(User user) {

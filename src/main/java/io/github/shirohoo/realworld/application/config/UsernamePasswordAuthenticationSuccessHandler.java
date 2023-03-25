@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 class UsernamePasswordAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final TokenService tokenService;
+    private final ApplicationTokenService tokenService;
     private final ObjectMapper objectMapper;
 
     @Override
