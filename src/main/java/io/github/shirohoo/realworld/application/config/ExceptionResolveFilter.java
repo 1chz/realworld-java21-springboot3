@@ -15,7 +15,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 class ExceptionResolveFilter extends OncePerRequestFilter {
@@ -28,6 +30,8 @@ class ExceptionResolveFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (IllegalArgumentException e) {
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+            log.error(e.getMessage());
+
             response.setStatus(problemDetail.getStatus());
             response.setContentType("application/problem+json");
             response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
