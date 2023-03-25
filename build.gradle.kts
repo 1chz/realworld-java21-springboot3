@@ -41,7 +41,7 @@ tasks.withType<Test> {
 spotless {
 	java {
 		palantirJavaFormat()
-
+		importOrder("io.github.shirohoo", "java", "javax", "jakarta", "org", "com", "lombok")
 		formatAnnotations()
 		removeUnusedImports()
 		trimTrailingWhitespace()
