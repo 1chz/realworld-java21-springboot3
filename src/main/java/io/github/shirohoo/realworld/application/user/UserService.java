@@ -20,9 +20,16 @@ class UserService {
 
     @Transactional
     public User signUp(User newUser) {
-        if (userRepository.existsByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())) {
-            throw new IllegalArgumentException("User already exists.");
+        String username = newUser.getUsername();
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("Username(`%s`) already exists.".formatted(username));
         }
+
+        String email = newUser.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
+        }
+
         newUser = newUser.encryptPasswords(passwordEncoder);
         return userRepository.save(newUser);
     }

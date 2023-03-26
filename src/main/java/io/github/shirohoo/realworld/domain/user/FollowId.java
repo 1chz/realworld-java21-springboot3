@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.domain.follow;
+package io.github.shirohoo.realworld.domain.user;
 
 import java.io.Serializable;
 

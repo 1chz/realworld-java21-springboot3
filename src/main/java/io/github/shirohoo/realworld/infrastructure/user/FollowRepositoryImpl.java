@@ -1,8 +1,8 @@
-package io.github.shirohoo.realworld.infrastructure.follow;
+package io.github.shirohoo.realworld.infrastructure.user;
 
-import io.github.shirohoo.realworld.domain.follow.Follow;
-import io.github.shirohoo.realworld.domain.follow.FollowId;
-import io.github.shirohoo.realworld.domain.follow.FollowRepository;
+import io.github.shirohoo.realworld.domain.user.Follow;
+import io.github.shirohoo.realworld.domain.user.FollowId;
+import io.github.shirohoo.realworld.domain.user.FollowRepository;
 
 import java.util.Optional;
 

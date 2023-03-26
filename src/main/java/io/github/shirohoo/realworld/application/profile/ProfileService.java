@@ -1,8 +1,8 @@
 package io.github.shirohoo.realworld.application.profile;
 
-import io.github.shirohoo.realworld.domain.follow.Follow;
-import io.github.shirohoo.realworld.domain.follow.FollowId;
-import io.github.shirohoo.realworld.domain.follow.FollowRepository;
+import io.github.shirohoo.realworld.domain.user.Follow;
+import io.github.shirohoo.realworld.domain.user.FollowId;
+import io.github.shirohoo.realworld.domain.user.FollowRepository;
 import io.github.shirohoo.realworld.domain.user.Profile;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
@@ -25,7 +25,7 @@ class ProfileService {
     public Profile getProfile(String targetUsername) {
         return userRepository
                 .findByUsername(targetUsername)
-                .map(u -> new Profile(u, false))
+                .map(targetUser -> new Profile(targetUser, false))
                 .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername)));
     }
 
