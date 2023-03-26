@@ -18,6 +18,15 @@ class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
+    public User signUp(User newUser) {
+        if (userRepository.existsByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())) {
+            throw new IllegalArgumentException("User already exists.");
+        }
+        newUser = newUser.encryptPasswords(passwordEncoder);
+        return userRepository.save(newUser);
+    }
+
     @Transactional(readOnly = true)
     public User getUser(String token, String guid) {
         return userRepository

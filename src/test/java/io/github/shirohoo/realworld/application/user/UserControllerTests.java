@@ -95,6 +95,101 @@ class UserControllerTests {
     }
 
     @Test
+    void shouldSuccessWhenSignUpUser() throws Exception {
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType("application/json")
+                                .content(
+                                        """
+                                                {
+                                                  "user":{
+                                                    "username": "oliver",
+                                                    "email": "oliver@oliver.oliver",
+                                                    "password": "oliver"
+                                                  }
+                                                }
+                                                """))
+                .andDo(print())
+                .andExpect(status().isTemporaryRedirect());
+    }
+
+    @Test
+    void shouldFailureWhenBlankUsername() throws Exception {
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType("application/json")
+                                .content(
+                                        """
+                                                {
+                                                  "user":{
+                                                    "username": "",
+                                                    "email": "jake@jake.jake",
+                                                    "password": "jakejake"
+                                                  }
+                                                }
+                                                """))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldFailureWhenBlankEmail() throws Exception {
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType("application/json")
+                                .content(
+                                        """
+                                                {
+                                                  "user":{
+                                                    "username": "jake",
+                                                    "email": "",
+                                                    "password": "jakejake"
+                                                  }
+                                                }
+                                                """))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldFailureWhenInvalidEmailFormats() throws Exception {
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType("application/json")
+                                .content(
+                                        """
+                                                {
+                                                  "user":{
+                                                    "username": "jake",
+                                                    "email": "invalid.email",
+                                                    "password": "jakejake"
+                                                  }
+                                                }
+                                                """))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldFailureWhenBlankPassword() throws Exception {
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType("application/json")
+                                .content(
+                                        """
+                                                {
+                                                  "user":{
+                                                    "username": "",
+                                                    "email": "jake@jake.jake",
+                                                    "password": ""
+                                                  }
+                                                }
+                                                """))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void shouldSuccessWhenGetUser() throws Exception {
         mockMvc.perform(get("/api/user")
                         .header("Content-Type", "application/json")
