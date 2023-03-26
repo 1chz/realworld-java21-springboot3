@@ -11,6 +11,7 @@ import io.github.shirohoo.realworld.infrastructure.user.UserJpaRepository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -49,7 +50,8 @@ class UsernamePasswordAuthenticationProcessingFilterTests {
     }
 
     @Test
-    void shouldSuccessWhenAttemptAuthentication() throws Exception {
+    @DisplayName("Login successfully")
+    void shouldSucceedWhenAttemptAuthentication() throws Exception {
         mockMvc.perform(
                         post("/api/users/login")
                                 .header("Content-Type", "application/json")
@@ -73,7 +75,8 @@ class UsernamePasswordAuthenticationProcessingFilterTests {
     }
 
     @Test
-    void shouldFailureWhenMissingInputContentType() throws Exception {
+    @DisplayName("Login failed when missing input content type: application/json")
+    void shouldFailWhenMissingInputContentType() throws Exception {
         mockMvc.perform(
                         post("/api/users/login")
                                 .content(

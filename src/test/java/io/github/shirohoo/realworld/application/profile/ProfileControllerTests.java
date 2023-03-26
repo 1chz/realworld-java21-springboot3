@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -95,7 +96,8 @@ class ProfileControllerTests {
     }
 
     @Test
-    void shouldSuccessFollow() throws Exception {
+    @DisplayName("Succeed in following")
+    void shouldSucceedFollow() throws Exception {
         mockMvc.perform(post("/api/profiles/james/follow").header("Authorization", "Bearer " + jakeToken))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -106,6 +108,7 @@ class ProfileControllerTests {
     }
 
     @Test
+    @DisplayName("Response 404 when following, if the followee does not exist in the DB")
     void shouldFailFollowIfFolloweeDoesNotExistInDB() throws Exception {
         mockMvc.perform(post("/api/profiles/noUser/follow").header("Authorization", "Bearer " + jakeToken))
                 .andDo(print())
@@ -113,7 +116,8 @@ class ProfileControllerTests {
     }
 
     @Test
-    void shouldSuccessUnfollow() throws Exception {
+    @DisplayName("Succeed in unfollowing")
+    void shouldSucceedUnfollow() throws Exception {
         // follow
         mockMvc.perform(post("/api/profiles/james/follow").header("Authorization", "Bearer " + jakeToken))
                 .andDo(print())
@@ -134,6 +138,7 @@ class ProfileControllerTests {
     }
 
     @Test
+    @DisplayName("Response 404 when unfollowing, if the followee is not in the DB")
     void shouldFailUnfollowIfFolloweeDoesNotExistInDB() throws Exception {
         mockMvc.perform(delete("/api/profiles/noUser/follow").header("Authorization", "Bearer " + jakeToken))
                 .andDo(print())
@@ -141,6 +146,7 @@ class ProfileControllerTests {
     }
 
     @Test
+    @DisplayName("Expect `following` to be `true` when get profile within logged in")
     void shouldSucceedGetProfileWithinLogin() throws Exception {
         // follow
         mockMvc.perform(post("/api/profiles/james/follow").header("Authorization", "Bearer " + jakeToken))
@@ -162,6 +168,7 @@ class ProfileControllerTests {
     }
 
     @Test
+    @DisplayName("Expect `following` to be `false` when get profile without logged in")
     void shouldSucceedGetProfileWithoutLogin() throws Exception {
         mockMvc.perform(get("/api/profiles/james"))
                 .andDo(print())
@@ -173,6 +180,7 @@ class ProfileControllerTests {
     }
 
     @Test
+    @DisplayName("Response 404 if when fetch profiles, if the target does not exist in the DB")
     void shouldFailGetProfileIfUserDoesNotExistInDB() throws Exception {
         mockMvc.perform(delete("/api/profiles/noUser/follow").header("Authorization", "Bearer " + jakeToken))
                 .andDo(print())

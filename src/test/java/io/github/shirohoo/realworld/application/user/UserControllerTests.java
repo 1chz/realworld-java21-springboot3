@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -95,7 +96,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldSuccessWhenSignUpUser() throws Exception {
+    @DisplayName("Sign up is successful")
+    void shouldSucceedWhenSignUp() throws Exception {
         mockMvc.perform(
                         post("/api/users")
                                 .contentType("application/json")
@@ -114,7 +116,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureWhenBlankUsername() throws Exception {
+    @DisplayName("Response 400 if username is empty when signing up")
+    void shouldFailWhenBlankUsername() throws Exception {
         mockMvc.perform(
                         post("/api/users")
                                 .contentType("application/json")
@@ -133,7 +136,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureWhenBlankEmail() throws Exception {
+    @DisplayName("Response 400 if email is empty when signing up")
+    void shouldFailWhenBlankEmail() throws Exception {
         mockMvc.perform(
                         post("/api/users")
                                 .contentType("application/json")
@@ -152,7 +156,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureWhenInvalidEmailFormats() throws Exception {
+    @DisplayName("Response 400 if email format is incorrect when signing up")
+    void shouldFailWhenInvalidEmailFormats() throws Exception {
         mockMvc.perform(
                         post("/api/users")
                                 .contentType("application/json")
@@ -171,7 +176,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureWhenBlankPassword() throws Exception {
+    @DisplayName("Response 400 if password is empty when signing up")
+    void shouldFailWhenBlankPassword() throws Exception {
         mockMvc.perform(
                         post("/api/users")
                                 .contentType("application/json")
@@ -179,7 +185,7 @@ class UserControllerTests {
                                         """
                                                 {
                                                   "user":{
-                                                    "username": "",
+                                                    "username": "jake",
                                                     "email": "jake@jake.jake",
                                                     "password": ""
                                                   }
@@ -190,7 +196,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldSuccessWhenGetUser() throws Exception {
+    @DisplayName("Can search the user who has been issued an authentication token")
+    void shouldSucceedWhenGetUser() throws Exception {
         mockMvc.perform(get("/api/user")
                         .header("Content-Type", "application/json")
                         .header("Authorization", "Bearer " + jakeToken))
@@ -205,14 +212,16 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureIfNoAuthorizationHeader() throws Exception {
+    @DisplayName("Response 401 if no authorization header")
+    void shouldFailIfNoAuthorizationHeader() throws Exception {
         mockMvc.perform(get("/api/user").header("Content-Type", "application/json"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void shouldSuccessWhenUpdateUser() throws Exception {
+    @DisplayName("Can update the user who has been issued an authentication token")
+    void shouldSucceedWhenUpdateUser() throws Exception {
         mockMvc.perform(
                         put("/api/user")
                                 .header("Content-Type", "application/json")
@@ -238,7 +247,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureIfDuplicatedUsername() throws Exception {
+    @DisplayName("Response 400 if duplicated username")
+    void shouldFailIfDuplicatedUsername() throws Exception {
         mockMvc.perform(
                         put("/api/user")
                                 .header("Content-Type", "application/json")
@@ -256,7 +266,8 @@ class UserControllerTests {
     }
 
     @Test
-    void shouldFailureIfDuplicatedEmail() throws Exception {
+    @DisplayName("Response 400 if duplicated email")
+    void shouldFailIfDuplicatedEmail() throws Exception {
         mockMvc.perform(
                         put("/api/user")
                                 .header("Content-Type", "application/json")
