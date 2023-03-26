@@ -38,9 +38,9 @@ class UserControllerTests {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    UUID guid;
+    UUID jakeGuid;
 
-    String token;
+    String jakeToken;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -85,8 +85,8 @@ class UserControllerTests {
                 .getResponse();
 
         String jsonContent = response.getContentAsString();
-        guid = UUID.fromString(JsonPath.read(jsonContent, "$.user.guid"));
-        token = JsonPath.read(jsonContent, "$.user.token");
+        jakeGuid = UUID.fromString(JsonPath.read(jsonContent, "$.user.guid"));
+        jakeToken = JsonPath.read(jsonContent, "$.user.token");
     }
 
     @AfterEach
@@ -193,7 +193,7 @@ class UserControllerTests {
     void shouldSuccessWhenGetUser() throws Exception {
         mockMvc.perform(get("/api/user")
                         .header("Content-Type", "application/json")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + jakeToken))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -216,7 +216,7 @@ class UserControllerTests {
         mockMvc.perform(
                         put("/api/user")
                                 .header("Content-Type", "application/json")
-                                .header("Authorization", "Bearer " + token)
+                                .header("Authorization", "Bearer " + jakeToken)
                                 .content(
                                         """
                         {
@@ -242,7 +242,7 @@ class UserControllerTests {
         mockMvc.perform(
                         put("/api/user")
                                 .header("Content-Type", "application/json")
-                                .header("Authorization", "Bearer " + token)
+                                .header("Authorization", "Bearer " + jakeToken)
                                 .content(
                                         """
                 {
@@ -260,7 +260,7 @@ class UserControllerTests {
         mockMvc.perform(
                         put("/api/user")
                                 .header("Content-Type", "application/json")
-                                .header("Authorization", "Bearer " + token)
+                                .header("Authorization", "Bearer " + jakeToken)
                                 .content(
                                         """
                 {

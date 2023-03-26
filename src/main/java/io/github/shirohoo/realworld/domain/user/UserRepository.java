@@ -8,6 +8,8 @@ public interface UserRepository {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByUsername(String username);
+
     Optional<User> findByGuid(UUID guid);
 
     boolean existsByUsername(String username);

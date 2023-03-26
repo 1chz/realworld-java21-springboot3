@@ -49,6 +49,8 @@ class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, "/api/users")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/profiles/{username}")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
