@@ -2,6 +2,7 @@ package io.github.shirohoo.realworld.application.user;
 
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
+import io.github.shirohoo.realworld.domain.user.UserVO;
 
 import java.util.UUID;
 
@@ -19,44 +20,41 @@ class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User signUp(User newUser) {
-        String username = newUser.getUsername();
-        if (userRepository.existsByUsername(username)) {
+    public User signUp(UserVO newUser) {
+        String username = newUser.username();
+        if (userRepository.existsByProfileUsername(username)) {
             throw new IllegalArgumentException("Username(`%s`) already exists.".formatted(username));
         }
 
-        String email = newUser.getEmail();
+        String email = newUser.email();
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
         }
 
-        newUser = newUser.encryptPasswords(passwordEncoder);
-        return userRepository.save(newUser);
+        User user = User.from(newUser);
+        user = user.encryptPasswords(passwordEncoder);
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
     public User getUser(String token, String guid) {
         return userRepository
                 .findByGuid(UUID.fromString(guid))
-                .map(user -> user.withToken(token))
+                .map(user -> user.bind(token))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
     }
 
     @Transactional
-    public User updateUser(String token, String guid, User updateRequests) {
-        User user = userRepository
-                .findByGuid(UUID.fromString(guid))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
-
-        String username = updateRequests.getUsername();
+    public User updateUser(User user, UserVO updateRequests) {
+        String username = updateRequests.username();
         if (!user.sameUsername(username)) {
-            if (username != null && userRepository.existsByUsername(username)) {
+            if (username != null && userRepository.existsByProfileUsername(username)) {
                 String msg = "Username(`%s`) already exists.".formatted(username);
                 throw new IllegalArgumentException(msg);
             }
         }
 
-        String email = updateRequests.getEmail();
+        String email = updateRequests.email();
         if (!user.sameEmail(email)) {
             if (email != null && userRepository.existsByEmail(email)) {
                 String msg = "Email(`%s`) already exists.".formatted(email);
@@ -64,6 +62,6 @@ class UserService {
             }
         }
 
-        return user.update(passwordEncoder, updateRequests).withToken(token);
+        return user.updateUser(passwordEncoder, updateRequests);
     }
 }

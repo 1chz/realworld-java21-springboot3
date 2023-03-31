@@ -6,8 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import io.github.shirohoo.realworld.domain.user.Profile;
 import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.infrastructure.user.UserJpaRepository;
+import io.github.shirohoo.realworld.domain.user.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class UsernamePasswordAuthenticationProcessingFilterTests {
     MockMvc mockMvc;
 
     @Autowired
-    UserJpaRepository userJpaRepository;
+    UserRepository userRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -37,16 +38,18 @@ class UsernamePasswordAuthenticationProcessingFilterTests {
         User jake = User.builder()
                 .email("jake@jake.jake")
                 .password(passwordEncoder.encode("jakejake"))
-                .username("jake")
-                .bio("I work at statefarm")
+                .profile(Profile.builder()
+                        .username("jake")
+                        .bio("I work at statefarm")
+                        .build())
                 .build();
 
-        userJpaRepository.save(jake);
+        userRepository.save(jake);
     }
 
     @AfterEach
     void tearDown() {
-        userJpaRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

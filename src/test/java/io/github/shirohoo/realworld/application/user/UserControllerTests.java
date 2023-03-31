@@ -8,10 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import io.github.shirohoo.realworld.domain.user.Profile;
 import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.infrastructure.user.UserJpaRepository;
-
-import java.util.UUID;
+import io.github.shirohoo.realworld.domain.user.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +33,10 @@ class UserControllerTests {
     MockMvc mockMvc;
 
     @Autowired
-    UserJpaRepository userJpaRepository;
+    UserRepository userRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    UUID jakeGuid;
 
     String jakeToken;
 
@@ -48,19 +45,23 @@ class UserControllerTests {
         User jake = User.builder()
                 .email("jake@jake.jake")
                 .password(passwordEncoder.encode("jakejake"))
-                .username("jake")
-                .bio("I work at statefarm")
+                .profile(Profile.builder()
+                        .username("jake")
+                        .bio("I work at statefarm")
+                        .build())
                 .build();
 
         User james = User.builder()
                 .email("james@james.james")
                 .password(passwordEncoder.encode("jamesjames"))
-                .username("james")
-                .bio("I work at statefarm")
+                .profile(Profile.builder()
+                        .username("james")
+                        .bio("I work at statefarm")
+                        .build())
                 .build();
 
-        userJpaRepository.save(jake);
-        userJpaRepository.save(james);
+        userRepository.save(jake);
+        userRepository.save(james);
 
         MockHttpServletResponse response = mockMvc.perform(
                         post("/api/users/login")
@@ -86,13 +87,12 @@ class UserControllerTests {
                 .getResponse();
 
         String jsonContent = response.getContentAsString();
-        jakeGuid = UUID.fromString(JsonPath.read(jsonContent, "$.user.guid"));
         jakeToken = JsonPath.read(jsonContent, "$.user.token");
     }
 
     @AfterEach
     void tearDown() {
-        userJpaRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

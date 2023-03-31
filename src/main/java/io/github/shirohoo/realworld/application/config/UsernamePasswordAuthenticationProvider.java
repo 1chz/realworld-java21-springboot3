@@ -1,27 +1,31 @@
 package io.github.shirohoo.realworld.application.config;
 
-import io.github.shirohoo.realworld.domain.user.User;
+import java.util.Collection;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
+    UsernamePasswordAuthenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+        this.passwordEncoder = passwordEncoder;
+        this.userDetailsService = userDetailsService;
+    }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        User userDetails = (User) userDetailsService.loadUserByUsername(authentication.getName());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
 
         String password = (String) authentication.getCredentials();
         String encodedPassword = userDetails.getPassword();
@@ -29,7 +33,8 @@ class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid passwords.");
         }
 
-        return UsernamePasswordAuthenticationToken.authenticated(userDetails, null, userDetails.getAuthorities());
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        return UsernamePasswordAuthenticationToken.authenticated(userDetails, null, authorities);
     }
 
     @Override

@@ -4,7 +4,6 @@ import io.github.shirohoo.realworld.domain.user.User;
 
 import java.io.IOException;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -36,16 +35,17 @@ class UsernamePasswordAuthenticationProcessingFilter extends AbstractAuthenticat
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException, IOException, ServletException {
+            throws AuthenticationException, IOException {
         if (isNotApplicationJson(request)) {
             throw new IllegalArgumentException("Content-Type must be application/json");
         }
 
         User user = objectMapper.readValue(request.getReader(), User.class);
-        Authentication unauthenticatedToken =
-                UsernamePasswordAuthenticationToken.unauthenticated(user.getEmail(), user.getPassword());
 
-        return getAuthenticationManager().authenticate(unauthenticatedToken);
+        String principal = user.getEmail();
+        String credentials = user.getPassword();
+        Authentication authentication = UsernamePasswordAuthenticationToken.unauthenticated(principal, credentials);
+        return getAuthenticationManager().authenticate(authentication);
     }
 
     private boolean isNotApplicationJson(HttpServletRequest request) {
