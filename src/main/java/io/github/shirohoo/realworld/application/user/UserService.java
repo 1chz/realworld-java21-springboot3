@@ -4,12 +4,10 @@ import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 import io.github.shirohoo.realworld.domain.user.UserVO;
 
-import java.util.UUID;
-
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,45 +21,37 @@ class UserService {
     public User signUp(UserVO newUser) {
         String username = newUser.username();
         if (userRepository.existsByProfileUsername(username)) {
-            throw new IllegalArgumentException("Username(`%s`) already exists.".formatted(username));
+            throw new IllegalArgumentException("username(`%s`) already exists.".formatted(username));
         }
 
         String email = newUser.email();
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
+            throw new IllegalArgumentException("email(`%s`) already exists.".formatted(email));
         }
 
-        User user = User.from(newUser);
-        user = user.encryptPasswords(passwordEncoder);
-        return userRepository.save(user);
-    }
-
-    @Transactional(readOnly = true)
-    public User getUser(String token, String guid) {
-        return userRepository
-                .findByGuid(UUID.fromString(guid))
-                .map(user -> user.bind(token))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+        String encoded = passwordEncoder.encode(newUser.password());
+        newUser = newUser.encryptPasswords(encoded);
+        return userRepository.save(User.from(newUser));
     }
 
     @Transactional
     public User updateUser(User user, UserVO updateRequests) {
         String username = updateRequests.username();
-        if (!user.sameUsername(username)) {
-            if (username != null && userRepository.existsByProfileUsername(username)) {
-                String msg = "Username(`%s`) already exists.".formatted(username);
-                throw new IllegalArgumentException(msg);
-            }
+        if (!user.isSameUsername(username) && userRepository.existsByProfileUsername(username)) {
+            throw new IllegalArgumentException("username(`%s`) already exists.".formatted(username));
         }
 
         String email = updateRequests.email();
-        if (!user.sameEmail(email)) {
-            if (email != null && userRepository.existsByEmail(email)) {
-                String msg = "Email(`%s`) already exists.".formatted(email);
-                throw new IllegalArgumentException(msg);
-            }
+        if (!user.isSameEmail(email) && userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("email(`%s`) already exists.".formatted(email));
         }
 
-        return user.updateUser(passwordEncoder, updateRequests);
+        String password = updateRequests.password();
+        if (StringUtils.hasText(password)) {
+            String encoded = passwordEncoder.encode(password);
+            updateRequests = updateRequests.encryptPasswords(encoded);
+        }
+
+        return user.update(updateRequests);
     }
 }

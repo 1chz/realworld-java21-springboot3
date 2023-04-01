@@ -22,7 +22,7 @@ import jakarta.persistence.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -60,12 +60,14 @@ public class User implements UserDetails {
     private String token;
 
     @ManyToMany
+    @Builder.Default
     @JoinTable(
             name = "follow",
             joinColumns = @JoinColumn(name = "following_id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id"))
     private Set<User> followers = new HashSet<>();
 
+    @Builder.Default
     @ManyToMany(mappedBy = "followers")
     private Set<User> following = new HashSet<>();
 
@@ -82,38 +84,15 @@ public class User implements UserDetails {
                 .build();
     }
 
-    public User encryptPasswords(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(this.password);
-        return this;
-    }
-
     public User bind(String token) {
         this.token = token;
         return this;
     }
 
-    public Profile getProfile(User me) {
-        if (me.following.contains(this)) return new Profile(this.profile, true);
-        else return this.profile;
-    }
-
-    public User updateUser(PasswordEncoder passwordEncoder, UserVO updateRequests) {
-        if (updateRequests.username() != null) {
-            this.profile.setUsername(updateRequests.username());
-        }
-
-        if (updateRequests.password() != null) {
-            this.password = passwordEncoder.encode(updateRequests.password());
-        }
-
-        if (updateRequests.email() != null) {
-            this.email = updateRequests.email();
-        }
-
-        this.profile.setBio(updateRequests.bio());
-
-        this.profile.setImage(updateRequests.image());
-
+    public User update(UserVO user) {
+        if (StringUtils.hasText(user.email())) this.email = user.email();
+        if (StringUtils.hasText(user.password())) this.password = user.password();
+        this.profile = this.profile.update(user);
         return this;
     }
 
@@ -129,11 +108,11 @@ public class User implements UserDetails {
         return target.getProfile(this);
     }
 
-    public boolean sameUsername(String username) {
+    public boolean isSameUsername(String username) {
         return this.profile.getUsername().equals(username);
     }
 
-    public boolean sameEmail(String email) {
+    public boolean isSameEmail(String email) {
         return this.email.equals(email);
     }
 
@@ -142,6 +121,11 @@ public class User implements UserDetails {
         String bio = this.profile.getBio();
         String image = this.profile.getImage();
         return new UserVO(username, this.email, "masked", bio, image, this.token);
+    }
+
+    public Profile getProfile(User me) {
+        if (me.following.contains(this)) return new Profile(this.profile, true);
+        return this.profile;
     }
 
     @Override

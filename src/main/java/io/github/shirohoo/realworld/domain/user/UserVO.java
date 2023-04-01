@@ -12,4 +12,8 @@ public record UserVO(
         @NotBlank String password,
         String bio,
         String image,
-        String token) {}
+        String token) {
+    public UserVO encryptPasswords(String encryptedPassword) {
+        return new UserVO(username, email, encryptedPassword, bio, image, token);
+    }
+}

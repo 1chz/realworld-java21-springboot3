@@ -5,6 +5,8 @@ import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import lombok.AccessLevel;
@@ -18,8 +20,8 @@ import lombok.Setter;
 @Setter
 @Builder
 @Embeddable
-@JsonRootName("profile")
 @AllArgsConstructor
+@JsonRootName("profile")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Profile {
     @Column(unique = true)
@@ -37,6 +39,13 @@ public class Profile {
         this.bio = profile.bio;
         this.image = profile.image;
         this.following = following;
+    }
+
+    public Profile update(UserVO user) {
+        if (StringUtils.hasText(user.username())) this.username = user.username();
+        this.bio = user.bio();
+        this.image = user.image();
+        return this;
     }
 
     @Override
