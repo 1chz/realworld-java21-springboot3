@@ -82,30 +82,6 @@ public class User implements UserDetails {
                 .build();
     }
 
-    public UserVO toImmutable() {
-        String username = this.profile.getUsername();
-        String bio = this.profile.getBio();
-        String image = this.profile.getImage();
-        return new UserVO(username, this.email, "masked", bio, image, this.token);
-    }
-
-    public Profile getProfile(User me) {
-        if (me.following.contains(this)) return new Profile(this.profile, true);
-        else return this.profile;
-    }
-
-    public Profile follow(User target) {
-        this.following.add(target);
-        target.followers.add(this);
-        return target.getProfile(this);
-    }
-
-    public Profile unfollow(User target) {
-        this.following.remove(target);
-        target.followers.remove(this);
-        return target.getProfile(this);
-    }
-
     public User encryptPasswords(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
         return this;
@@ -116,12 +92,9 @@ public class User implements UserDetails {
         return this;
     }
 
-    public boolean sameUsername(String username) {
-        return this.profile.getUsername().equals(username);
-    }
-
-    public boolean sameEmail(String email) {
-        return this.email.equals(email);
+    public Profile getProfile(User me) {
+        if (me.following.contains(this)) return new Profile(this.profile, true);
+        else return this.profile;
     }
 
     public User updateUser(PasswordEncoder passwordEncoder, UserVO updateRequests) {
@@ -142,6 +115,33 @@ public class User implements UserDetails {
         this.profile.setImage(updateRequests.image());
 
         return this;
+    }
+
+    public Profile follow(User target) {
+        this.following.add(target);
+        target.followers.add(this);
+        return target.getProfile(this);
+    }
+
+    public Profile unfollow(User target) {
+        this.following.remove(target);
+        target.followers.remove(this);
+        return target.getProfile(this);
+    }
+
+    public boolean sameUsername(String username) {
+        return this.profile.getUsername().equals(username);
+    }
+
+    public boolean sameEmail(String email) {
+        return this.email.equals(email);
+    }
+
+    public UserVO toImmutable() {
+        String username = this.profile.getUsername();
+        String bio = this.profile.getBio();
+        String image = this.profile.getImage();
+        return new UserVO(username, this.email, "masked", bio, image, this.token);
     }
 
     @Override
