@@ -5,12 +5,10 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByProfileUsername(String username);
-
-    Optional<User> findByGuid(UUID guid);
 
     boolean existsByProfileUsername(String username);
 

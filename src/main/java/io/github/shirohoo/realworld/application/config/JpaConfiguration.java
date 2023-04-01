@@ -1,8 +1,6 @@
 package io.github.shirohoo.realworld.application.config;
 
-import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.domain.user.UserRepository;
-
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
@@ -17,12 +15,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 @EnableJpaAuditing
 class JpaConfiguration {
     @Bean
-    AuditorAware<Integer> createAuditorAware(UserRepository userRepository) {
+    AuditorAware<UUID> createAuditorAware() {
         return () -> {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             JwtAuthenticationToken authentication = (JwtAuthenticationToken) securityContext.getAuthentication();
-            String guid = authentication.getName();
-            return userRepository.findByGuid(UUID.fromString(guid)).map(User::getId);
+
+            return Optional.of(authentication.getName()).map(UUID::fromString);
         };
     }
 }

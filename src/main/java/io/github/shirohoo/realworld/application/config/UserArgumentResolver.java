@@ -36,11 +36,11 @@ class UserArgumentResolver implements HandlerMethodArgumentResolver {
             WebDataBinderFactory binderFactory) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         JwtAuthenticationToken authentication = (JwtAuthenticationToken) securityContext.getAuthentication();
-        String guid = authentication.getName();
-        String token = authentication.getToken().getTokenValue();
 
+        String userId = authentication.getName();
+        String token = authentication.getToken().getTokenValue();
         return userRepository
-                .findByGuid(UUID.fromString(guid))
+                .findById(UUID.fromString(userId))
                 .map(user -> user.bind(token))
                 .orElseThrow(() -> new BadCredentialsException("Invalid token"));
     }
