@@ -1,7 +1,6 @@
 package io.github.shirohoo.realworld.application.config;
 
 import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.domain.user.UserRepository;
 
 import java.io.IOException;
 
@@ -19,8 +18,7 @@ class UsernamePasswordAuthenticationSuccessHandler extends SimpleUrlAuthenticati
     private final ApplicationTokenService tokenService;
     private final ObjectMapper objectMapper;
 
-    public UsernamePasswordAuthenticationSuccessHandler(
-            ApplicationTokenService tokenService, UserRepository userRepository, ObjectMapper objectMapper) {
+    UsernamePasswordAuthenticationSuccessHandler(ApplicationTokenService tokenService, ObjectMapper objectMapper) {
         this.tokenService = tokenService;
         this.objectMapper = objectMapper;
     }

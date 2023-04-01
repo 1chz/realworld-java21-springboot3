@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Configuration
 class ObjectMapperConfiguration {
     @Bean
-    ObjectMapper objectMapper() {
+    public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
         objectMapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);

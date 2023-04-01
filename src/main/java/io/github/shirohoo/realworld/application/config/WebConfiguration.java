@@ -9,7 +9,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfiguration implements WebMvcConfigurer {
+class WebConfiguration implements WebMvcConfigurer {
     private final UserRepository userRepository;
 
     public WebConfiguration(UserRepository userRepository) {

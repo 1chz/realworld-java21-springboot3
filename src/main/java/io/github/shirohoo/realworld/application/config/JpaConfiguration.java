@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 @EnableJpaAuditing
 class JpaConfiguration {
     @Bean
-    AuditorAware<UUID> createAuditorAware() {
+    public AuditorAware<UUID> createAuditorAware() {
         return () -> {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             JwtAuthenticationToken authentication = (JwtAuthenticationToken) securityContext.getAuthentication();

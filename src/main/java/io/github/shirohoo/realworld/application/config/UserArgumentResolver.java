@@ -19,7 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 class UserArgumentResolver implements HandlerMethodArgumentResolver {
     private final UserRepository userRepository;
 
-    public UserArgumentResolver(UserRepository userRepository) {
+    UserArgumentResolver(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

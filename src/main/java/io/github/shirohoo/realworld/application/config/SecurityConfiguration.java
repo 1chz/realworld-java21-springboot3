@@ -39,7 +39,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 @EnableMethodSecurity
 class SecurityConfiguration {
     @Bean
-    SecurityFilterChain securityFilterChain(
+    public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             ExceptionResolveFilter exceptionResolveFilter,
             UsernamePasswordAuthenticationProcessingFilter usernameAuthFilter)
@@ -64,22 +64,22 @@ class SecurityConfiguration {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
+    public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
         return new ProviderManager(List.of(authenticationProvider));
     }
 
     @Bean
-    JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
+    public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
         return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
     @Bean
-    JwtEncoder jwtEncoder(
+    public JwtEncoder jwtEncoder(
             @Value("${security.key.public}") RSAPublicKey rsaPublicKey,
             @Value("${security.key.private}") RSAPrivateKey rsaPrivateKey) {
         JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
