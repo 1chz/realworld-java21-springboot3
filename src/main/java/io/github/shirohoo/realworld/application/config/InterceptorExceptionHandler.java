@@ -12,16 +12,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-class ExceptionResolveAdvisor extends ResponseEntityExceptionHandler {
+class InterceptorExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handle(IllegalArgumentException e) {
-        log.error(e.getMessage());
+        log.info("Illegal argument: {}", e.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ProblemDetail handle(NoSuchElementException e) {
-        log.error(e.getMessage());
+        log.info("No such element: {}", e.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handle(Exception e) {
+        log.error("Unknown error: {}", e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR, "An error has occurred. Please contact the administrator.");
     }
 }

@@ -41,7 +41,7 @@ class UserArgumentResolver implements HandlerMethodArgumentResolver {
         String token = authentication.getToken().getTokenValue();
         return userRepository
                 .findById(UUID.fromString(userId))
-                .map(user -> user.bind(token))
+                .map(user -> user.bindToken(token))
                 .orElseThrow(() -> new BadCredentialsException("Invalid token"));
     }
 }

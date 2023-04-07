@@ -4,15 +4,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -39,38 +35,28 @@ import com.nimbusds.jose.proc.SecurityContext;
 @EnableMethodSecurity
 class SecurityConfiguration {
     @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            ExceptionResolveFilter exceptionResolveFilter,
-            UsernamePasswordAuthenticationProcessingFilter usernameAuthFilter)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, FilterExceptionHandler filterExceptionHandler)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, "/api/users")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/profiles/{username}")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                .authorizeHttpRequests(
+                        requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .exceptionHandling(
                         handler -> handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                                 .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                .addFilterBefore(usernameAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(exceptionResolveFilter, UsernamePasswordAuthenticationProcessingFilter.class)
+                .addFilterBefore(filterExceptionHandler, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
-        return new ProviderManager(List.of(authenticationProvider));
     }
 
     @Bean

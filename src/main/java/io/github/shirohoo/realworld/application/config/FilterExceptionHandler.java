@@ -19,10 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-class ExceptionResolveFilter extends OncePerRequestFilter {
+class FilterExceptionHandler extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
-    ExceptionResolveFilter(ObjectMapper objectMapper) {
+    FilterExceptionHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -32,9 +32,10 @@ class ExceptionResolveFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
+
         } catch (IllegalArgumentException e) {
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
-            log.error(e.getMessage());
+            log.info("Illegal argument: {}", e.getMessage());
 
             response.setStatus(problemDetail.getStatus());
             response.setContentType("application/problem+json");

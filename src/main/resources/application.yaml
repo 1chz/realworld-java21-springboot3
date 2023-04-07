@@ -16,4 +16,3 @@ security:
   key:
     private: classpath:app.key
     public: classpath:app.pub
-

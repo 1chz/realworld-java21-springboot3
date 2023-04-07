@@ -14,6 +14,7 @@ class ObjectMapperConfiguration {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
         objectMapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return objectMapper;
     }
 }

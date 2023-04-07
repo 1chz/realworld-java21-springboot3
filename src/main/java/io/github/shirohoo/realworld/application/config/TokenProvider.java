@@ -7,13 +7,13 @@ import java.time.Instant;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-class ApplicationTokenService {
+@Component
+public class TokenProvider {
     private final JwtEncoder jwtEncoder;
 
-    ApplicationTokenService(JwtEncoder jwtEncoder) {
+    TokenProvider(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
 
