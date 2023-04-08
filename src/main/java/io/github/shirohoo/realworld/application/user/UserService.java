@@ -48,4 +48,29 @@ class UserService {
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
     }
+
+    @Transactional
+    public User update(User user, UserUpdateRequest request) {
+        String email = request.email();
+        if (email != null && !email.equals(user.getEmail()) && userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("email(`%s`) already exists.".formatted(email));
+        }
+
+        String password = request.password();
+        if (password != null) {
+            String encoded = passwordEncoder.encode(password);
+            user.setPassword(encoded);
+        }
+
+        String username = request.username();
+        if (username != null && !username.equals(user.getUsername()) && userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("username(`%s`) already exists.".formatted(username));
+        }
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setBio(request.bio());
+        user.setImage(request.image());
+
+        return userRepository.save(user);
+    }
 }

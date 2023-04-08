@@ -29,12 +29,12 @@ public class User {
     private UUID id;
 
     @Column(unique = true)
-    private String username;
+    private String email;
 
     private String password;
 
     @Column(unique = true)
-    private String email;
+    private String username;
 
     private String bio;
 
@@ -48,12 +48,30 @@ public class User {
         return this;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String encoded) {
+        this.password = encoded;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
+        if (o instanceof User other) return this.id.equals(other.id);
+        return false;
     }
 
     @Override

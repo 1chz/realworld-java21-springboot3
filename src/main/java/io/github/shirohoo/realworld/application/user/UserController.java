@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,5 +38,10 @@ class UserController {
     @GetMapping("/api/user")
     public UserResponse getCurrentUser(User user) {
         return new UserResponse(user);
+    }
+
+    @PutMapping("/api/user")
+    public UserResponse updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
+        return new UserResponse(userService.update(user, request));
     }
 }

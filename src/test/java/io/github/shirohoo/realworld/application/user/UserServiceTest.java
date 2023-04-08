@@ -18,7 +18,7 @@ class UserServiceTest {
     private UserService sut;
 
     @Test
-    @DisplayName("유저 서비스는 회원가입 서비스를 제공한다")
+    @DisplayName("유저 서비스는 회원가입 기능을 제공한다")
     void signUp() throws Exception {
         // given
         // - sign up request
@@ -35,7 +35,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("유저 서비스는 로그인 서비스를 제공한다")
+    @DisplayName("유저 서비스는 로그인 기능을 제공한다")
     void login() throws Exception {
         // given
         // - sign up
@@ -51,5 +51,32 @@ class UserServiceTest {
         assertThat(user.token()).isNotEmpty();
         assertThat(user.bio()).isNull();
         assertThat(user.image()).isNull();
+    }
+
+    @Test
+    @DisplayName("유저 서비스는 회원 정보 업데이트 기능을 제공한다")
+    void update() throws Exception {
+        // given
+        // - sign up
+        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        User user = sut.signUp(signUpRequest);
+
+        // - update request
+        String email = "james.to@gmail.com";
+        String username = "james.to";
+        String password = "5678";
+        String bio = "I like to skateboard";
+        String image = "https://i.stack.imgur.com/xHWG8.jpg";
+        UserUpdateRequest updateRequest = new UserUpdateRequest(email, username, password, bio, image);
+
+        // when
+        user = sut.update(user, updateRequest);
+
+        // then
+        assertThat(user.getEmail()).isEqualTo("james.to@gmail.com");
+        assertThat(user.getUsername()).isEqualTo("james.to");
+        assertThat(user.getPassword()).isNotEqualTo("5678");
+        assertThat(user.getBio()).isEqualTo("I like to skateboard");
+        assertThat(user.getImage()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
     }
 }
