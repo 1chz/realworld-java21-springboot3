@@ -1,5 +1,6 @@
 package io.github.shirohoo.realworld.application.user;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -92,5 +93,30 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.profile.bio").isEmpty())
                 .andExpect(jsonPath("$.profile.image").isEmpty())
                 .andExpect(jsonPath("$.profile.following").value(true));
+    }
+
+    @Test
+    @DisplayName("프로필 API는 다른 유저를 언팔로우하는 API를 제공한다")
+    void unfollow() throws Exception {
+        // given
+        // - login and get authorization token
+        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        String jamesToken = userService.login(loginRequest).token();
+
+        // - james follow simpson
+        sut.perform(post("/api/profiles/simpson/follow").header("Authorization", "Bearer " + jamesToken));
+
+        // when
+        ResultActions resultActions =
+                sut.perform(delete("/api/profiles/simpson/follow").header("Authorization", "Bearer " + jamesToken));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.profile.username").value("simpson"))
+                .andExpect(jsonPath("$.profile.bio").isEmpty())
+                .andExpect(jsonPath("$.profile.image").isEmpty())
+                .andExpect(jsonPath("$.profile.following").value(false));
     }
 }

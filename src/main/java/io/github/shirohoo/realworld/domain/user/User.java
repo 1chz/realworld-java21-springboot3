@@ -5,12 +5,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -43,11 +46,17 @@ public class User {
 
     private String image;
 
-    @OneToMany(mappedBy = "me")
-    private final Set<Follower> followers = new HashSet<>();
+    @Builder.Default
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_follow",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id"))
+    private Set<User> followings = new HashSet<>();
 
-    @OneToMany(mappedBy = "me")
-    private final Set<Following> followings = new HashSet<>();
+    @Builder.Default
+    @ManyToMany(mappedBy = "followings", cascade = CascadeType.ALL)
+    private Set<User> followers = new HashSet<>();
 
     @Transient
     private String token;
@@ -61,10 +70,20 @@ public class User {
         return this;
     }
 
-    public Following follow(User to) {
-        Following following = new Following(this, to);
-        this.followings.add(following);
-        return following;
+    public void follow(User to) {
+        if (this.followings.contains(to)) throw new IllegalStateException("Already following");
+        this.followings.add(to);
+        to.followers.add(this);
+    }
+
+    public void unfollow(User to) {
+        if (!this.followings.contains(to)) throw new IllegalStateException("Not following");
+        this.followings.remove(to);
+        to.followers.remove(this);
+    }
+
+    public boolean isFollowing(User to) {
+        return this.followings.contains(to);
     }
 
     public void setEmail(String email) {

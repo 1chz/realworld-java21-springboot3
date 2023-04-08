@@ -67,4 +67,25 @@ class ProfileServiceTest {
         assertThat(simpsonProfile.image()).isNull();
         assertThat(simpsonProfile.following()).isTrue();
     }
+
+    @Test
+    @DisplayName("프로필 서비스는 다른 유저를 언팔로우하는 기능을 제공한다")
+    void unfollow() throws Exception {
+        // given
+        // - fetch users
+        User james = userRepository.findByEmail("james@gmail.com").orElseThrow();
+        User simpson = userRepository.findByEmail("simpson@gmail.com").orElseThrow();
+
+        // - james follow simpson
+        sut.follow(james, simpson);
+
+        // when
+        ProfileResponse simpsonProfile = sut.unfollow(james, simpson);
+
+        // then
+        assertThat(simpsonProfile.username()).isEqualTo("simpson");
+        assertThat(simpsonProfile.bio()).isNull();
+        assertThat(simpsonProfile.image()).isNull();
+        assertThat(simpsonProfile.following()).isFalse();
+    }
 }

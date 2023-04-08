@@ -1,11 +1,10 @@
 package io.github.shirohoo.realworld.application.user;
 
-import io.github.shirohoo.realworld.domain.user.FollowerRepository;
-import io.github.shirohoo.realworld.domain.user.FollowingRepository;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
 import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,50 +12,58 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 class ProfileService {
     private final UserRepository userRepository;
-    private final FollowerRepository followerRepository;
-    private final FollowingRepository followingRepository;
 
-    public ProfileService(
-            UserRepository userRepository,
-            FollowerRepository followerRepository,
-            FollowingRepository followingRepository) {
+    public ProfileService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.followerRepository = followerRepository;
-        this.followingRepository = followingRepository;
     }
 
     @Transactional(readOnly = true)
-    public ProfileResponse getProfile(User me, String username) {
-        User to =
-                userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not found"));
-        return this.getProfile(me, to);
-    }
-
-    @Transactional(readOnly = true)
-    public ProfileResponse getProfile(User me, User target) {
-        String username = target.getUsername();
-        String bio = target.getBio();
-        String image = target.getImage();
-        boolean following = followingRepository.existsByMeAndFollowing(me, target);
-        return new ProfileResponse(username, bio, image, following);
-    }
-
-    @Transactional(readOnly = true)
-    public ProfileResponse follow(User me, String to) {
+    public ProfileResponse getProfile(User me, String to) {
         return userRepository
                 .findByUsername(to)
-                .map(following -> this.follow(me, following))
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .map(it -> this.getProfile(me, it))
+                .orElseThrow(userNotFound(to));
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileResponse getProfile(User me, User to) {
+        String username = to.getUsername();
+        String bio = to.getBio();
+        String image = to.getImage();
+
+        if (me == null) {
+            return new ProfileResponse(username, bio, image, false);
+        } else {
+            return new ProfileResponse(username, bio, image, me.isFollowing(to));
+        }
+    }
+
+    @Transactional
+    public ProfileResponse follow(User me, String to) {
+        return userRepository.findByUsername(to).map(it -> this.follow(me, it)).orElseThrow(userNotFound(to));
     }
 
     @Transactional
     public ProfileResponse follow(User me, User to) {
-        if (followingRepository.existsByMeAndFollowing(me, to)) {
-            throw new IllegalStateException("Already following");
-        }
-
-        followingRepository.save(me.follow(to));
-
+        me.follow(to);
         return this.getProfile(me, to);
+    }
+
+    @Transactional
+    public ProfileResponse unfollow(User me, String to) {
+        return userRepository
+                .findByUsername(to)
+                .map(it -> this.unfollow(me, it))
+                .orElseThrow(userNotFound(to));
+    }
+
+    @Transactional
+    public ProfileResponse unfollow(User me, User to) {
+        me.unfollow(to);
+        return this.getProfile(me, to);
+    }
+
+    private Supplier<NoSuchElementException> userNotFound(String username) {
+        return () -> new NoSuchElementException("User(`%s`) not found".formatted(username));
     }
 }
