@@ -1,5 +1,7 @@
 package io.github.shirohoo.realworld.domain.user;
 
+import io.github.shirohoo.realworld.domain.content.Article;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,7 +19,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,10 +30,10 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
 @Accessors(fluent = true, chain = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -61,6 +62,10 @@ public class User {
     @Builder.Default
     @ManyToMany(mappedBy = "followings", cascade = CascadeType.ALL)
     private Set<User> followers = new HashSet<>();
+
+    @Builder.Default
+    @ManyToMany(mappedBy = "favorites", cascade = CascadeType.ALL)
+    private Set<Article> favoritedArticles = new HashSet<>();
 
     @Transient
     private String token;
