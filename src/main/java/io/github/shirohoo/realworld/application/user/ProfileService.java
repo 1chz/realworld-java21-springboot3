@@ -26,6 +26,13 @@ class ProfileService {
     }
 
     @Transactional(readOnly = true)
+    public ProfileResponse getProfile(User me, String username) {
+        User to =
+                userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not found"));
+        return this.getProfile(me, to);
+    }
+
+    @Transactional(readOnly = true)
     public ProfileResponse getProfile(User me, User target) {
         String username = target.getUsername();
         String bio = target.getBio();

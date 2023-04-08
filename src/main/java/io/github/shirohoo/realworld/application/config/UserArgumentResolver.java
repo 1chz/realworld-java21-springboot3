@@ -7,7 +7,9 @@ import java.util.UUID;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -35,10 +37,15 @@ class UserArgumentResolver implements HandlerMethodArgumentResolver {
             @NonNull NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        JwtAuthenticationToken authentication = (JwtAuthenticationToken) securityContext.getAuthentication();
+        Authentication authentication = securityContext.getAuthentication();
 
-        String userId = authentication.getName();
-        String token = authentication.getToken().getTokenValue();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+
+        JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
+        String userId = jwt.getName();
+        String token = jwt.getToken().getTokenValue();
         return userRepository
                 .findById(UUID.fromString(userId))
                 .map(user -> user.bindToken(token))

@@ -43,6 +43,8 @@ class SecurityConfiguration {
                 .authorizeHttpRequests(
                         requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
                                 .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/profiles/{username}")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
