@@ -18,12 +18,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 class UserArgumentResolver implements HandlerMethodArgumentResolver {
     private final UserRepository userRepository;
-
-    UserArgumentResolver(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

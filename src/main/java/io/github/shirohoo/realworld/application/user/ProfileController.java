@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 class ProfileController {
     private final ProfileService profileService;
-
-    ProfileController(ProfileService profileService) {
-        this.profileService = profileService;
-    }
 
     @GetMapping("/api/profiles/{username}")
     public ProfileResponse getProfile(User me, @PathVariable("username") String to) {

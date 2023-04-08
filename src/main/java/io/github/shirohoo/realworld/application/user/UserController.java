@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 class UserController {
     private final UserService userService;
-
-    UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/api/users")
     public ModelAndView signUp(@RequestBody UserSignUpRequest request, HttpServletRequest httpServletRequest) {

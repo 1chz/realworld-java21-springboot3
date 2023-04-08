@@ -9,13 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 class ArticleService {
     private final ArticleRepository articleRepository;
-
-    ArticleService(ArticleRepository articleRepository) {
-        this.articleRepository = articleRepository;
-    }
 
     @Transactional(readOnly = true)
     public Page<Article> getArticles(ArticleFacets facets) {
