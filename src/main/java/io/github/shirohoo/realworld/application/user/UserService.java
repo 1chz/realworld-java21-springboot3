@@ -21,7 +21,7 @@ class UserService {
     }
 
     @Transactional
-    public User signUp(UserRegistrationRequest request) {
+    public User signUp(UserSignUpRequest request) {
         String username = request.username();
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("username(`%s`) already exists.".formatted(username));
@@ -44,7 +44,7 @@ class UserService {
                 .filter(user -> passwordEncoder.matches(request.password(), user.getPassword()))
                 .map(user -> {
                     String token = tokenProvider.provide(user);
-                    return new UserResponse(user.getEmail(), token, user.getUsername(), user.getBio(), user.getImage());
+                    return new UserResponse(user.bindToken(token));
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
     }

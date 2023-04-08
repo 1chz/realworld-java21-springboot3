@@ -19,12 +19,13 @@ class UserServiceTest {
 
     @Test
     @DisplayName("유저 서비스는 회원가입 서비스를 제공한다")
-    void signUp() {
+    void signUp() throws Exception {
         // given
-        UserRegistrationRequest registrationRequest = new UserRegistrationRequest("james@gmail.com", "james", "1234");
+        // - sign up request
+        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
 
         // when
-        User user = sut.signUp(registrationRequest);
+        User user = sut.signUp(signUpRequest);
 
         // then
         assertThat(user.getId()).isNotNull();
@@ -35,21 +36,20 @@ class UserServiceTest {
 
     @Test
     @DisplayName("유저 서비스는 로그인 서비스를 제공한다")
-    void login() {
+    void login() throws Exception {
         // given
-        UserRegistrationRequest registrationRequest = new UserRegistrationRequest("james@gmail.com", "james", "1234");
-        sut.signUp(registrationRequest);
-
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        // - sign up
+        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        sut.signUp(signUpRequest);
 
         // when
-        UserResponse userResponse = sut.login(loginRequest);
+        UserResponse user = sut.login(new UserLoginRequest("james@gmail.com", "1234"));
 
         // then
-        assertThat(userResponse.email()).isEqualTo("james@gmail.com");
-        assertThat(userResponse.token()).isNotEmpty();
-        assertThat(userResponse.username()).isEqualTo("james");
-        assertThat(userResponse.bio()).isNull();
-        assertThat(userResponse.image()).isNull();
+        assertThat(user.email()).isEqualTo("james@gmail.com");
+        assertThat(user.username()).isEqualTo("james");
+        assertThat(user.token()).isNotEmpty();
+        assertThat(user.bio()).isNull();
+        assertThat(user.image()).isNull();
     }
 }
