@@ -32,21 +32,10 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
 
     runtimeOnly("com.h2database:h2")
-
-    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
-    annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties["querydsl.version"]}:jakarta")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.clean {
-    doFirst {
-        delete("build/generated")
-    }
 }
 
 tasks.compileJava {
