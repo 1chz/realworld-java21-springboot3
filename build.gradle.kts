@@ -38,6 +38,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// clean build
 tasks.compileJava {
     dependsOn(tasks.clean)
 }
@@ -50,5 +51,17 @@ spotless {
         removeUnusedImports()
         trimTrailingWhitespace()
         importOrder("io.github.shirohoo", "java", "javax", "jakarta", "org", "com", "lombok")
+    }
+
+    kotlin {
+        ktlint()
+        indentWithSpaces()
+        trimTrailingWhitespace()
+    }
+
+    kotlinGradle {
+        ktlint()
+        indentWithSpaces()
+        trimTrailingWhitespace()
     }
 }
