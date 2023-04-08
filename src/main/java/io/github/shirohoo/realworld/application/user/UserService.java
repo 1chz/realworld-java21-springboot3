@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.application.user;
 
 import io.github.shirohoo.realworld.application.config.TokenProvider;
+import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +21,7 @@ class UserService {
     }
 
     @Transactional
-    public void signUp(UserRegistrationRequest request) {
+    public User signUp(UserRegistrationRequest request) {
         String username = request.username();
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("username(`%s`) already exists.".formatted(username));
@@ -33,7 +34,7 @@ class UserService {
 
         String encoded = passwordEncoder.encode(request.password());
         request = request.encryptPasswords(encoded);
-        userRepository.save(request.toUser());
+        return userRepository.save(request.toUser());
     }
 
     @Transactional(readOnly = true)
