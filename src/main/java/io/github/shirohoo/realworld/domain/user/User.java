@@ -1,6 +1,8 @@
 package io.github.shirohoo.realworld.domain.user;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -8,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -40,12 +43,28 @@ public class User {
 
     private String image;
 
+    @OneToMany(mappedBy = "me")
+    private final Set<Follower> followers = new HashSet<>();
+
+    @OneToMany(mappedBy = "me")
+    private final Set<Following> followings = new HashSet<>();
+
     @Transient
     private String token;
+
+    public static User withEmailUsername(String email, String username) {
+        return User.builder().email(email).username(username).build();
+    }
 
     public User bindToken(String token) {
         this.token = token;
         return this;
+    }
+
+    public Following follow(User to) {
+        Following following = new Following(this, to);
+        this.followings.add(following);
+        return following;
     }
 
     public void setEmail(String email) {

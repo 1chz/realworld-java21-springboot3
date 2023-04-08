@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.application.user;
 
 import io.github.shirohoo.realworld.application.config.TokenProvider;
+import io.github.shirohoo.realworld.domain.user.FollowerRepository;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
@@ -14,7 +15,11 @@ class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+    UserService(
+            UserRepository userRepository,
+            FollowerRepository followerRepository,
+            PasswordEncoder passwordEncoder,
+            TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
