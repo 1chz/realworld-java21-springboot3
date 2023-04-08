@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-@DisplayName("팔로우 서비스")
-class FollowServiceTest {
+@DisplayName("프로필 서비스")
+class ProfileServiceTest {
     @Autowired
-    private FollowService sut;
+    private ProfileService sut;
 
     @Autowired
     private UserRepository userRepository;
@@ -35,7 +35,7 @@ class FollowServiceTest {
     }
 
     @Test
-    @DisplayName("팔로우 서비스는 프로필 조회 기능을 제공한다")
+    @DisplayName("프로필 서비스는 프로필 조회 기능을 제공한다")
     void getProfile() throws Exception {
         // given
         User james = userRepository.findByEmail("james@gmail.com").orElseThrow();
@@ -52,7 +52,7 @@ class FollowServiceTest {
     }
 
     @Test
-    @DisplayName("팔로우 서비스는 다른 유저를 팔로우하는 기능을 제공한다")
+    @DisplayName("프로필 서비스는 다른 유저를 팔로우하는 기능을 제공한다")
     void follow() throws Exception {
         // given
         User james = userRepository.findByEmail("james@gmail.com").orElseThrow();

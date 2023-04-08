@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("팔로우 API")
-class FollowControllerTest {
+@DisplayName("프로필 API")
+class ProfileControllerTest {
     @Autowired
     private MockMvc sut;
 
@@ -34,7 +34,7 @@ class FollowControllerTest {
     }
 
     @Test
-    @DisplayName("팔로우 API는 다른 유저를 팔로우하는 API를 제공한다")
+    @DisplayName("프로필 API는 다른 유저를 팔로우하는 API를 제공한다")
     void follow() throws Exception {
         // given
         // - login and get authorization token

@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-class FollowController {
-    private final FollowService followService;
+class ProfileController {
+    private final ProfileService profileService;
 
-    FollowController(FollowService followService) {
-        this.followService = followService;
+    ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
     }
 
     @ResponseStatus(CREATED)
     @PostMapping("/api/profiles/{username}/follow")
     public ProfileResponse follow(User user, @PathVariable String username) {
-        return followService.follow(user, username);
+        return profileService.follow(user, username);
     }
 }

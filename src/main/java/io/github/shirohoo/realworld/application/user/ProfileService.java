@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-class FollowService {
+class ProfileService {
     private final UserRepository userRepository;
     private final FollowerRepository followerRepository;
     private final FollowingRepository followingRepository;
 
-    public FollowService(
+    public ProfileService(
             UserRepository userRepository,
             FollowerRepository followerRepository,
             FollowingRepository followingRepository) {
@@ -25,7 +25,7 @@ class FollowService {
         this.followingRepository = followingRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ProfileResponse getProfile(User me, User target) {
         String username = target.getUsername();
         String bio = target.getBio();
@@ -34,7 +34,7 @@ class FollowService {
         return new ProfileResponse(username, bio, image, following);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ProfileResponse follow(User me, String to) {
         return userRepository
                 .findByUsername(to)
