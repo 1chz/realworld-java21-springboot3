@@ -73,7 +73,7 @@ class UserControllerTest {
 
         // then
         resultActions
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.user.email").value("james@gmail.com"))
                 .andExpect(jsonPath("$.user.username").value("james"))
@@ -92,11 +92,10 @@ class UserControllerTest {
 
         // - login and get authorization token
         UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
-        UserResponse userResponse = userService.login(loginRequest);
+        String jamesToken = userService.login(loginRequest).token();
 
         // when
-        ResultActions resultActions =
-                sut.perform(get("/api/user").header("Authorization", "Bearer " + userResponse.token()));
+        ResultActions resultActions = sut.perform(get("/api/user").header("Authorization", "Bearer " + jamesToken));
 
         // then
         resultActions

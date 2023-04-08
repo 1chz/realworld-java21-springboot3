@@ -1,5 +1,7 @@
 package io.github.shirohoo.realworld.application.user;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 import io.github.shirohoo.realworld.domain.user.User;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -30,6 +33,7 @@ class UserController {
         return new ModelAndView("redirect:/api/users/login", "user", loginRequest);
     }
 
+    @ResponseStatus(CREATED)
     @PostMapping("/api/users/login")
     public UserResponse login(@RequestBody UserLoginRequest request) {
         return userService.login(request);
