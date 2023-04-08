@@ -23,7 +23,7 @@ public class TokenProvider {
                 .issuer("https://realworld.io")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(300))
-                .subject(user.getId().toString())
+                .subject(user.id().toString())
                 .build();
 
         JwtEncoderParameters parameters = JwtEncoderParameters.from(claimsSet);

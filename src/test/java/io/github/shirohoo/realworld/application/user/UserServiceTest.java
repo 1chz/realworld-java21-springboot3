@@ -28,10 +28,10 @@ class UserServiceTest {
         User user = sut.signUp(signUpRequest);
 
         // then
-        assertThat(user.getId()).isNotNull();
-        assertThat(user.getEmail()).isEqualTo("james@gmail.com");
-        assertThat(user.getUsername()).isEqualTo("james");
-        assertThat(user.getPassword()).isNotEqualTo("1234");
+        assertThat(user.id()).isNotNull();
+        assertThat(user.email()).isEqualTo("james@gmail.com");
+        assertThat(user.username()).isEqualTo("james");
+        assertThat(user.password()).isNotEqualTo("1234");
     }
 
     @Test
@@ -73,10 +73,10 @@ class UserServiceTest {
         user = sut.update(user, updateRequest);
 
         // then
-        assertThat(user.getEmail()).isEqualTo("james.to@gmail.com");
-        assertThat(user.getUsername()).isEqualTo("james.to");
-        assertThat(user.getPassword()).isNotEqualTo("5678");
-        assertThat(user.getBio()).isEqualTo("I like to skateboard");
-        assertThat(user.getImage()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
+        assertThat(user.email()).isEqualTo("james.to@gmail.com");
+        assertThat(user.username()).isEqualTo("james.to");
+        assertThat(user.password()).isNotEqualTo("5678");
+        assertThat(user.bio()).isEqualTo("I like to skateboard");
+        assertThat(user.image()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
     }
 }

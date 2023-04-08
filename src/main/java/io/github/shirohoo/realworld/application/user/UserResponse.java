@@ -7,6 +7,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("user")
 record UserResponse(String email, String token, String username, String bio, String image) {
     UserResponse(User user) {
-        this(user.getEmail(), user.getToken(), user.getUsername(), user.getBio(), user.getImage());
+        this(user.email(), user.token(), user.username(), user.bio(), user.image());
     }
 }

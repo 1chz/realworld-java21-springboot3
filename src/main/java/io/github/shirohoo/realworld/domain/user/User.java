@@ -22,12 +22,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @Table(name = "users")
+@Accessors(fluent = true, chain = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
@@ -62,12 +66,7 @@ public class User {
     private String token;
 
     public static User withEmailUsername(String email, String username) {
-        return User.builder().email(email).username(username).build();
-    }
-
-    public User bindToken(String token) {
-        this.token = token;
-        return this;
+        return new User().email(email).username(username);
     }
 
     public void follow(User to) {
@@ -84,26 +83,6 @@ public class User {
 
     public boolean isFollowing(User to) {
         return this.followings.contains(to);
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String encoded) {
-        this.password = encoded;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     @Override

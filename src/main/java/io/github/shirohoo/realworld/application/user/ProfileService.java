@@ -27,9 +27,9 @@ class ProfileService {
 
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(User me, User to) {
-        String username = to.getUsername();
-        String bio = to.getBio();
-        String image = to.getImage();
+        String username = to.username();
+        String bio = to.bio();
+        String image = to.image();
 
         if (me == null) {
             return new ProfileResponse(username, bio, image, false);

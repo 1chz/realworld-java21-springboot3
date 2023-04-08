@@ -46,9 +46,10 @@ class UserArgumentResolver implements HandlerMethodArgumentResolver {
         JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
         String userId = jwt.getName();
         String token = jwt.getToken().getTokenValue();
+
         return userRepository
                 .findById(UUID.fromString(userId))
-                .map(user -> user.bindToken(token))
+                .map(it -> it.token(token))
                 .orElseThrow(() -> new BadCredentialsException("Invalid token"));
     }
 }

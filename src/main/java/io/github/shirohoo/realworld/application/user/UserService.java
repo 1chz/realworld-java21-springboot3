@@ -41,10 +41,10 @@ class UserService {
     public UserResponse login(UserLoginRequest request) {
         return userRepository
                 .findByEmail(request.email())
-                .filter(user -> passwordEncoder.matches(request.password(), user.getPassword()))
+                .filter(user -> passwordEncoder.matches(request.password(), user.password()))
                 .map(user -> {
                     String token = tokenProvider.provide(user);
-                    return new UserResponse(user.bindToken(token));
+                    return new UserResponse(user.token(token));
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
     }
@@ -52,24 +52,22 @@ class UserService {
     @Transactional
     public User update(User user, UserUpdateRequest request) {
         String email = request.email();
-        if (email != null && !email.equals(user.getEmail()) && userRepository.existsByEmail(email)) {
+        if (email != null && !email.equals(user.email()) && userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("email(`%s`) already exists.".formatted(email));
         }
 
         String password = request.password();
         if (password != null) {
             String encoded = passwordEncoder.encode(password);
-            user.setPassword(encoded);
+            user.password(encoded);
         }
 
         String username = request.username();
-        if (username != null && !username.equals(user.getUsername()) && userRepository.existsByUsername(username)) {
+        if (username != null && !username.equals(user.username()) && userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("username(`%s`) already exists.".formatted(username));
         }
-        user.setEmail(email);
-        user.setUsername(username);
-        user.setBio(request.bio());
-        user.setImage(request.image());
+
+        user.email(email).username(username).bio(request.bio()).image(request.image());
 
         return userRepository.save(user);
     }
