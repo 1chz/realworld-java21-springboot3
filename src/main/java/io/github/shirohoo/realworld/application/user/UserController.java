@@ -35,20 +35,20 @@ class UserController {
 
     @ResponseStatus(CREATED)
     @PostMapping("/api/users/login")
-    public UserDTO login(@RequestBody UserLoginRequest request) {
+    public UserResponse login(@RequestBody UserLoginRequest request) {
         Users users = userService.login(request);
-        return new UserDTO(users);
+        return new UserResponse(users);
     }
 
     @GetMapping("/api/user")
-    public UserDTO getCurrentUser(User user) {
+    public UserResponse getCurrentUser(User user) {
         Users users = new Users(user);
-        return new UserDTO(users);
+        return new UserResponse(users);
     }
 
     @PutMapping("/api/user")
-    public UserDTO updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
+    public UserResponse updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
         Users users = userService.update(user, request);
-        return new UserDTO(users);
+        return new UserResponse(users);
     }
 }

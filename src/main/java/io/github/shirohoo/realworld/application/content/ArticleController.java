@@ -24,7 +24,7 @@ class ArticleController {
     }
 
     @GetMapping("/api/articles")
-    public MultipleArticlesDTO getArticles(
+    public MultipleArticlesResponse getArticles(
             User me,
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "author", required = false) String author,
@@ -33,16 +33,16 @@ class ArticleController {
             @RequestParam(value = "offset", required = false, defaultValue = "20") int limit) {
         ArticleFacets facets = new ArticleFacets(tag, author, favorited, offset, limit);
         List<Articles> articles = articleService.getArticles(me, facets);
-        return new MultipleArticlesDTO(articles);
+        return new MultipleArticlesResponse(articles);
     }
 
     @GetMapping("/api/articles/feed")
-    public MultipleArticlesDTO getFeedArticles(
+    public MultipleArticlesResponse getFeedArticles(
             User me,
             @RequestParam(value = "limit", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "offset", required = false, defaultValue = "20") int limit) {
         ArticleFacets facets = new ArticleFacets(null, null, null, offset, limit);
         List<Articles> articles = articleService.getFeedArticles(me, facets);
-        return new MultipleArticlesDTO(articles);
+        return new MultipleArticlesResponse(articles);
     }
 }

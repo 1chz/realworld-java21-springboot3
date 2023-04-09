@@ -20,21 +20,21 @@ class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("/api/profiles/{username}")
-    public ProfileDTO getProfile(User me, @PathVariable("username") String to) {
+    public ProfileResponse getProfile(User me, @PathVariable("username") String to) {
         Profile profile = profileService.getProfile(me, to);
-        return new ProfileDTO(profile);
+        return new ProfileResponse(profile);
     }
 
     @ResponseStatus(CREATED)
     @PostMapping("/api/profiles/{username}/follow")
-    public ProfileDTO follow(User me, @PathVariable("username") String to) {
+    public ProfileResponse follow(User me, @PathVariable("username") String to) {
         Profile profile = profileService.follow(me, to);
-        return new ProfileDTO(profile);
+        return new ProfileResponse(profile);
     }
 
     @DeleteMapping("/api/profiles/{username}/follow")
-    public ProfileDTO unfollow(User me, @PathVariable("username") String to) {
+    public ProfileResponse unfollow(User me, @PathVariable("username") String to) {
         Profile profile = profileService.unfollow(me, to);
-        return new ProfileDTO(profile);
+        return new ProfileResponse(profile);
     }
 }
