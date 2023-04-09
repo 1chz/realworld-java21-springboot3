@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true, chain = true)
 public class User {
     @Id
+    @Setter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
@@ -52,6 +54,8 @@ public class User {
     private String image;
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_follow",
@@ -60,19 +64,19 @@ public class User {
     private Set<User> followings = new HashSet<>();
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(mappedBy = "followings", cascade = CascadeType.ALL)
     private Set<User> followers = new HashSet<>();
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(mappedBy = "favorites", cascade = CascadeType.ALL)
     private Set<Article> favoritedArticles = new HashSet<>();
 
     @Transient
     private String token;
-
-    public static User withEmailUsername(String email, String username) {
-        return new User().email(email).username(username);
-    }
 
     public void follow(User to) {
         if (this.followings.contains(to)) throw new IllegalStateException("Already following");

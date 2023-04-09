@@ -25,8 +25,11 @@ class ProfileServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        userRepository.save(User.withEmailUsername("james@gmail.com", "james"));
-        userRepository.save(User.withEmailUsername("simpson@gmail.com", "simpson"));
+        User james = new User().email("james@gmail.com").username("james");
+        userRepository.save(james);
+
+        User simpson = new User().email("simpson@gmail.com").username("simpson");
+        userRepository.save(simpson);
     }
 
     @AfterEach
