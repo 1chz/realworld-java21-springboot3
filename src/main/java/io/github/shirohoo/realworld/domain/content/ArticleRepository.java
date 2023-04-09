@@ -1,5 +1,8 @@
 package io.github.shirohoo.realworld.domain.content;
 
+import io.github.shirohoo.realworld.domain.user.User;
+
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -17,11 +20,13 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                     AND (:favorited IS NULL OR :favorited IN (SELECT f.username FROM a.favorites f))
                     ORDER BY a.createdAt DESC
                     """)
-    Page<Article> findArticlesByFacets(
+    Page<Article> findByFacets(
             @Param("tag") String tag,
             @Param("author") String author,
             @Param("favorited") String favorited,
             Pageable pageable);
+
+    Page<Article> findByAuthorInOrderByCreatedAtDesc(List<User> authors, Pageable pageable);
 
     Optional<Article> findBySlug(String slug);
 }

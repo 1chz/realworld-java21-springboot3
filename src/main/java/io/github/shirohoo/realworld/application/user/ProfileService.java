@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-class ProfileService {
+public class ProfileService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)

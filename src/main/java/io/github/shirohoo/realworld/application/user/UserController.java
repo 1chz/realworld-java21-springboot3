@@ -48,7 +48,7 @@ class UserController {
 
     @PutMapping("/api/user")
     public UserDTO updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
-        Users users = new Users(userService.update(user, request));
+        Users users = userService.update(user, request);
         return new UserDTO(users);
     }
 }

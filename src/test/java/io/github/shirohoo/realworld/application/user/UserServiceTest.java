@@ -71,13 +71,12 @@ class UserServiceTest {
         UserUpdateRequest updateRequest = new UserUpdateRequest(email, username, password, bio, image);
 
         // when
-        user = sut.update(user, updateRequest);
+        Users users = sut.update(user, updateRequest);
 
         // then
-        assertThat(user.email()).isEqualTo("james.to@gmail.com");
-        assertThat(user.username()).isEqualTo("james.to");
-        assertThat(user.password()).isNotEqualTo("5678");
-        assertThat(user.bio()).isEqualTo("I like to skateboard");
-        assertThat(user.image()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
+        assertThat(users.email()).isEqualTo("james.to@gmail.com");
+        assertThat(users.username()).isEqualTo("james.to");
+        assertThat(users.bio()).isEqualTo("I like to skateboard");
+        assertThat(users.image()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
     }
 }

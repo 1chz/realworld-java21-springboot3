@@ -5,7 +5,7 @@ import io.github.shirohoo.realworld.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("user")
-record UserSignUpRequest(String email, String username, String password) {
+public record UserSignUpRequest(String email, String username, String password) {
     public UserSignUpRequest encryptPasswords(String encoded) {
         return new UserSignUpRequest(email, username, encoded);
     }

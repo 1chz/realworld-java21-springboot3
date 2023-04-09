@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.domain.user;
 import io.github.shirohoo.realworld.domain.content.Article;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -54,7 +55,6 @@ public class User {
     private String image;
 
     @Builder.Default
-    @Getter(AccessLevel.PRIVATE)
     @Setter(AccessLevel.PRIVATE)
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -92,6 +92,10 @@ public class User {
 
     public boolean isFollowing(User to) {
         return this.followings.contains(to);
+    }
+
+    public List<User> followings() {
+        return List.copyOf(this.followings);
     }
 
     @Override

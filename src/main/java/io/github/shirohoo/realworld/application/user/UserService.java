@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-class UserService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
@@ -48,7 +48,7 @@ class UserService {
     }
 
     @Transactional
-    public User update(User user, UserUpdateRequest request) {
+    public Users update(User user, UserUpdateRequest request) {
         String email = request.email();
         if (email != null && !email.equals(user.email()) && userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
@@ -67,6 +67,6 @@ class UserService {
 
         user.email(email).username(username).bio(request.bio()).image(request.image());
 
-        return userRepository.save(user);
+        return new Users(userRepository.save(user));
     }
 }

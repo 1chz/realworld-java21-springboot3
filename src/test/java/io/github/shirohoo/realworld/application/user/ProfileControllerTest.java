@@ -36,7 +36,7 @@ class ProfileControllerTest {
     }
 
     @Test
-    @DisplayName("미인증 유저도 다른 유저의 프로필을 조회할 수 있다")
+    @DisplayName("프로필 API는 미인증 유저도 다른 유저의 프로필을 조회할 수 있는 API를 제공한다")
     void getProfileOnUnauthenticated() throws Exception {
         // when
         ResultActions resultActions = sut.perform(get("/api/profiles/simpson"));
@@ -52,7 +52,7 @@ class ProfileControllerTest {
     }
 
     @Test
-    @DisplayName("인증 상태에서 다른 유저의 프로필을 조회할 시 팔로우 여부를 알 수 있다")
+    @DisplayName("프로필 API는 인증 상태에서 다른 유저의 프로필을 조회할 시 팔로우 여부를 알 수 있는 API를 제공한다")
     void getProfileOnAuthenticate() throws Exception {
         // given
         // - login and get authorization token
