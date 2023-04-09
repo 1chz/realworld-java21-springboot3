@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import io.github.shirohoo.realworld.domain.user.Users;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +120,7 @@ class UserControllerTest {
 
         // - login and get authorization token
         UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
-        UserResponse userResponse = userService.login(loginRequest);
+        Users users = userService.login(loginRequest);
 
         // - update request
         String email = "james.to@gmail.com";
@@ -130,7 +132,7 @@ class UserControllerTest {
 
         // when
         ResultActions resultActions = sut.perform(put("/api/user")
-                .header("Authorization", "Bearer " + userResponse.token())
+                .header("Authorization", "Bearer " + users.token())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)));
 

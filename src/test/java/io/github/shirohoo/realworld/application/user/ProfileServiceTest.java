@@ -2,6 +2,7 @@ package io.github.shirohoo.realworld.application.user;
 
 import static org.assertj.core.api.Assertions.*;
 
+import io.github.shirohoo.realworld.domain.user.Profile;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
@@ -45,7 +46,7 @@ class ProfileServiceTest {
         User simpson = userRepository.findByEmail("simpson@gmail.com").orElseThrow();
 
         // when
-        ProfileResponse simpsonProfile = sut.getProfile(james, simpson);
+        Profile simpsonProfile = sut.getProfile(james, simpson);
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
@@ -62,7 +63,7 @@ class ProfileServiceTest {
         User simpson = userRepository.findByEmail("simpson@gmail.com").orElseThrow();
 
         // when
-        ProfileResponse simpsonProfile = sut.follow(james, simpson);
+        Profile simpsonProfile = sut.follow(james, simpson);
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
@@ -83,7 +84,7 @@ class ProfileServiceTest {
         sut.follow(james, simpson);
 
         // when
-        ProfileResponse simpsonProfile = sut.unfollow(james, simpson);
+        Profile simpsonProfile = sut.unfollow(james, simpson);
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");

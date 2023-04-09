@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.application.user;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.shirohoo.realworld.domain.user.User;
+import io.github.shirohoo.realworld.domain.user.Users;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class UserServiceTest {
         sut.signUp(signUpRequest);
 
         // when
-        UserResponse user = sut.login(new UserLoginRequest("james@gmail.com", "1234"));
+        Users user = sut.login(new UserLoginRequest("james@gmail.com", "1234"));
 
         // then
         assertThat(user.email()).isEqualTo("james@gmail.com");

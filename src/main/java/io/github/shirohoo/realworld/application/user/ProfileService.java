@@ -1,5 +1,6 @@
 package io.github.shirohoo.realworld.application.user;
 
+import io.github.shirohoo.realworld.domain.user.Profile;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
@@ -17,7 +18,7 @@ class ProfileService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public ProfileResponse getProfile(User me, String to) {
+    public Profile getProfile(User me, String to) {
         return userRepository
                 .findByUsername(to)
                 .map(it -> this.getProfile(me, it))
@@ -25,31 +26,23 @@ class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public ProfileResponse getProfile(User me, User to) {
-        String username = to.username();
-        String bio = to.bio();
-        String image = to.image();
-
-        if (me == null) {
-            return new ProfileResponse(username, bio, image, false);
-        } else {
-            return new ProfileResponse(username, bio, image, me.isFollowing(to));
-        }
+    public Profile getProfile(User me, User to) {
+        return new Profile(me, to);
     }
 
     @Transactional
-    public ProfileResponse follow(User me, String to) {
+    public Profile follow(User me, String to) {
         return userRepository.findByUsername(to).map(it -> this.follow(me, it)).orElseThrow(userNotFound(to));
     }
 
     @Transactional
-    public ProfileResponse follow(User me, User to) {
+    public Profile follow(User me, User to) {
         me.follow(to);
         return this.getProfile(me, to);
     }
 
     @Transactional
-    public ProfileResponse unfollow(User me, String to) {
+    public Profile unfollow(User me, String to) {
         return userRepository
                 .findByUsername(to)
                 .map(it -> this.unfollow(me, it))
@@ -57,7 +50,7 @@ class ProfileService {
     }
 
     @Transactional
-    public ProfileResponse unfollow(User me, User to) {
+    public Profile unfollow(User me, User to) {
         me.unfollow(to);
         return this.getProfile(me, to);
     }

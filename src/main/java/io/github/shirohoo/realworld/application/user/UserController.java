@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.application.user;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import io.github.shirohoo.realworld.domain.user.User;
+import io.github.shirohoo.realworld.domain.user.Users;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -34,17 +35,20 @@ class UserController {
 
     @ResponseStatus(CREATED)
     @PostMapping("/api/users/login")
-    public UserResponse login(@RequestBody UserLoginRequest request) {
-        return userService.login(request);
+    public UserDTO login(@RequestBody UserLoginRequest request) {
+        Users users = userService.login(request);
+        return new UserDTO(users);
     }
 
     @GetMapping("/api/user")
-    public UserResponse getCurrentUser(User user) {
-        return new UserResponse(user);
+    public UserDTO getCurrentUser(User user) {
+        Users users = new Users(user);
+        return new UserDTO(users);
     }
 
     @PutMapping("/api/user")
-    public UserResponse updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
-        return new UserResponse(userService.update(user, request));
+    public UserDTO updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
+        Users users = new Users(userService.update(user, request));
+        return new UserDTO(users);
     }
 }

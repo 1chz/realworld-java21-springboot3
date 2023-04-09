@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +44,7 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     private User author;
 
+    @Column(unique = true)
     private String slug;
 
     private String title;
@@ -51,6 +54,8 @@ public class Article {
     private String content;
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "article_favorites",
@@ -59,6 +64,8 @@ public class Article {
     private Set<User> favorites = new HashSet<>();
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "article_tags",
@@ -80,5 +87,17 @@ public class Article {
     public Article addFavorite(User user) {
         favorites.add(user);
         return this;
+    }
+
+    public String[] tagList() {
+        return tags.stream().map(Tag::name).toArray(String[]::new);
+    }
+
+    public boolean favoritedBy(User user) {
+        return favorites.contains(user);
+    }
+
+    public int favoritesCount() {
+        return favorites.size();
     }
 }

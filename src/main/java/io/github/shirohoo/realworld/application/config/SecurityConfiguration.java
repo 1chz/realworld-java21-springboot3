@@ -45,6 +45,8 @@ class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/profiles/{username}")
                                 .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/articles", "/api/articles/{slug}")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
