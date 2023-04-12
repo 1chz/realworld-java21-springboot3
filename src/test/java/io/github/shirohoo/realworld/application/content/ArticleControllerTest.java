@@ -1,6 +1,10 @@
 package io.github.shirohoo.realworld.application.content;
 
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,14 +17,21 @@ import io.github.shirohoo.realworld.domain.content.Tag;
 import io.github.shirohoo.realworld.domain.content.TagRepository;
 import io.github.shirohoo.realworld.domain.user.User;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 @Transactional
 @SpringBootTest
@@ -31,6 +42,9 @@ class ArticleControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -39,6 +53,7 @@ class ArticleControllerTest {
     @Autowired
     private ArticleRepository articleRepository;
 
+    private String jamesToken;
     private String simpsonToken;
 
     @BeforeEach
@@ -62,8 +77,11 @@ class ArticleControllerTest {
                 .addFavorite(simpson);
         articleRepository.save(effectiveJava);
 
+        LoginUserRequest jamesLoginRequest = new LoginUserRequest("james@gmail.com", "1234");
+        jamesToken = "Bearer " + userService.login(jamesLoginRequest).token();
+
         LoginUserRequest simpsonLoginRequest = new LoginUserRequest("simpson@gmail.com", "1234");
-        simpsonToken = userService.login(simpsonLoginRequest).token();
+        simpsonToken = "Bearer " + userService.login(simpsonLoginRequest).token();
     }
 
     @Test
@@ -95,9 +113,9 @@ class ArticleControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 API는 팔로우중인 유저가 작성한 최근 게시글 목록을 조회하는 API를 제공한다")
+    @DisplayName("게시글 API는 인증된 유저가 팔로우중인 유저의 최근 게시글을 조회할 수 있는 API를 제공한다")
     void getFeedArticles() throws Exception {
-        mockMvc.perform(get("/api/articles/feed").header("Authorization", "Bearer " + simpsonToken))
+        mockMvc.perform(get("/api/articles/feed").header("Authorization", simpsonToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.articlesCount").value(1))
                 .andExpect(jsonPath("$.articles[0].title").value("Effective Java"))
@@ -105,5 +123,91 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.articles[0].favorited").value(true))
                 .andExpect(jsonPath("$.articles[0].favoritesCount").value(1))
                 .andExpect(jsonPath("$.articles[0].tagList[0]").value("java"));
+    }
+
+    @Test
+    @DisplayName("게시글 API는 인증된 유저가 게시글을 작성할 수 있는 API를 제공한다")
+    void createArticle() throws Exception {
+        // given
+        CreateArticleRequest request = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/articles")
+                .header("Authorization", jamesToken)
+                .content(objectMapper.writeValueAsString(Map.of("article", request)))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.article.slug").value("test-article"))
+                .andExpect(jsonPath("$.article.title").value("Test Article"))
+                .andExpect(jsonPath("$.article.description").value("Test description"))
+                .andExpect(jsonPath("$.article.body").value("Test body"))
+                .andExpect(jsonPath("$.article.tagList", containsInAnyOrder("test", "sample")))
+                .andExpect(jsonPath("$.article.author.username").value("james"));
+    }
+
+    @Test
+    @DisplayName("게시글 API는 인증된 유저가 게시글을 수정할 수 있는 API를 제공한다")
+    public void updateArticle() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // when
+        // - update the article
+        UpdateArticleRequest updateRequest =
+                new UpdateArticleRequest("Updated Title", "Updated description", "Updated body");
+        ResultActions resultActions = mockMvc.perform(put("/api/articles/{slug}", slug)
+                .header("Authorization", jamesToken)
+                .content(objectMapper.writeValueAsString(Map.of("article", updateRequest)))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.article.slug").value("updated-title"))
+                .andExpect(jsonPath("$.article.title").value("Updated Title"))
+                .andExpect(jsonPath("$.article.description").value("Updated description"))
+                .andExpect(jsonPath("$.article.body").value("Updated body"));
+    }
+
+    @Test
+    @DisplayName("게시글 API는 인증된 유저가 게시글을 삭제할 수 있는 API를 제공한다")
+    public void deleteArticle() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // when
+        ResultActions resultActions =
+                mockMvc.perform(delete("/api/articles/{slug}", slug).header("Authorization", jamesToken));
+
+        // then
+        resultActions.andExpect(status().isOk());
     }
 }

@@ -29,4 +29,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     Page<Article> findByAuthorInOrderByCreatedAtDesc(List<User> authors, Pageable pageable);
 
     Optional<Article> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
 }
