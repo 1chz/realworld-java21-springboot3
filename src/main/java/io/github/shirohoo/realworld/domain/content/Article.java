@@ -50,6 +50,7 @@ public class Article {
     @Column(unique = true)
     private String slug;
 
+    @Column(unique = true)
     private String title;
 
     private String description;

@@ -12,12 +12,23 @@ For more information on how to this works with other frontends/backends, head ov
 
 # Considerations
 
-1. If you implement JWT yourself, even if you use Spring Security, you will have to write a lot of code. That's why I used OAuth 2.0 Resource Server, which makes implementation much simpler.
-2. I was curious about mixing Layered Architecture and DDD style, so I tried it out myself.
-3. I have encountered various frameworks such as Django, Flask, FastAPI, Express, NestJS, Ktor, Quarkus, but I have not seen any framework as great as Spring yet. (The backward compatibility guaranteed by the Java ecosystem is truly amazing.)
+While implementing this application, I had the following considerations. If there are any developers who are trying to learn by looking at this repository, or who are planning to develop something based on this repository, it might be helpful to
+consider these points:
+
+1. Proper error handling and logging: Ensure that the application handles errors gracefully and logs them appropriately. This will make it easier to debug issues in production and improve the overall reliability of the application.
+2. Scalability: Consider the scalability of the application, especially if it is expected to handle a large volume of traffic or data. This includes things like database sharding, load balancing, and caching.
+3. Security: Make sure the application is secure, including protecting against common attacks such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF). Use proper authentication and authorization mechanisms to ensure
+   that only authorized users can access sensitive data or perform critical actions.
+4. Code maintainability: Write clean, maintainable code that is easy to understand and modify. Use best practices such as code commenting, code reviews, and version control to make it easier to maintain and evolve the application over time.
+5. Performance: Optimize the performance of the application, especially for frequently used or resource-intensive operations. This includes things like database indexing, query optimization, and caching.
+6. If you implement JWT yourself, even if you use Spring Security, you will have to write a lot of code. That's why I used OAuth 2.0 Resource Server, which makes implementation much simpler.
+7. I was curious about mixing Layered Architecture and DDD style, so I tried it out myself.
+8. I have encountered various frameworks such as Django, Flask, FastAPI, Express, NestJS, Ktor, Quarkus, but I have not seen any framework as great as Spring yet. (The backward compatibility guaranteed by the Java ecosystem is truly amazing.)
    Therefore, I implemented it in a tightly coupled manner with the Spring framework, assuming that the framework would not change in the future.
-4. I was implemented it so that the dependency on the database layer is only through JPA. This makes it very easy to change databases. However, if you have a deep understanding of the database, you may be concerned about inefficient queries.
-5. I used H2 for the database. Although H2 is a memory database, it operates in MySQL mode and provides almost the same functionality as MySQL.
+9. I was implemented it so that the dependency on the database layer is only through JPA. This makes it very easy to change databases. However, if you have a deep understanding of the database, you may be concerned about inefficient queries.
+10. I used H2 for the database. Although H2 is a memory database, it operates in MySQL mode and provides almost the same functionality as MySQL.
+11. I have excluded input validation. If necessary, it can be easily implemented using JSR-303(380) or similar technologies, so there should be no problem.
+12. I struggled with whether the slug and title of the article table should be unique, but ultimately decided to make them unique in accordance with the API specification.
 
 # How it works
 
@@ -52,6 +63,8 @@ deciding which technology stack to choose through comparisons with various other
 # Database Architecture
 
 > **Note:** I paid attention to data types, but did not pay much attention to size.
+
+Many developers who use JPA tend to use Long as the id type. However, it's worth considering whether your table with an id of Long will ever need to store 2^31 records.
 
 - [schema.sql](database/schema.sql)
 
@@ -91,9 +104,9 @@ deciding which technology stack to choose through comparisons with various other
 ./gradlew build
 ```
 
-## Run E2E test
+## Run integration test
 
 1. Run local (**important**)
-2. [Run E2E test](api/README.md#running-api-tests-locally)
+2. [Run integration test](api/README.md#running-api-tests-locally)
 
 ![image](https://user-images.githubusercontent.com/71188307/231535590-a24c0650-57d6-4d39-9f9b-bd8800c6c2f4.png)
