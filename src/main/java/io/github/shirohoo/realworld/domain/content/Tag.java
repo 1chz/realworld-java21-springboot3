@@ -40,7 +40,8 @@ public class Tag {
 
     public void tagged(Article article) {
         if (this.articles.contains(article)) return;
-        articles.add(article);
+        this.articles.add(article);
+        article.addTag(this);
     }
 
     @Override

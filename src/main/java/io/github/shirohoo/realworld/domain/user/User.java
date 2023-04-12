@@ -113,11 +113,13 @@ public class User {
     public void favorite(Article article) {
         if (this.favoritedArticles.contains(article)) return;
         this.favoritedArticles.add(article);
+        article.favoritedBy(this);
     }
 
     public void unfavorite(Article article) {
         if (!this.favoritedArticles.contains(article)) return;
         this.favoritedArticles.remove(article);
+        article.unfavoritedBy(this);
     }
 
     @Override
