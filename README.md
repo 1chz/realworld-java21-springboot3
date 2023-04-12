@@ -109,4 +109,4 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 1. Run local (**important**)
 2. [Run integration test](api/README.md#running-api-tests-locally)
 
-![image](https://user-images.githubusercontent.com/71188307/231535590-a24c0650-57d6-4d39-9f9b-bd8800c6c2f4.png)
+<img width="1127" alt="image" src="https://user-images.githubusercontent.com/71188307/231559354-1673e52b-3be7-4d7d-922c-e34d19eff1c3.png">
