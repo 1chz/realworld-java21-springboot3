@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.application.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("유저 API")
+@DisplayName("The User APIs")
 class UserControllerTest {
     @Autowired
     private MockMvc sut;
@@ -40,7 +41,7 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("유저 API는 회원가입 API를 제공한다")
+    @DisplayName("provides membership registration API.")
     void signUp() throws Exception {
         // given
         // - sign up request
@@ -56,11 +57,12 @@ class UserControllerTest {
                 .andExpect(status().isTemporaryRedirect())
                 .andExpect(view().name("redirect:/api/users/login"))
                 .andExpect(model().attributeExists("user"))
-                .andExpect(model().attribute("user", Map.of("user", new LoginUserRequest("james@gmail.com", "1234"))));
+                .andExpect(model().attribute("user", Map.of("user", new LoginUserRequest("james@gmail.com", "1234"))))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("유저 API는 로그인 API를 제공한다")
+    @DisplayName("provides login API.")
     void login() throws Exception {
         // given
         // - sign up
@@ -83,11 +85,12 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.user.username").value("james"))
                 .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andExpect(jsonPath("$.user.bio").isEmpty())
-                .andExpect(jsonPath("$.user.image").isEmpty());
+                .andExpect(jsonPath("$.user.image").isEmpty())
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("유저 API는 로그인 된 유저의 정보를 제공한다")
+    @DisplayName("provides logged-in user information.")
     void getCurrentUser() throws Exception {
         // given
         // - sign up
@@ -99,7 +102,7 @@ class UserControllerTest {
         String jamesToken = userService.login(loginRequest).token();
 
         // when
-        ResultActions resultActions = sut.perform(get("/api/user").header("Authorization", "Bearer " + jamesToken));
+        ResultActions resultActions = sut.perform(get("/api/user").header("Authorization", "Token " + jamesToken));
 
         // then
         resultActions
@@ -109,11 +112,12 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.user.username").value("james"))
                 .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andExpect(jsonPath("$.user.bio").isEmpty())
-                .andExpect(jsonPath("$.user.image").isEmpty());
+                .andExpect(jsonPath("$.user.image").isEmpty())
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("유저 API는 회원정보 업데이트 API를 제공한다")
+    @DisplayName("provides user information update API.")
     void update() throws Exception {
         // given
         // - sign up
@@ -134,7 +138,7 @@ class UserControllerTest {
 
         // when
         ResultActions resultActions = sut.perform(put("/api/user")
-                .header("Authorization", "Bearer " + userVO.token())
+                .header("Authorization", "Token " + userVO.token())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", updateRequest))));
 
@@ -146,6 +150,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.user.username").value("james.to"))
                 .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andExpect(jsonPath("$.user.bio").value("I like to skateboard"))
-                .andExpect(jsonPath("$.user.image").value("https://i.stack.imgur.com/xHWG8.jpg"));
+                .andExpect(jsonPath("$.user.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
+                .andDo(print());
     }
 }

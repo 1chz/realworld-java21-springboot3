@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-class WebConfiguration implements WebMvcConfigurer {
+public class WebConfiguration implements WebMvcConfigurer {
     private final UserRepository userRepository;
 
     @Override

@@ -2,6 +2,7 @@ package io.github.shirohoo.realworld.domain.user;
 
 import io.github.shirohoo.realworld.domain.content.Article;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +21,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -36,6 +41,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Table(name = "users")
 @Accessors(fluent = true, chain = true)
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @Setter(AccessLevel.PRIVATE)
@@ -53,6 +59,9 @@ public class User {
     private String bio;
 
     private String image;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     @Builder.Default
     @Setter(AccessLevel.PRIVATE)
@@ -77,13 +86,13 @@ public class User {
     private String token;
 
     public void follow(User to) {
-        if (this.followings.contains(to)) throw new IllegalStateException("Already following");
+        if (this.followings.contains(to)) return;
         this.followings.add(to);
         to.followers.add(this);
     }
 
     public void unfollow(User to) {
-        if (!this.followings.contains(to)) throw new IllegalStateException("Not following");
+        if (!this.followings.contains(to)) return;
         this.followings.remove(to);
         to.followers.remove(this);
     }
@@ -94,6 +103,16 @@ public class User {
 
     public List<User> followings() {
         return List.copyOf(this.followings);
+    }
+
+    public void favorite(Article article) {
+        if (this.favoritedArticles.contains(article)) return;
+        this.favoritedArticles.add(article);
+    }
+
+    public void unfavorite(Article article) {
+        if (!this.favoritedArticles.contains(article)) return;
+        this.favoritedArticles.remove(article);
     }
 
     @Override

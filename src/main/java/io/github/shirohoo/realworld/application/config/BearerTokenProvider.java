@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class TokenProvider {
+public class BearerTokenProvider {
     private final JwtEncoder jwtEncoder;
 
     public String provide(User user) {

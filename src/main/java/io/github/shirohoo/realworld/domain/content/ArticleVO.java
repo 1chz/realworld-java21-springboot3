@@ -25,7 +25,7 @@ public record ArticleVO(
                 article.tagList(),
                 article.createdAt(),
                 article.updatedAt(),
-                article.favoritedBy(me),
+                article.hasFavoritedBy(me),
                 article.favoritesCount(),
                 new ProfileVO(me, article.author()));
     }

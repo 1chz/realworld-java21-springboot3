@@ -21,7 +21,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-class UserArgumentResolver implements HandlerMethodArgumentResolver {
+public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     private final UserRepository userRepository;
 
     @Override

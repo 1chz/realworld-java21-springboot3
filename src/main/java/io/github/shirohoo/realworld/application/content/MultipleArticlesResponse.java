@@ -4,7 +4,7 @@ import io.github.shirohoo.realworld.domain.content.ArticleVO;
 
 import java.util.List;
 
-record MultipleArticlesResponse(ArticleVO[] articles, int articlesCount) {
+public record MultipleArticlesResponse(ArticleVO[] articles, int articlesCount) {
     public MultipleArticlesResponse(List<ArticleVO> articles) {
         this(articles.toArray(ArticleVO[]::new), articles.size());
     }

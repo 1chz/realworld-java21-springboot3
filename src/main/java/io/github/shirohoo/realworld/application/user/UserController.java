@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-class UserController {
+public class UserController {
     private final UserService userService;
 
     @PostMapping("/api/users")
@@ -43,14 +43,14 @@ class UserController {
     }
 
     @GetMapping("/api/user")
-    public UserResponse getCurrentUser(User user) {
-        UserVO userVO = new UserVO(user);
+    public UserResponse getCurrentUser(User me) {
+        UserVO userVO = new UserVO(me);
         return new UserResponse(userVO);
     }
 
     @PutMapping("/api/user")
-    public UserResponse updateCurrentUser(User user, @RequestBody UpdateUserRequest request) {
-        UserVO userVO = userService.update(user, request);
+    public UserResponse updateCurrentUser(User me, @RequestBody UpdateUserRequest request) {
+        UserVO userVO = userService.update(me, request);
         return new UserResponse(userVO);
     }
 }

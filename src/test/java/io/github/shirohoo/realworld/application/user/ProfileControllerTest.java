@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.application.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("프로필 API")
+@DisplayName("The Profile APIs")
 class ProfileControllerTest {
     @Autowired
     private MockMvc sut;
@@ -36,10 +37,10 @@ class ProfileControllerTest {
     }
 
     @Test
-    @DisplayName("프로필 API는 미인증 유저도 다른 유저의 프로필을 조회할 수 있는 API를 제공한다")
+    @DisplayName("provides an API that allows unauthenticated users to view other users' profiles.")
     void getProfileOnUnauthenticated() throws Exception {
         // when
-        ResultActions resultActions = sut.perform(get("/api/profiles/simpson"));
+        ResultActions resultActions = sut.perform(get("/api/profiles/{username}", "simpson"));
 
         // then
         resultActions
@@ -48,11 +49,13 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.profile.username").value("simpson"))
                 .andExpect(jsonPath("$.profile.bio").isEmpty())
                 .andExpect(jsonPath("$.profile.image").isEmpty())
-                .andExpect(jsonPath("$.profile.following").value(false)); // always false
+                .andExpect(jsonPath("$.profile.following").value(false)) // always false
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("프로필 API는 인증 상태에서 다른 유저의 프로필을 조회할 시 팔로우 여부를 알 수 있는 API를 제공한다")
+    @DisplayName(
+            "provides an API that allows you to know whether you are following a user when viewing another user's profile in an authenticated state.")
     void getProfileOnAuthenticate() throws Exception {
         // given
         // - login and get authorization token
@@ -61,7 +64,7 @@ class ProfileControllerTest {
 
         // when
         ResultActions resultActions =
-                sut.perform(get("/api/profiles/simpson").header("Authorization", "Bearer " + jamesToken));
+                sut.perform(get("/api/profiles/{username}", "simpson").header("Authorization", "Token " + jamesToken));
 
         // then
         resultActions
@@ -70,11 +73,12 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.profile.username").value("simpson"))
                 .andExpect(jsonPath("$.profile.bio").isEmpty())
                 .andExpect(jsonPath("$.profile.image").isEmpty())
-                .andExpect(jsonPath("$.profile.following").value(false));
+                .andExpect(jsonPath("$.profile.following").value(false))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("프로필 API는 다른 유저를 팔로우하는 API를 제공한다")
+    @DisplayName("provides an API to follow other users.")
     void follow() throws Exception {
         // given
         // - login and get authorization token
@@ -82,33 +86,8 @@ class ProfileControllerTest {
         String jamesToken = userService.login(loginRequest).token();
 
         // when
-        ResultActions resultActions =
-                sut.perform(post("/api/profiles/simpson/follow").header("Authorization", "Bearer " + jamesToken));
-
-        // then
-        resultActions
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.profile.username").value("simpson"))
-                .andExpect(jsonPath("$.profile.bio").isEmpty())
-                .andExpect(jsonPath("$.profile.image").isEmpty())
-                .andExpect(jsonPath("$.profile.following").value(true));
-    }
-
-    @Test
-    @DisplayName("프로필 API는 다른 유저를 언팔로우하는 API를 제공한다")
-    void unfollow() throws Exception {
-        // given
-        // - login and get authorization token
-        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
-        String jamesToken = userService.login(loginRequest).token();
-
-        // - james follow simpson
-        sut.perform(post("/api/profiles/simpson/follow").header("Authorization", "Bearer " + jamesToken));
-
-        // when
-        ResultActions resultActions =
-                sut.perform(delete("/api/profiles/simpson/follow").header("Authorization", "Bearer " + jamesToken));
+        ResultActions resultActions = sut.perform(
+                post("/api/profiles/{username}/follow", "simpson").header("Authorization", "Token " + jamesToken));
 
         // then
         resultActions
@@ -117,6 +96,33 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.profile.username").value("simpson"))
                 .andExpect(jsonPath("$.profile.bio").isEmpty())
                 .andExpect(jsonPath("$.profile.image").isEmpty())
-                .andExpect(jsonPath("$.profile.following").value(false));
+                .andExpect(jsonPath("$.profile.following").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("provides an API to unfollow other users.")
+    void unfollow() throws Exception {
+        // given
+        // - login and get authorization token
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
+        String jamesToken = userService.login(loginRequest).token();
+
+        // - james follow simpson
+        sut.perform(post("/api/profiles/{username}/follow", "simpson").header("Authorization", "Token " + jamesToken));
+
+        // when
+        ResultActions resultActions = sut.perform(
+                delete("/api/profiles/{username}/follow", "simpson").header("Authorization", "Token " + jamesToken));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.profile.username").value("simpson"))
+                .andExpect(jsonPath("$.profile.bio").isEmpty())
+                .andExpect(jsonPath("$.profile.image").isEmpty())
+                .andExpect(jsonPath("$.profile.following").value(false))
+                .andDo(print());
     }
 }

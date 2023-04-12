@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,7 +37,7 @@ import com.jayway.jsonpath.JsonPath;
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("게시글 API")
+@DisplayName("The Article APIs")
 class ArticleControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -74,30 +75,31 @@ class ArticleControllerTest {
                 .title("Effective Java")
                 .author(james)
                 .addTag(java)
-                .addFavoritedBy(simpson);
+                .favoritedBy(simpson);
         articleRepository.save(effectiveJava);
 
         LoginUserRequest jamesLoginRequest = new LoginUserRequest("james@gmail.com", "1234");
-        jamesToken = "Bearer " + userService.login(jamesLoginRequest).token();
+        jamesToken = "Token " + userService.login(jamesLoginRequest).token();
 
         LoginUserRequest simpsonLoginRequest = new LoginUserRequest("simpson@gmail.com", "1234");
-        simpsonToken = "Bearer " + userService.login(simpsonLoginRequest).token();
+        simpsonToken = "Token " + userService.login(simpsonLoginRequest).token();
     }
 
     @Test
-    @DisplayName("게시글 API는 슬러그로 단일 게시글을 조회할 수 있는 API를 제공한다")
+    @DisplayName("provides an API to retrieve a single article by slug.")
     void getSingleArticles() throws Exception {
-        mockMvc.perform(get("/api/articles/effective-java"))
+        mockMvc.perform(get("/api/articles/{slug}", "effective-java"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.article.title").value("Effective Java"))
                 .andExpect(jsonPath("$.article.author.username").value("james"))
                 .andExpect(jsonPath("$.article.favorited").value(false))
                 .andExpect(jsonPath("$.article.favoritesCount").value(1))
-                .andExpect(jsonPath("$.article.tagList[0]").value("java"));
+                .andExpect(jsonPath("$.article.tagList[0]").value("java"))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("게시글 API는 미인증 유저도 최근 게시글 목록을 조건 검색 할 수 있는 API를 제공한다")
+    @DisplayName("provides an API that allows unauthenticated users to view recent articles under specific conditions.")
     void getArticles() throws Exception {
         mockMvc.perform(get("/api/articles")
                         .param("tag", "java")
@@ -109,11 +111,13 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.articles[0].author.username").value("james"))
                 .andExpect(jsonPath("$.articles[0].favorited").value(false))
                 .andExpect(jsonPath("$.articles[0].favoritesCount").value(1))
-                .andExpect(jsonPath("$.articles[0].tagList[0]").value("java"));
+                .andExpect(jsonPath("$.articles[0].tagList[0]").value("java"))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("게시글 API는 인증된 유저가 팔로우중인 유저의 최근 게시글을 조회할 수 있는 API를 제공한다")
+    @DisplayName(
+            "provides an API that allows authenticated users to retrieve recent articles from users they are following.")
     void getFeedArticles() throws Exception {
         mockMvc.perform(get("/api/articles/feed").header("Authorization", simpsonToken))
                 .andExpect(status().isOk())
@@ -122,11 +126,12 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.articles[0].author.username").value("james"))
                 .andExpect(jsonPath("$.articles[0].favorited").value(true))
                 .andExpect(jsonPath("$.articles[0].favoritesCount").value(1))
-                .andExpect(jsonPath("$.articles[0].tagList[0]").value("java"));
+                .andExpect(jsonPath("$.articles[0].tagList[0]").value("java"))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("게시글 API는 인증된 유저가 게시글을 작성할 수 있는 API를 제공한다")
+    @DisplayName("provides an API that allows authenticated users to create articles.")
     void createArticle() throws Exception {
         // given
         CreateArticleRequest request = new CreateArticleRequest(
@@ -146,11 +151,12 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.article.description").value("Test description"))
                 .andExpect(jsonPath("$.article.body").value("Test body"))
                 .andExpect(jsonPath("$.article.tagList", containsInAnyOrder("test", "sample")))
-                .andExpect(jsonPath("$.article.author.username").value("james"));
+                .andExpect(jsonPath("$.article.author.username").value("james"))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("게시글 API는 인증된 유저가 게시글을 수정할 수 있는 API를 제공한다")
+    @DisplayName("provides an API that allows authenticated users to edit articles.")
     public void updateArticle() throws Exception {
         // given
         // - create a test article
@@ -182,11 +188,12 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.article.slug").value("updated-title"))
                 .andExpect(jsonPath("$.article.title").value("Updated Title"))
                 .andExpect(jsonPath("$.article.description").value("Updated description"))
-                .andExpect(jsonPath("$.article.body").value("Updated body"));
+                .andExpect(jsonPath("$.article.body").value("Updated body"))
+                .andDo(print());
     }
 
     @Test
-    @DisplayName("게시글 API는 인증된 유저가 게시글을 삭제할 수 있는 API를 제공한다")
+    @DisplayName("provides an API that allows authenticated users to delete articles.")
     public void deleteArticle() throws Exception {
         // given
         // - create a test article
@@ -208,6 +215,6 @@ class ArticleControllerTest {
                 mockMvc.perform(delete("/api/articles/{slug}", slug).header("Authorization", jamesToken));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk()).andDo(print());
     }
 }

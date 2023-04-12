@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-@DisplayName("유저 서비스")
+@DisplayName("The User Services")
 class UserServiceTest {
     @Autowired
     private UserService sut;
 
     @Test
-    @DisplayName("유저 서비스는 회원가입 기능을 제공한다")
+    @DisplayName("provides membership registration function.")
     void signUp() throws Exception {
         // given
         // - sign up request
@@ -36,7 +36,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("유저 서비스는 로그인 기능을 제공한다")
+    @DisplayName("provides login function.")
     void login() throws Exception {
         // given
         // - sign up
@@ -55,7 +55,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("유저 서비스는 회원 정보 업데이트 기능을 제공한다")
+    @DisplayName("provides member information update function.")
     void update() throws Exception {
         // given
         // - sign up

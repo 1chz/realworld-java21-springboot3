@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +22,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -37,25 +39,24 @@ import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
 @EnableMethodSecurity
-class SecurityConfiguration {
+public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, FilterExceptionHandler filterExceptionHandler)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .cors()
-                .and()
+                .cors(SecurityConfigurerAdapter::and)
                 .authorizeHttpRequests(
                         requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/profiles/{username}")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/articles", "/api/articles/{slug}")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/articles/{slug}/comments")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/tags")
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/profiles/{username}",
+                                        "/api/articles",
+                                        "/api/articles/{slug}",
+                                        "/api/articles/{slug}/comments",
+                                        "/api/tags")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
@@ -97,5 +98,10 @@ class SecurityConfiguration {
         JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    public BearerTokenResolver bearerTokenResolver() {
+        return new CustomBearerTokenResolver();
     }
 }

@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class FilterExceptionHandler extends OncePerRequestFilter {
+public class FilterExceptionHandler extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override

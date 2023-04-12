@@ -3,8 +3,8 @@ package io.github.shirohoo.realworld.application.content;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-record ArticleFacets(String tag, String author, String favorited, int offset, int limit) {
-    ArticleFacets {
+public record ArticleFacets(String tag, String author, String favorited, int offset, int limit) {
+    public ArticleFacets {
         if (offset < 0) {
             offset = 0;
         }

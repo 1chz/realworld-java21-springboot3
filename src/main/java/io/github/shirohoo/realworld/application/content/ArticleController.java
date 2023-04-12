@@ -22,12 +22,13 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-class ArticleController {
+public class ArticleController {
     private final ArticleService articleService;
 
-    @GetMapping("/api/articles/{slug}")
-    public SingleArticleResponse getSingleArticle(User me, @PathVariable String slug) {
-        ArticleVO article = articleService.getSingleArticle(me, slug);
+    @ResponseStatus(CREATED)
+    @PostMapping("/api/articles")
+    public SingleArticleResponse createArticle(User me, @RequestBody CreateArticleRequest request) {
+        ArticleVO article = articleService.createArticle(me, request);
         return new SingleArticleResponse(article);
     }
 
@@ -44,10 +45,9 @@ class ArticleController {
         return new MultipleArticlesResponse(articles);
     }
 
-    @ResponseStatus(CREATED)
-    @PostMapping("/api/articles")
-    public SingleArticleResponse createArticle(User me, @RequestBody CreateArticleRequest request) {
-        ArticleVO article = articleService.createArticle(me, request);
+    @GetMapping("/api/articles/{slug}")
+    public SingleArticleResponse getSingleArticle(User me, @PathVariable String slug) {
+        ArticleVO article = articleService.getSingleArticle(me, slug);
         return new SingleArticleResponse(article);
     }
 

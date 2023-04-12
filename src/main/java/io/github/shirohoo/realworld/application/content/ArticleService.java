@@ -13,7 +13,9 @@ import io.github.shirohoo.realworld.domain.user.User;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,13 +48,15 @@ public class ArticleService {
                 .toList();
     }
 
+    @PreAuthorize("isAuthenticated()")
     public List<ArticleVO> getFeedArticles(User me, ArticleFacets facets) {
         List<User> followings = me.followings();
         Pageable pageable = facets.getPageable();
 
-        return articleRepository.findByAuthorInOrderByCreatedAtDesc(followings, pageable).getContent().stream()
-                .map(article -> new ArticleVO(me, article))
-                .toList();
+        Page<Article> articlePage = articleRepository.findByAuthorInOrderByCreatedAtDesc(followings, pageable);
+        List<Article> content = articlePage.getContent();
+
+        return content.stream().map(article -> new ArticleVO(me, article)).toList();
     }
 
     @Transactional
@@ -78,21 +82,31 @@ public class ArticleService {
 
     @Transactional
     public ArticleVO updateArticle(User me, String slug, UpdateArticleRequest request) {
-        Article updated = articleRepository
+        Article article = articleRepository
                 .findBySlug(slug)
-                .map(article -> {
-                    if (article.author().equals(me)) {
-                        article.slug(request.title().toLowerCase().replaceAll("\\s+", "-"));
-                        article.title(request.title());
-                        article.description(request.description());
-                        article.content(request.body());
-                        return articleRepository.save(article);
-                    }
-                    throw new IllegalArgumentException("You cannot edit articles written by others.");
-                })
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
 
-        return new ArticleVO(me, updated);
+        if (!article.isAuthoredBy(me)) {
+            throw new IllegalArgumentException("You cannot edit articles written by others.");
+        }
+
+        String title = request.title();
+        if (title != null && !title.isBlank()) {
+            article.slug(title.toLowerCase().replaceAll("\\s+", "-"));
+            article.title(title);
+        }
+
+        String description = request.description();
+        if (description != null && !description.isBlank()) {
+            article.description(description);
+        }
+
+        String content = request.body();
+        if (content != null && !content.isBlank()) {
+            article.content(content);
+        }
+
+        return new ArticleVO(me, articleRepository.save(article));
     }
 
     @Transactional
@@ -101,11 +115,8 @@ public class ArticleService {
                 .findBySlug(slug)
                 .ifPresentOrElse(
                         article -> {
-                            if (article.author().equals(me)) {
-                                articleRepository.delete(article);
-                            } else {
-                                throw new IllegalArgumentException("You cannot delete articles written by others.");
-                            }
+                            if (article.isAuthoredBy(me)) articleRepository.delete(article);
+                            else throw new IllegalArgumentException("You cannot delete articles written by others.");
                         },
                         () -> {
                             throw new NoSuchElementException("Article not found by slug: `%s`".formatted(slug));
@@ -114,16 +125,16 @@ public class ArticleService {
 
     @Transactional
     public CommentVO createComment(User me, String slug, CreateCommentRequest request) {
-        Comment comment = articleRepository
+        return articleRepository
                 .findBySlug(slug)
                 .map(article -> Comment.builder()
                         .author(me)
                         .article(article)
                         .content(request.body())
                         .build())
+                .map(commentRepository::save)
+                .map(c -> new CommentVO(me, c))
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
-
-        return new CommentVO(me, commentRepository.save(comment));
     }
 
     @Transactional
@@ -131,6 +142,7 @@ public class ArticleService {
         Article article = articleRepository
                 .findBySlug(slug)
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
+
         return commentRepository.findByArticleOrderByCreatedAtDesc(article).stream()
                 .map(comment -> new CommentVO(me, comment))
                 .toList();
@@ -142,11 +154,8 @@ public class ArticleService {
                 .findById(commentId)
                 .ifPresentOrElse(
                         comment -> {
-                            if (comment.author().equals(me)) {
-                                commentRepository.delete(comment);
-                            } else {
-                                throw new IllegalArgumentException("You cannot delete comments written by others.");
-                            }
+                            if (comment.isAuthoredBy(me)) commentRepository.delete(comment);
+                            else throw new IllegalArgumentException("You cannot delete comments written by others.");
                         },
                         () -> {
                             throw new NoSuchElementException("Comment not found by id: `%d`".formatted(commentId));
@@ -155,17 +164,17 @@ public class ArticleService {
 
     @Transactional
     public ArticleVO favoriteArticle(User me, String slug) {
-        Article article = articleRepository
+        return articleRepository
                 .findBySlug(slug)
+                .map(article -> new ArticleVO(me, article.favoritedBy(me)))
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
-        return new ArticleVO(me, article.addFavoritedBy(me));
     }
 
     @Transactional
     public ArticleVO unfavoriteArticle(User me, String slug) {
-        Article article = articleRepository
+        return articleRepository
                 .findBySlug(slug)
+                .map(article -> new ArticleVO(me, article.unfavoritedBy(me)))
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
-        return new ArticleVO(me, article.removeFavoritedBy(me));
     }
 }

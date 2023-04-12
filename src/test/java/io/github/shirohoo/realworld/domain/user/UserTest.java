@@ -5,11 +5,25 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("유저")
+@DisplayName("The User")
 class UserTest {
     @Test
-    @DisplayName("유저끼리는 팔로우, 언팔로우를 할 수 있다")
+    @DisplayName("Users can follow each other.")
     void follows() throws Exception {
+        // given
+        User james = new User().username("james");
+        User simpson = new User().username("simpson");
+
+        // when
+        james.follow(simpson);
+
+        // then
+        assertTrue(james.isFollowing(simpson));
+    }
+
+    @Test
+    @DisplayName("Users can unfollow each other.")
+    void unfollow() throws Exception {
         // given
         User james = new User().username("james");
         User simpson = new User().username("simpson");

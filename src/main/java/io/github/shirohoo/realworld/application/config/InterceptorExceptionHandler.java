@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -12,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-class InterceptorExceptionHandler extends ResponseEntityExceptionHandler {
+public class InterceptorExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handle(IllegalArgumentException e) {
         log.info("Illegal argument: {}", e.getMessage());
@@ -23,6 +24,12 @@ class InterceptorExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handle(NoSuchElementException e) {
         log.info("No such element: {}", e.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handle(AccessDeniedException e) {
+        log.info("Access denied: {}", e.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-@DisplayName("게시글 서비스")
+@DisplayName("The Article Services")
 class ArticleServiceTest {
     @Autowired
     private ArticleService sut;
@@ -56,13 +56,13 @@ class ArticleServiceTest {
         tagRepository.save(java);
 
         Article effectiveJava =
-                new Article().title("Effective Java").author(james).addTag(java).addFavoritedBy(simpson);
+                new Article().title("Effective Java").author(james).addTag(java).favoritedBy(simpson);
         articleRepository.save(effectiveJava);
     }
 
     @MethodSource
     @ParameterizedTest
-    @DisplayName("게시글 서비스는 특정 조건으로 게시글들을 조회하는 기능을 제공한다")
+    @DisplayName("provides a function to search articles under specific conditions.")
     void getArticles(ArticleFacets facets) throws Exception {
         List<ArticleVO> articles = sut.getArticles(james, facets);
         assertThat(articles).hasSize(1).extracting(ArticleVO::title).containsExactly("Effective Java");
@@ -77,7 +77,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 새로운 게시글을 작성하는 기능을 제공한다")
+    @DisplayName("provides the function to create new articles.")
     void createArticle() throws Exception {
         // given
         CreateArticleRequest request = new CreateArticleRequest(
@@ -95,7 +95,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 게시글을 수정하는 기능을 제공한다")
+    @DisplayName("provides the function to edit articles.")
     void updateArticle() throws Exception {
         // given
         String slug = "updated-title";
@@ -128,7 +128,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 다른 유저가 작성한 게시글을 수정할 수 없게 한다")
+    @DisplayName("prevents other users from editing articles written by them.")
     void updateArticleWithInvalidUser() throws Exception {
         // given
         String slug = "test-title";
@@ -158,7 +158,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 게시글 수정시 게시글을 찾지 못한다면 이를 유저에게 알려준다")
+    @DisplayName("notifies the user if the article cannot be found when editing the article.")
     void updateNonExistingArticle() throws Exception {
         // given
         String slug = "non-existing-article";
@@ -173,7 +173,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 게시글을 삭제하는 기능을 제공한다")
+    @DisplayName("provides the function to delete a article.")
     void deleteArticle() throws Exception {
         // given
         String slug = "test-article";
@@ -194,7 +194,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 다른 유저가 작성한 게시글을 삭제할 수 없게 한다")
+    @DisplayName("prevents users from deleting articles made by other users.")
     void deleteArticleWithInvalidUser() throws Exception {
         // given
         String slug = "test-article";
@@ -218,7 +218,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 서비스는 게시글 삭제시 게시글을 찾지 못한다면 이를 유저에게 알려준다")
+    @DisplayName("notifies the user if the article cannot be found when deleting the article.")
     void deleteNonExistingArticle() throws Exception {
         // given
         String slug = "non-existing-article";

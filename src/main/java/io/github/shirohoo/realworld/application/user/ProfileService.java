@@ -5,7 +5,6 @@ import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
 import java.util.NoSuchElementException;
-import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,7 @@ public class ProfileService {
         return userRepository
                 .findByUsername(to)
                 .map(it -> this.getProfile(me, it))
-                .orElseThrow(userNotFound(to));
+                .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(to)));
     }
 
     @Transactional(readOnly = true)
@@ -32,7 +31,10 @@ public class ProfileService {
 
     @Transactional
     public ProfileVO follow(User me, String to) {
-        return userRepository.findByUsername(to).map(it -> this.follow(me, it)).orElseThrow(userNotFound(to));
+        return userRepository
+                .findByUsername(to)
+                .map(it -> this.follow(me, it))
+                .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(to)));
     }
 
     @Transactional
@@ -46,16 +48,12 @@ public class ProfileService {
         return userRepository
                 .findByUsername(to)
                 .map(it -> this.unfollow(me, it))
-                .orElseThrow(userNotFound(to));
+                .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(to)));
     }
 
     @Transactional
     public ProfileVO unfollow(User me, User to) {
         me.unfollow(to);
         return this.getProfile(me, to);
-    }
-
-    private Supplier<NoSuchElementException> userNotFound(String username) {
-        return () -> new NoSuchElementException("User(`%s`) not found".formatted(username));
     }
 }

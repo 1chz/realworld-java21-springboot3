@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@DisplayName("리얼월드 애플리케이션")
+@DisplayName("Realworld Application")
 class RealworldApplicationTests {
     @Test
-    @DisplayName("리얼월드 애플리케이션의 스프링 컨테이너가 로딩된다")
+    @DisplayName("spring container of real world application is loaded.")
     void contextLoads() {}
 }
