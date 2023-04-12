@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.domain.content;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -35,5 +36,16 @@ public class Tag {
 
     public Tag(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Tag other) return this.id.equals(other.id);
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

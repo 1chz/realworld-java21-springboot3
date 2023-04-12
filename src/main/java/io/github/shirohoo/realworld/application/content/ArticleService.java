@@ -12,6 +12,7 @@ import io.github.shirohoo.realworld.domain.user.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +51,7 @@ public class ArticleService {
 
     @PreAuthorize("isAuthenticated()")
     public List<ArticleVO> getFeedArticles(User me, ArticleFacets facets) {
-        List<User> followings = me.followings();
+        Set<User> followings = me.followings();
         Pageable pageable = facets.getPageable();
 
         Page<Article> articlePage = articleRepository.findByAuthorInOrderByCreatedAtDesc(followings, pageable);

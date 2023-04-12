@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.domain.content;
 import io.github.shirohoo.realworld.domain.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -53,5 +54,16 @@ public class Comment {
 
     public boolean isAuthoredBy(User user) {
         return this.author.equals(user);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Comment other) return this.id.equals(other.id);
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

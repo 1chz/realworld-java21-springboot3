@@ -4,7 +4,6 @@ import io.github.shirohoo.realworld.domain.content.Article;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -73,12 +72,10 @@ public class User {
     private Set<User> followings = new HashSet<>();
 
     @Builder.Default
-    @Getter(AccessLevel.PRIVATE)
     @ManyToMany(mappedBy = "followings", cascade = CascadeType.ALL)
     private final Set<User> followers = new HashSet<>();
 
     @Builder.Default
-    @Getter(AccessLevel.PRIVATE)
     @ManyToMany(mappedBy = "favorites", cascade = CascadeType.ALL)
     private final Set<Article> favoritedArticles = new HashSet<>();
 
@@ -101,8 +98,16 @@ public class User {
         return this.followings.contains(to);
     }
 
-    public List<User> followings() {
-        return List.copyOf(this.followings);
+    public Set<User> followings() {
+        return Set.copyOf(this.followings);
+    }
+
+    public Set<User> followers() {
+        return Set.copyOf(this.followers);
+    }
+
+    public Set<Article> favoritedArticles() {
+        return Set.copyOf(this.favoritedArticles);
     }
 
     public void favorite(Article article) {

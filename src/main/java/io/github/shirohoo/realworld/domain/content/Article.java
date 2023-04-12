@@ -4,6 +4,7 @@ import io.github.shirohoo.realworld.domain.user.User;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -58,7 +59,6 @@ public class Article {
     private String content;
 
     @Builder.Default
-    @Getter(AccessLevel.PRIVATE)
     @Setter(AccessLevel.PRIVATE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
@@ -89,13 +89,16 @@ public class Article {
     }
 
     public Article favoritedBy(User user) {
+        if (this.favorites.contains(user)) return this;
         this.favorites.add(user);
         user.favorite(this);
         return this;
     }
 
-    public Article unfavoritedBy(User me) {
-        this.favorites.remove(me);
+    public Article unfavoritedBy(User user) {
+        if (!this.favorites.contains(user)) return this;
+        this.favorites.remove(user);
+        user.unfavorite(this);
         return this;
     }
 
@@ -103,7 +106,7 @@ public class Article {
         return this.tags.stream().map(Tag::name).sorted().toArray(String[]::new);
     }
 
-    public boolean hasFavoritedBy(User user) {
+    public boolean hasFavorited(User user) {
         return this.favorites.contains(user);
     }
 
@@ -113,5 +116,20 @@ public class Article {
 
     public boolean isAuthoredBy(User user) {
         return this.author.equals(user);
+    }
+
+    public Set<User> favorites() {
+        return Set.copyOf(this.favorites);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Article other) return this.id.equals(other.id);
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
