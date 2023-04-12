@@ -2,7 +2,7 @@ package io.github.shirohoo.realworld.application.user;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-import io.github.shirohoo.realworld.domain.user.Profile;
+import io.github.shirohoo.realworld.domain.user.ProfileVO;
 import io.github.shirohoo.realworld.domain.user.User;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,20 +21,20 @@ class ProfileController {
 
     @GetMapping("/api/profiles/{username}")
     public ProfileResponse getProfile(User me, @PathVariable("username") String to) {
-        Profile profile = profileService.getProfile(me, to);
+        ProfileVO profile = profileService.getProfile(me, to);
         return new ProfileResponse(profile);
     }
 
     @ResponseStatus(CREATED)
     @PostMapping("/api/profiles/{username}/follow")
     public ProfileResponse follow(User me, @PathVariable("username") String to) {
-        Profile profile = profileService.follow(me, to);
+        ProfileVO profile = profileService.follow(me, to);
         return new ProfileResponse(profile);
     }
 
     @DeleteMapping("/api/profiles/{username}/follow")
     public ProfileResponse unfollow(User me, @PathVariable("username") String to) {
-        Profile profile = profileService.unfollow(me, to);
+        ProfileVO profile = profileService.unfollow(me, to);
         return new ProfileResponse(profile);
     }
 }

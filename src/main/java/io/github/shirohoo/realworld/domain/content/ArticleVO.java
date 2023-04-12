@@ -1,11 +1,11 @@
 package io.github.shirohoo.realworld.domain.content;
 
-import io.github.shirohoo.realworld.domain.user.Profile;
+import io.github.shirohoo.realworld.domain.user.ProfileVO;
 import io.github.shirohoo.realworld.domain.user.User;
 
 import java.time.LocalDateTime;
 
-public record Articles(
+public record ArticleVO(
         String slug,
         String title,
         String description,
@@ -15,8 +15,8 @@ public record Articles(
         LocalDateTime updatedAt,
         boolean favorited,
         int favoritesCount,
-        Profile author) {
-    public Articles(User me, Article article) {
+        ProfileVO author) {
+    public ArticleVO(User me, Article article) {
         this(
                 article.slug(),
                 article.title(),
@@ -27,6 +27,6 @@ public record Articles(
                 article.updatedAt(),
                 article.favoritedBy(me),
                 article.favoritesCount(),
-                new Profile(me, article.author()));
+                new ProfileVO(me, article.author()));
     }
 }

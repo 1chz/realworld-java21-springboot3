@@ -3,7 +3,7 @@ package io.github.shirohoo.realworld.application.user;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.domain.user.Users;
+import io.github.shirohoo.realworld.domain.user.UserVO;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class UserServiceTest {
     void signUp() throws Exception {
         // given
         // - sign up request
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
 
         // when
         User user = sut.signUp(signUpRequest);
@@ -40,11 +40,11 @@ class UserServiceTest {
     void login() throws Exception {
         // given
         // - sign up
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
         sut.signUp(signUpRequest);
 
         // when
-        Users user = sut.login(new UserLoginRequest("james@gmail.com", "1234"));
+        UserVO user = sut.login(new LoginUserRequest("james@gmail.com", "1234"));
 
         // then
         assertThat(user.email()).isEqualTo("james@gmail.com");
@@ -59,7 +59,7 @@ class UserServiceTest {
     void update() throws Exception {
         // given
         // - sign up
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
         User user = sut.signUp(signUpRequest);
 
         // - update request
@@ -68,15 +68,15 @@ class UserServiceTest {
         String password = "5678";
         String bio = "I like to skateboard";
         String image = "https://i.stack.imgur.com/xHWG8.jpg";
-        UserUpdateRequest updateRequest = new UserUpdateRequest(email, username, password, bio, image);
+        UpdateUserRequest updateRequest = new UpdateUserRequest(email, username, password, bio, image);
 
         // when
-        Users users = sut.update(user, updateRequest);
+        UserVO userVO = sut.update(user, updateRequest);
 
         // then
-        assertThat(users.email()).isEqualTo("james.to@gmail.com");
-        assertThat(users.username()).isEqualTo("james.to");
-        assertThat(users.bio()).isEqualTo("I like to skateboard");
-        assertThat(users.image()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
+        assertThat(userVO.email()).isEqualTo("james.to@gmail.com");
+        assertThat(userVO.username()).isEqualTo("james.to");
+        assertThat(userVO.bio()).isEqualTo("I like to skateboard");
+        assertThat(userVO.image()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");
     }
 }

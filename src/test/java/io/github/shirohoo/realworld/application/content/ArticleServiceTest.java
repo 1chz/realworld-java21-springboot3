@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.shirohoo.realworld.domain.content.Article;
 import io.github.shirohoo.realworld.domain.content.ArticleRepository;
-import io.github.shirohoo.realworld.domain.content.Articles;
+import io.github.shirohoo.realworld.domain.content.ArticleVO;
 import io.github.shirohoo.realworld.domain.content.Tag;
 import io.github.shirohoo.realworld.domain.content.TagRepository;
 import io.github.shirohoo.realworld.domain.user.User;
@@ -60,8 +60,8 @@ class ArticleServiceTest {
     @ParameterizedTest
     @DisplayName("게시글 서비스는 특정 조건으로 게시글들을 조회하는 기능을 제공한다")
     void getArticles(ArticleFacets facets) throws Exception {
-        List<Articles> articles = articleService.getArticles(james, facets);
-        assertThat(articles).hasSize(1).extracting(Articles::title).containsExactly("Effective Java");
+        List<ArticleVO> articles = articleService.getArticles(james, facets);
+        assertThat(articles).hasSize(1).extracting(ArticleVO::title).containsExactly("Effective Java");
     }
 
     static Stream<Arguments> getArticles() {

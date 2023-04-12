@@ -3,7 +3,7 @@ package io.github.shirohoo.realworld.application.user;
 import io.github.shirohoo.realworld.application.config.TokenProvider;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
-import io.github.shirohoo.realworld.domain.user.Users;
+import io.github.shirohoo.realworld.domain.user.UserVO;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class UserService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public User signUp(UserSignUpRequest request) {
+    public User signUp(SignUpUserRequest request) {
         String username = request.username();
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username(`%s`) already exists.".formatted(username));
@@ -36,19 +36,19 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Users login(UserLoginRequest request) {
+    public UserVO login(LoginUserRequest request) {
         return userRepository
                 .findByEmail(request.email())
                 .filter(user -> passwordEncoder.matches(request.password(), user.password()))
                 .map(user -> {
                     String token = tokenProvider.provide(user);
-                    return new Users(user.token(token));
+                    return new UserVO(user.token(token));
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
     }
 
     @Transactional
-    public Users update(User user, UserUpdateRequest request) {
+    public UserVO update(User user, UpdateUserRequest request) {
         String email = request.email();
         if (email != null && !email.equals(user.email()) && userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email(`%s`) already exists.".formatted(email));
@@ -67,6 +67,6 @@ public class UserService {
 
         user.email(email).username(username).bio(request.bio()).image(request.image());
 
-        return new Users(userRepository.save(user));
+        return new UserVO(userRepository.save(user));
     }
 }

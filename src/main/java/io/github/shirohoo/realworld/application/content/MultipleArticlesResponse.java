@@ -1,11 +1,11 @@
 package io.github.shirohoo.realworld.application.content;
 
-import io.github.shirohoo.realworld.domain.content.Articles;
+import io.github.shirohoo.realworld.domain.content.ArticleVO;
 
 import java.util.List;
 
-record MultipleArticlesResponse(Articles[] articles, int articlesCount) {
-    public MultipleArticlesResponse(List<Articles> articles) {
-        this(articles.toArray(Articles[]::new), articles.size());
+record MultipleArticlesResponse(ArticleVO[] articles, int articlesCount) {
+    public MultipleArticlesResponse(List<ArticleVO> articles) {
+        this(articles.toArray(ArticleVO[]::new), articles.size());
     }
 }

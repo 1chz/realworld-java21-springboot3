@@ -1,5 +1,5 @@
 package io.github.shirohoo.realworld.application.user;
 
-import io.github.shirohoo.realworld.domain.user.Profile;
+import io.github.shirohoo.realworld.domain.user.ProfileVO;
 
-record ProfileResponse(Profile profile) {}
+record ProfileResponse(ProfileVO profile) {}

@@ -1,5 +1,5 @@
 package io.github.shirohoo.realworld.application.user;
 
-import io.github.shirohoo.realworld.domain.user.Users;
+import io.github.shirohoo.realworld.domain.user.UserVO;
 
-record UserResponse(Users user) {}
+record UserResponse(UserVO user) {}

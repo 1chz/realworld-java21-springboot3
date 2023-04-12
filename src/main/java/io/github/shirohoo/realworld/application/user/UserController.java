@@ -3,7 +3,9 @@ package io.github.shirohoo.realworld.application.user;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.domain.user.Users;
+import io.github.shirohoo.realworld.domain.user.UserVO;
+
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,30 +27,30 @@ class UserController {
     private final UserService userService;
 
     @PostMapping("/api/users")
-    public ModelAndView signUp(@RequestBody UserSignUpRequest request, HttpServletRequest httpServletRequest) {
+    public ModelAndView signUp(@RequestBody SignUpUserRequest request, HttpServletRequest httpServletRequest) {
         userService.signUp(request);
 
-        UserLoginRequest loginRequest = new UserLoginRequest(request.email(), request.password());
+        LoginUserRequest loginRequest = new LoginUserRequest(request.email(), request.password());
         httpServletRequest.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
-        return new ModelAndView("redirect:/api/users/login", "user", loginRequest);
+        return new ModelAndView("redirect:/api/users/login", "user", Map.of("user", loginRequest));
     }
 
     @ResponseStatus(CREATED)
     @PostMapping("/api/users/login")
-    public UserResponse login(@RequestBody UserLoginRequest request) {
-        Users users = userService.login(request);
-        return new UserResponse(users);
+    public UserResponse login(@RequestBody LoginUserRequest request) {
+        UserVO userVO = userService.login(request);
+        return new UserResponse(userVO);
     }
 
     @GetMapping("/api/user")
     public UserResponse getCurrentUser(User user) {
-        Users users = new Users(user);
-        return new UserResponse(users);
+        UserVO userVO = new UserVO(user);
+        return new UserResponse(userVO);
     }
 
     @PutMapping("/api/user")
-    public UserResponse updateCurrentUser(User user, @RequestBody UserUpdateRequest request) {
-        Users users = userService.update(user, request);
-        return new UserResponse(users);
+    public UserResponse updateCurrentUser(User user, @RequestBody UpdateUserRequest request) {
+        UserVO userVO = userService.update(user, request);
+        return new UserResponse(userVO);
     }
 }

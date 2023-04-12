@@ -1,6 +1,6 @@
 package io.github.shirohoo.realworld.application.user;
 
-import io.github.shirohoo.realworld.domain.user.Profile;
+import io.github.shirohoo.realworld.domain.user.ProfileVO;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
@@ -18,7 +18,7 @@ public class ProfileService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public Profile getProfile(User me, String to) {
+    public ProfileVO getProfile(User me, String to) {
         return userRepository
                 .findByUsername(to)
                 .map(it -> this.getProfile(me, it))
@@ -26,23 +26,23 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public Profile getProfile(User me, User to) {
-        return new Profile(me, to);
+    public ProfileVO getProfile(User me, User to) {
+        return new ProfileVO(me, to);
     }
 
     @Transactional
-    public Profile follow(User me, String to) {
+    public ProfileVO follow(User me, String to) {
         return userRepository.findByUsername(to).map(it -> this.follow(me, it)).orElseThrow(userNotFound(to));
     }
 
     @Transactional
-    public Profile follow(User me, User to) {
+    public ProfileVO follow(User me, User to) {
         me.follow(to);
         return this.getProfile(me, to);
     }
 
     @Transactional
-    public Profile unfollow(User me, String to) {
+    public ProfileVO unfollow(User me, String to) {
         return userRepository
                 .findByUsername(to)
                 .map(it -> this.unfollow(me, it))
@@ -50,7 +50,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public Profile unfollow(User me, User to) {
+    public ProfileVO unfollow(User me, User to) {
         me.unfollow(to);
         return this.getProfile(me, to);
     }

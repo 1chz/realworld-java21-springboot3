@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import io.github.shirohoo.realworld.domain.user.Users;
+import io.github.shirohoo.realworld.domain.user.UserVO;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,19 +44,19 @@ class UserControllerTest {
     void signUp() throws Exception {
         // given
         // - sign up request
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
 
         // when
         ResultActions resultActions = sut.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signUpRequest)));
+                .content(objectMapper.writeValueAsString(Map.of("user", signUpRequest))));
 
         // then
         resultActions
                 .andExpect(status().isTemporaryRedirect())
                 .andExpect(view().name("redirect:/api/users/login"))
                 .andExpect(model().attributeExists("user"))
-                .andExpect(model().attribute("user", new UserLoginRequest("james@gmail.com", "1234")));
+                .andExpect(model().attribute("user", Map.of("user", new LoginUserRequest("james@gmail.com", "1234"))));
     }
 
     @Test
@@ -62,16 +64,16 @@ class UserControllerTest {
     void login() throws Exception {
         // given
         // - sign up
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
         userService.signUp(signUpRequest);
 
         // - login request
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
 
         // when
         ResultActions resultActions = sut.perform(post("/api/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)));
+                .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 
         // then
         resultActions
@@ -89,11 +91,11 @@ class UserControllerTest {
     void getCurrentUser() throws Exception {
         // given
         // - sign up
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
         userService.signUp(signUpRequest);
 
         // - login and get authorization token
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
         String jamesToken = userService.login(loginRequest).token();
 
         // when
@@ -115,12 +117,12 @@ class UserControllerTest {
     void update() throws Exception {
         // given
         // - sign up
-        UserSignUpRequest signUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
         userService.signUp(signUpRequest);
 
         // - login and get authorization token
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
-        Users users = userService.login(loginRequest);
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
+        UserVO userVO = userService.login(loginRequest);
 
         // - update request
         String email = "james.to@gmail.com";
@@ -128,13 +130,13 @@ class UserControllerTest {
         String password = "5678";
         String bio = "I like to skateboard";
         String image = "https://i.stack.imgur.com/xHWG8.jpg";
-        UserUpdateRequest updateRequest = new UserUpdateRequest(email, username, password, bio, image);
+        UpdateUserRequest updateRequest = new UpdateUserRequest(email, username, password, bio, image);
 
         // when
         ResultActions resultActions = sut.perform(put("/api/user")
-                .header("Authorization", "Bearer " + users.token())
+                .header("Authorization", "Bearer " + userVO.token())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateRequest)));
+                .content(objectMapper.writeValueAsString(Map.of("user", updateRequest))));
 
         // then
         resultActions

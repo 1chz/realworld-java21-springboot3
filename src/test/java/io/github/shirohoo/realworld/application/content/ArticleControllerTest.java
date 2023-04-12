@@ -4,9 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import io.github.shirohoo.realworld.application.user.UserLoginRequest;
+import io.github.shirohoo.realworld.application.user.LoginUserRequest;
+import io.github.shirohoo.realworld.application.user.SignUpUserRequest;
 import io.github.shirohoo.realworld.application.user.UserService;
-import io.github.shirohoo.realworld.application.user.UserSignUpRequest;
 import io.github.shirohoo.realworld.domain.content.Article;
 import io.github.shirohoo.realworld.domain.content.ArticleRepository;
 import io.github.shirohoo.realworld.domain.content.Tag;
@@ -43,10 +43,10 @@ class ArticleControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        UserSignUpRequest jamesSignUpRequest = new UserSignUpRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest jamesSignUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
         User james = userService.signUp(jamesSignUpRequest);
 
-        UserSignUpRequest simpsonSignUpRequest = new UserSignUpRequest("simpson@gmail.com", "simpson", "1234");
+        SignUpUserRequest simpsonSignUpRequest = new SignUpUserRequest("simpson@gmail.com", "simpson", "1234");
         User simpson = userService.signUp(simpsonSignUpRequest);
 
         simpson.follow(james);
@@ -62,7 +62,7 @@ class ArticleControllerTest {
                 .addFavorite(simpson);
         articleRepository.save(effectiveJava);
 
-        UserLoginRequest simpsonLoginRequest = new UserLoginRequest("simpson@gmail.com", "1234");
+        LoginUserRequest simpsonLoginRequest = new LoginUserRequest("simpson@gmail.com", "1234");
         simpsonToken = userService.login(simpsonLoginRequest).token();
     }
 

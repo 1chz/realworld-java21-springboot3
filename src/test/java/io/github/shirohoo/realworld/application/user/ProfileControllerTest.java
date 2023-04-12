@@ -31,8 +31,8 @@ class ProfileControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        userService.signUp(new UserSignUpRequest("james@gmail.com", "james", "1234"));
-        userService.signUp(new UserSignUpRequest("simpson@gmail.com", "simpson", "1234"));
+        userService.signUp(new SignUpUserRequest("james@gmail.com", "james", "1234"));
+        userService.signUp(new SignUpUserRequest("simpson@gmail.com", "simpson", "1234"));
     }
 
     @Test
@@ -56,7 +56,7 @@ class ProfileControllerTest {
     void getProfileOnAuthenticate() throws Exception {
         // given
         // - login and get authorization token
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
         String jamesToken = userService.login(loginRequest).token();
 
         // when
@@ -78,7 +78,7 @@ class ProfileControllerTest {
     void follow() throws Exception {
         // given
         // - login and get authorization token
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
         String jamesToken = userService.login(loginRequest).token();
 
         // when
@@ -100,7 +100,7 @@ class ProfileControllerTest {
     void unfollow() throws Exception {
         // given
         // - login and get authorization token
-        UserLoginRequest loginRequest = new UserLoginRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
         String jamesToken = userService.login(loginRequest).token();
 
         // - james follow simpson
