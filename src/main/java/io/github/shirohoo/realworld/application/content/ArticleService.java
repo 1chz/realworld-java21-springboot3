@@ -3,6 +3,9 @@ package io.github.shirohoo.realworld.application.content;
 import io.github.shirohoo.realworld.domain.content.Article;
 import io.github.shirohoo.realworld.domain.content.ArticleRepository;
 import io.github.shirohoo.realworld.domain.content.ArticleVO;
+import io.github.shirohoo.realworld.domain.content.Comment;
+import io.github.shirohoo.realworld.domain.content.CommentRepository;
+import io.github.shirohoo.realworld.domain.content.CommentVO;
 import io.github.shirohoo.realworld.domain.content.Tag;
 import io.github.shirohoo.realworld.domain.content.TagRepository;
 import io.github.shirohoo.realworld.domain.user.User;
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleService {
     private final TagRepository tagRepository;
     private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public ArticleVO getSingleArticle(User me, String slug) {
@@ -106,5 +110,62 @@ public class ArticleService {
                         () -> {
                             throw new NoSuchElementException("Article not found by slug: `%s`".formatted(slug));
                         });
+    }
+
+    @Transactional
+    public CommentVO createComment(User me, String slug, CreateCommentRequest request) {
+        Comment comment = articleRepository
+                .findBySlug(slug)
+                .map(article -> Comment.builder()
+                        .author(me)
+                        .article(article)
+                        .content(request.body())
+                        .build())
+                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
+
+        return new CommentVO(me, commentRepository.save(comment));
+    }
+
+    @Transactional
+    public List<CommentVO> getArticleComments(User me, String slug) {
+        Article article = articleRepository
+                .findBySlug(slug)
+                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
+        return commentRepository.findByArticleOrderByCreatedAtDesc(article).stream()
+                .map(comment -> new CommentVO(me, comment))
+                .toList();
+    }
+
+    @Transactional
+    public void deleteComment(User me, int commentId) {
+        commentRepository
+                .findById(commentId)
+                .ifPresentOrElse(
+                        comment -> {
+                            if (comment.author().equals(me)) {
+                                commentRepository.delete(comment);
+                            } else {
+                                throw new IllegalArgumentException("You cannot delete comments written by others.");
+                            }
+                        },
+                        () -> {
+                            throw new NoSuchElementException("Comment not found by id: `%d`".formatted(commentId));
+                        });
+    }
+
+    @Transactional
+    public ArticleVO favoriteArticle(User me, String slug) {
+        Article article = articleRepository
+                .findBySlug(slug)
+                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
+        return new ArticleVO(me, article.addFavoritedBy(me));
+    }
+
+    @Transactional
+    public ArticleVO unfavoriteArticle(User me, String slug) {
+        Article article = articleRepository
+                .findBySlug(slug)
+                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
+        return new ArticleVO(me, article.removeFavoritedBy(me));
     }
 }

@@ -80,24 +80,29 @@ public class Article {
     private LocalDateTime updatedAt;
 
     public Article addTag(Tag tag) {
-        tags.add(tag);
+        this.tags.add(tag);
         return this;
     }
 
-    public Article addFavorite(User user) {
-        favorites.add(user);
+    public Article addFavoritedBy(User user) {
+        this.favorites.add(user);
+        return this;
+    }
+
+    public Article removeFavoritedBy(User me) {
+        this.favorites.remove(me);
         return this;
     }
 
     public String[] tagList() {
-        return tags.stream().map(Tag::name).toArray(String[]::new);
+        return this.tags.stream().map(Tag::name).toArray(String[]::new);
     }
 
     public boolean favoritedBy(User user) {
-        return favorites.contains(user);
+        return this.favorites.contains(user);
     }
 
     public int favoritesCount() {
-        return favorites.size();
+        return this.favorites.size();
     }
 }

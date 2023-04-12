@@ -65,15 +65,13 @@ public class User {
 
     @Builder.Default
     @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(mappedBy = "followings", cascade = CascadeType.ALL)
-    private Set<User> followers = new HashSet<>();
+    private final Set<User> followers = new HashSet<>();
 
     @Builder.Default
     @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(mappedBy = "favorites", cascade = CascadeType.ALL)
-    private Set<Article> favoritedArticles = new HashSet<>();
+    private final Set<Article> favoritedArticles = new HashSet<>();
 
     @Transient
     private String token;

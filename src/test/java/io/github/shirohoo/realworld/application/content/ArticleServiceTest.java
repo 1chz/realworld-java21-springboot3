@@ -56,7 +56,7 @@ class ArticleServiceTest {
         tagRepository.save(java);
 
         Article effectiveJava =
-                new Article().title("Effective Java").author(james).addTag(java).addFavorite(simpson);
+                new Article().title("Effective Java").author(james).addTag(java).addFavoritedBy(simpson);
         articleRepository.save(effectiveJava);
     }
 

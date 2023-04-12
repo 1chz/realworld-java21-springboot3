@@ -1,8 +1,9 @@
 package io.github.shirohoo.realworld.application.content;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
 
 import io.github.shirohoo.realworld.domain.content.ArticleVO;
+import io.github.shirohoo.realworld.domain.content.CommentVO;
 import io.github.shirohoo.realworld.domain.user.User;
 
 import java.util.List;
@@ -70,5 +71,35 @@ class ArticleController {
         ArticleFacets facets = new ArticleFacets(null, null, null, offset, limit);
         List<ArticleVO> articles = articleService.getFeedArticles(me, facets);
         return new MultipleArticlesResponse(articles);
+    }
+
+    @PostMapping("/api/articles/{slug}/comments")
+    public SingleCommentResponse createComment(
+            User me, @PathVariable String slug, @RequestBody CreateCommentRequest request) {
+        CommentVO comment = articleService.createComment(me, slug, request);
+        return new SingleCommentResponse(comment);
+    }
+
+    @GetMapping("/api/articles/{slug}/comments")
+    public MultipleCommentsResponse getComments(User me, @PathVariable String slug) {
+        List<CommentVO> comments = articleService.getArticleComments(me, slug);
+        return new MultipleCommentsResponse(comments);
+    }
+
+    @DeleteMapping("/api/articles/{slug}/comments/{id}")
+    public void deleteComment(User me, @PathVariable String slug, @PathVariable int id) {
+        articleService.deleteComment(me, id);
+    }
+
+    @PostMapping("/api/articles/{slug}/favorite")
+    public SingleArticleResponse favoriteArticle(User me, @PathVariable String slug) {
+        ArticleVO article = articleService.favoriteArticle(me, slug);
+        return new SingleArticleResponse(article);
+    }
+
+    @DeleteMapping("/api/articles/{slug}/favorite")
+    public SingleArticleResponse unfavoriteArticle(User me, @PathVariable String slug) {
+        ArticleVO article = articleService.unfavoriteArticle(me, slug);
+        return new SingleArticleResponse(article);
     }
 }
