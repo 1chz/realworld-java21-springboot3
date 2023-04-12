@@ -38,14 +38,19 @@ public class Tag {
         this.name = name;
     }
 
+    public void tagged(Article article) {
+        if (this.articles.contains(article)) return;
+        articles.add(article);
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Tag other) return this.id.equals(other.id);
+        if (o instanceof Tag other) return Objects.equals(this.name, other.name);
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(name);
     }
 }

@@ -84,7 +84,9 @@ public class Article {
     private LocalDateTime updatedAt;
 
     public Article addTag(Tag tag) {
+        if (this.tags.contains(tag)) return this;
         this.tags.add(tag);
+        tag.tagged(this);
         return this;
     }
 
@@ -118,13 +120,17 @@ public class Article {
         return this.author.equals(user);
     }
 
+    public boolean isTaggedBy(Tag tag) {
+        return this.tags.contains(tag);
+    }
+
     public Set<User> favorites() {
         return Set.copyOf(this.favorites);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Article other) return this.id.equals(other.id);
+        if (o instanceof Article other) return Objects.equals(this.id, other.id);
         return false;
     }
 
