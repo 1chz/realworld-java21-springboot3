@@ -68,7 +68,6 @@ public class Article {
     private Set<User> favorites = new HashSet<>();
 
     @Builder.Default
-    @Getter(AccessLevel.PRIVATE)
     @Setter(AccessLevel.PRIVATE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(

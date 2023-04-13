@@ -45,6 +45,14 @@ class ArticleServiceTest {
     private User james;
     private User simpson;
 
+    static Stream<Arguments> getArticles() {
+        return Stream.of(
+                Arguments.of(new ArticleFacets("java", null, null, 0, 20)),
+                Arguments.of(new ArticleFacets(null, "james", null, 0, 20)),
+                Arguments.of(new ArticleFacets(null, null, "simpson", 0, 20)),
+                Arguments.of(new ArticleFacets("java", "james", "simpson", 0, 20)));
+    }
+
     @BeforeEach
     void setUp() throws Exception {
         james = User.builder()
@@ -79,14 +87,6 @@ class ArticleServiceTest {
     void getArticles(ArticleFacets facets) throws Exception {
         List<ArticleVO> articles = sut.getArticles(james, facets);
         assertThat(articles).hasSize(1).extracting(ArticleVO::title).containsExactly("Effective Java");
-    }
-
-    static Stream<Arguments> getArticles() {
-        return Stream.of(
-                Arguments.of(new ArticleFacets("java", null, null, 0, 20)),
-                Arguments.of(new ArticleFacets(null, "james", null, 0, 20)),
-                Arguments.of(new ArticleFacets(null, null, "simpson", 0, 20)),
-                Arguments.of(new ArticleFacets("java", "james", "simpson", 0, 20)));
     }
 
     @Test
