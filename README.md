@@ -72,21 +72,11 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 # Getting started
 
-> **Note:** `chmod +x gradlew` is required
+> **Note:** You just need to have JDK 17 installed.
+>
+> **Note:** If permission denied occurs when running the gradle task, enter `chmod +x gradlew` to grant the permission.
 
-## Check code style
-
-```shell
-./gradlew spotlessCheck
-```
-
-## Apply code style
-
-```shell
-./gradlew spotlessApply
-```
-
-## Run local
+## Run application
 
 ```shell
 ./gradlew bootRun
@@ -102,6 +92,20 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 <img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/231682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
 
+## Check code style
+
+> **Note:** When you run the `build` task, this task runs automatically. If the code style doesn't match, the build will fail.
+
+```shell
+./gradlew spotlessCheck
+```
+
+## Apply code style
+
+```shell
+./gradlew spotlessApply
+```
+
 ## Run build
 
 ```shell
@@ -110,7 +114,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 ## Run integration test
 
-1. Run local (**important**)
+1. Run application (**important**)
 2. [Run integration test](api/README.md#running-api-tests-locally)
 
 <img width="1127" alt="image" src="https://user-images.githubusercontent.com/71188307/231559354-1673e52b-3be7-4d7d-922c-e34d19eff1c3.png">
