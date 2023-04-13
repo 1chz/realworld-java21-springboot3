@@ -8,6 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @DisplayName("Realworld Application")
 class RealworldApplicationTests {
     @Test
-    @DisplayName("spring container of real world application is loaded.")
+    @DisplayName("spring container of Realworld Application is loaded.")
     void contextLoads() {}
 }

@@ -94,9 +94,13 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 ## Run test
 
+> **Note:** Running this task will generate a test coverage report at `build/jacoco/html/index.html`.
+
 ```shell
 ./gradlew test
 ```
+
+<img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/231682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
 
 ## Run build
 
