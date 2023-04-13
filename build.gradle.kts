@@ -1,5 +1,6 @@
 plugins {
     java
+    jacoco
     id("com.diffplug.spotless") version "6.18.0"
     id("org.springframework.boot") version "3.0.5"
     id("io.spring.dependency-management") version "1.1.0"
@@ -36,9 +37,18 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
 }
 
-// clean build
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("$buildDir/jacoco/html"))
+    }
+}
+
 tasks.compileJava {
     dependsOn(tasks.clean)
 }

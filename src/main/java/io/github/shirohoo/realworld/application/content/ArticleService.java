@@ -1,6 +1,6 @@
 package io.github.shirohoo.realworld.application.content;
 
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.hasText;
 
 import io.github.shirohoo.realworld.domain.content.Article;
 import io.github.shirohoo.realworld.domain.content.ArticleFacets;

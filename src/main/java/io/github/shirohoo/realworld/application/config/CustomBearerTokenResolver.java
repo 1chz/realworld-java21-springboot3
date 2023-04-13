@@ -25,6 +25,7 @@ public class CustomBearerTokenResolver implements BearerTokenResolver {
         String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
         String parameterToken =
                 isParameterTokenSupportedForRequest(request) ? resolveFromRequestParameters(request) : null;
+
         if (authorizationHeaderToken != null) {
             if (parameterToken != null) {
                 BearerTokenError error =
@@ -53,7 +54,7 @@ public class CustomBearerTokenResolver implements BearerTokenResolver {
                 || "GET".equals(request.getMethod()));
     }
 
-    private static String resolveFromRequestParameters(HttpServletRequest request) {
+    private String resolveFromRequestParameters(HttpServletRequest request) {
         String[] values = request.getParameterValues("access_token");
         if (values == null || values.length == 0) return null;
         if (values.length == 1) return values[0];
