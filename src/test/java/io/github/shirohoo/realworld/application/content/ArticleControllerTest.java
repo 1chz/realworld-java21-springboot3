@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.application.content;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -94,7 +95,7 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.article.author.username").value("james"))
                 .andExpect(jsonPath("$.article.favorited").value(false))
                 .andExpect(jsonPath("$.article.favoritesCount").value(1))
-                .andExpect(jsonPath("$.article.tagList[0]").value("java"))
+                .andExpect(jsonPath("$.article.tagList", containsInAnyOrder("java")))
                 .andDo(print());
     }
 
@@ -122,6 +123,7 @@ class ArticleControllerTest {
         mockMvc.perform(get("/api/articles/feed").header("Authorization", simpsonToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.articlesCount").value(1))
+                .andExpect(jsonPath("$.articles", hasSize(1)))
                 .andExpect(jsonPath("$.articles[0].title").value("Effective Java"))
                 .andExpect(jsonPath("$.articles[0].author.username").value("james"))
                 .andExpect(jsonPath("$.articles[0].favorited").value(true))
@@ -145,7 +147,7 @@ class ArticleControllerTest {
 
         // then
         resultActions
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.article.slug").value("test-article"))
                 .andExpect(jsonPath("$.article.title").value("Test Article"))
                 .andExpect(jsonPath("$.article.description").value("Test description"))
@@ -216,5 +218,193 @@ class ArticleControllerTest {
 
         // then
         resultActions.andExpect(status().isOk()).andDo(print());
+    }
+
+    @Test
+    @DisplayName("provides an API that write comments on articles.")
+    public void createComment() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article by james
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // - create a comment by simpson
+        CreateCommentRequest request = new CreateCommentRequest("Test comment");
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/articles/{slug}/comments", slug)
+                .header("Authorization", simpsonToken)
+                .content(objectMapper.writeValueAsString(Map.of("comment", request)))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comment.body").value("Test comment"))
+                .andExpect(jsonPath("$.comment.author.username").value("simpson"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("provides an API that retrieve all comments of a specific article.")
+    public void getComments() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article by james
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // - create a comment by simpson
+        CreateCommentRequest request = new CreateCommentRequest("Test comment");
+
+        mockMvc.perform(post("/api/articles/{slug}/comments", slug)
+                .header("Authorization", simpsonToken)
+                .content(objectMapper.writeValueAsString(Map.of("comment", request)))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/api/articles/{slug}/comments", slug));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comments", hasSize(1)))
+                .andExpect(jsonPath("$.comments[0].body").value("Test comment"))
+                .andExpect(jsonPath("$.comments[0].author.username").value("simpson"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("provides an API that allows authenticated users to delete comments on articles.")
+    public void deleteComment() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article by james
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // - create a comment by simpson
+        CreateCommentRequest request = new CreateCommentRequest("Test comment");
+
+        int commentId = JsonPath.parse(mockMvc.perform(post("/api/articles/{slug}/comments", slug)
+                                .header("Authorization", simpsonToken)
+                                .content(objectMapper.writeValueAsString(Map.of("comment", request)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.comment.id", Integer.class);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                delete("/api/articles/{slug}/comments/{id}", slug, commentId).header("Authorization", simpsonToken));
+
+        // then
+        resultActions.andExpect(status().isOk()).andDo(print());
+    }
+
+    @Test
+    @DisplayName("provides an API that allows authenticated users to favorite articles.")
+    public void favoriteArticle() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article by james
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // when
+        ResultActions resultActions =
+                mockMvc.perform(post("/api/articles/{slug}/favorite", slug).header("Authorization", simpsonToken));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.article.slug").value("test-article"))
+                .andExpect(jsonPath("$.article.title").value("Test Article"))
+                .andExpect(jsonPath("$.article.description").value("Test description"))
+                .andExpect(jsonPath("$.article.body").value("Test body"))
+                .andExpect(jsonPath("$.article.tagList", containsInAnyOrder("test", "sample")))
+                .andExpect(jsonPath("$.article.favorited").value(true))
+                .andExpect(jsonPath("$.article.favoritesCount").value(1))
+                .andExpect(jsonPath("$.article.author.username").value("james"))
+                .andExpect(jsonPath("$.article.author.following").value(true))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("provides an API that allows authenticated users to unfavorite articles.")
+    public void unfavoriteArticle() throws Exception {
+        // given
+        // - create a test article
+        CreateArticleRequest createRequest = new CreateArticleRequest(
+                "Test Article", "Test description", "Test body", new String[] {"test", "sample"});
+
+        // - get the slug of the article by james
+        String slug = JsonPath.parse(mockMvc.perform(post("/api/articles")
+                                .header("Authorization", jamesToken)
+                                .content(objectMapper.writeValueAsString(Map.of("article", createRequest)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString())
+                .read("$.article.slug");
+
+        // - favorite the article by simpson
+        mockMvc.perform(post("/api/articles/{slug}/favorite", slug).header("Authorization", simpsonToken));
+
+        // when
+        ResultActions resultActions =
+                mockMvc.perform(delete("/api/articles/{slug}/favorite", slug).header("Authorization", simpsonToken));
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.article.slug").value("test-article"))
+                .andExpect(jsonPath("$.article.title").value("Test Article"))
+                .andExpect(jsonPath("$.article.description").value("Test description"))
+                .andExpect(jsonPath("$.article.body").value("Test body"))
+                .andExpect(jsonPath("$.article.tagList", containsInAnyOrder("test", "sample")))
+                .andExpect(jsonPath("$.article.favorited").value(false))
+                .andExpect(jsonPath("$.article.favoritesCount").value(0))
+                .andExpect(jsonPath("$.article.author.username").value("james"))
+                .andExpect(jsonPath("$.article.author.following").value(true))
+                .andDo(print());
     }
 }

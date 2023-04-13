@@ -1,7 +1,5 @@
 package io.github.shirohoo.realworld.application.content;
 
-import static org.springframework.http.HttpStatus.CREATED;
-
 import io.github.shirohoo.realworld.domain.content.ArticleFacets;
 import io.github.shirohoo.realworld.domain.content.ArticleVO;
 import io.github.shirohoo.realworld.domain.content.CommentVO;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
     private final ArticleService articleService;
 
-    @ResponseStatus(CREATED)
     @PostMapping("/api/articles")
     public SingleArticleResponse createArticle(User me, @RequestBody CreateArticleRequest request) {
         ArticleVO article = articleService.createArticle(me, request);
