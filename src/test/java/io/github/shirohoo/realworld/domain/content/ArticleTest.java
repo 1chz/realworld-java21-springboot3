@@ -63,7 +63,7 @@ class ArticleTest {
         article.addTag(junit);
 
         // then
-        String[] tagList = article.tagList();
+        String[] tagList = article.tags();
         assertThat(tagList).containsExactly("java", "junit", "spring");
     }
 

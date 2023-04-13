@@ -82,32 +82,27 @@ public class User {
     @Transient
     private String token;
 
-    public void follow(User to) {
-        if (this.followings.contains(to)) return;
-        this.followings.add(to);
-        to.followers.add(this);
+    public static ProfileVO retrievesProfile(User me, User to) {
+        if (me == null) return new ProfileVO(null, to);
+        return new ProfileVO(me, to);
     }
 
-    public void unfollow(User to) {
-        if (!this.followings.contains(to)) return;
+    public ProfileVO follow(User to) {
+        if (this.followings.contains(to)) return new ProfileVO(this, to);
+        this.followings.add(to);
+        to.followers.add(this);
+        return User.retrievesProfile(this, to);
+    }
+
+    public ProfileVO unfollow(User to) {
+        if (!this.followings.contains(to)) return new ProfileVO(this, to);
         this.followings.remove(to);
         to.followers.remove(this);
+        return User.retrievesProfile(this, to);
     }
 
     public boolean isFollowing(User to) {
         return this.followings.contains(to);
-    }
-
-    public Set<User> followings() {
-        return Set.copyOf(this.followings);
-    }
-
-    public Set<User> followers() {
-        return Set.copyOf(this.followers);
-    }
-
-    public Set<Article> favoritedArticles() {
-        return Set.copyOf(this.favoritedArticles);
     }
 
     public void favorite(Article article) {
@@ -120,6 +115,18 @@ public class User {
         if (!this.favoritedArticles.contains(article)) return;
         this.favoritedArticles.remove(article);
         article.unfavoritedBy(this);
+    }
+
+    public Set<User> followings() {
+        return Set.copyOf(this.followings);
+    }
+
+    public Set<User> followers() {
+        return Set.copyOf(this.followers);
+    }
+
+    public Set<Article> favoritedArticles() {
+        return Set.copyOf(this.favoritedArticles);
     }
 
     @Override

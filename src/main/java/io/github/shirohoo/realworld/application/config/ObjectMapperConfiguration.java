@@ -30,8 +30,7 @@ public class ObjectMapperConfiguration {
     }
 
     private Module iso8601Serializer() {
-        JavaTimeModule module = new JavaTimeModule();
-        module.addSerializer(LocalDateTime.class, new JsonSerializer<>() {
+        return new JavaTimeModule().addSerializer(LocalDateTime.class, new JsonSerializer<>() {
             @Override
             public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
                     throws IOException {
@@ -39,6 +38,5 @@ public class ObjectMapperConfiguration {
                 gen.writeString(formattedDateTime);
             }
         });
-        return module;
     }
 }

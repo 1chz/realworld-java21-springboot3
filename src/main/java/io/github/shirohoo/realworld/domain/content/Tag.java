@@ -38,7 +38,7 @@ public class Tag {
         this.name = name;
     }
 
-    public void tagged(Article article) {
+    public void addTag(Article article) {
         if (this.articles.contains(article)) return;
         this.articles.add(article);
         article.addTag(this);

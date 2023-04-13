@@ -2,6 +2,7 @@ package io.github.shirohoo.realworld.application.content;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+import io.github.shirohoo.realworld.domain.content.ArticleFacets;
 import io.github.shirohoo.realworld.domain.content.ArticleVO;
 import io.github.shirohoo.realworld.domain.content.CommentVO;
 import io.github.shirohoo.realworld.domain.user.User;

@@ -20,40 +20,38 @@ public class ProfileService {
     public ProfileVO getProfile(User me, String to) {
         return userRepository
                 .findByUsername(to)
-                .map(it -> this.getProfile(me, it))
+                .map(it -> User.retrievesProfile(me, it))
                 .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(to)));
     }
 
     @Transactional(readOnly = true)
     public ProfileVO getProfile(User me, User to) {
-        return new ProfileVO(me, to);
+        return User.retrievesProfile(me, to);
     }
 
     @Transactional
     public ProfileVO follow(User me, String to) {
         return userRepository
                 .findByUsername(to)
-                .map(it -> this.follow(me, it))
+                .map(me::follow)
                 .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(to)));
     }
 
     @Transactional
     public ProfileVO follow(User me, User to) {
-        me.follow(to);
-        return this.getProfile(me, to);
+        return me.follow(to);
     }
 
     @Transactional
     public ProfileVO unfollow(User me, String to) {
         return userRepository
                 .findByUsername(to)
-                .map(it -> this.unfollow(me, it))
+                .map(me::unfollow)
                 .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(to)));
     }
 
     @Transactional
     public ProfileVO unfollow(User me, User to) {
-        me.unfollow(to);
-        return this.getProfile(me, to);
+        return me.unfollow(to);
     }
 }

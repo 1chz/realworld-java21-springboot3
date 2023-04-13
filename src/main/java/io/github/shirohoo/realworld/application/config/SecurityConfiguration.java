@@ -52,10 +52,10 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers(
                                         HttpMethod.GET,
-                                        "/api/profiles/{username}",
-                                        "/api/articles",
-                                        "/api/articles/{slug}",
                                         "/api/articles/{slug}/comments",
+                                        "/api/articles/{slug}",
+                                        "/api/articles",
+                                        "/api/profiles/{username}",
                                         "/api/tags")
                                 .permitAll()
                                 .anyRequest()

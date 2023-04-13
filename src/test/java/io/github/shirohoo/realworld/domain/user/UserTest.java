@@ -1,7 +1,6 @@
 package io.github.shirohoo.realworld.domain.user;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.shirohoo.realworld.domain.content.Article;
 

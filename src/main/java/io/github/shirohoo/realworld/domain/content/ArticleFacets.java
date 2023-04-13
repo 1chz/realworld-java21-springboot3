@@ -1,4 +1,4 @@
-package io.github.shirohoo.realworld.application.content;
+package io.github.shirohoo.realworld.domain.content;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

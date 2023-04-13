@@ -86,7 +86,7 @@ public class Article {
     public Article addTag(Tag tag) {
         if (this.tags.contains(tag)) return this;
         this.tags.add(tag);
-        tag.tagged(this);
+        tag.addTag(this);
         return this;
     }
 
@@ -104,16 +104,8 @@ public class Article {
         return this;
     }
 
-    public String[] tagList() {
-        return this.tags.stream().map(Tag::name).sorted().toArray(String[]::new);
-    }
-
     public boolean hasFavorited(User user) {
         return this.favorites.contains(user);
-    }
-
-    public int favoritesCount() {
-        return this.favorites.size();
     }
 
     public boolean isAuthoredBy(User user) {
@@ -122,6 +114,14 @@ public class Article {
 
     public boolean isTaggedBy(Tag tag) {
         return this.tags.contains(tag);
+    }
+
+    public int favoritesCount() {
+        return this.favorites.size();
+    }
+
+    public String[] tags() {
+        return this.tags.stream().map(Tag::name).sorted().toArray(String[]::new);
     }
 
     public Set<User> favorites() {

@@ -1,6 +1,9 @@
 package io.github.shirohoo.realworld.application.content;
 
+import static org.springframework.util.StringUtils.*;
+
 import io.github.shirohoo.realworld.domain.content.Article;
+import io.github.shirohoo.realworld.domain.content.ArticleFacets;
 import io.github.shirohoo.realworld.domain.content.ArticleRepository;
 import io.github.shirohoo.realworld.domain.content.ArticleVO;
 import io.github.shirohoo.realworld.domain.content.Comment;
@@ -92,18 +95,18 @@ public class ArticleService {
         }
 
         String title = request.title();
-        if (title != null && !title.isBlank()) {
+        if (hasText(title)) {
             article.slug(title.toLowerCase().replaceAll("\\s+", "-"));
             article.title(title);
         }
 
         String description = request.description();
-        if (description != null && !description.isBlank()) {
+        if (hasText(description)) {
             article.description(description);
         }
 
         String content = request.body();
-        if (content != null && !content.isBlank()) {
+        if (hasText(content)) {
             article.content(content);
         }
 
@@ -140,11 +143,11 @@ public class ArticleService {
 
     @Transactional
     public List<CommentVO> getArticleComments(User me, String slug) {
-        Article article = articleRepository
+        return articleRepository
                 .findBySlug(slug)
-                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
-
-        return commentRepository.findByArticleOrderByCreatedAtDesc(article).stream()
+                .map(commentRepository::findByArticleOrderByCreatedAtDesc)
+                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)))
+                .stream()
                 .map(comment -> new CommentVO(me, comment))
                 .toList();
     }

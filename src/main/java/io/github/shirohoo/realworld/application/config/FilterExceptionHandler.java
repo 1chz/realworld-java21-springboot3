@@ -26,7 +26,9 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain filterChain)
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
@@ -34,6 +36,15 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
         } catch (IllegalArgumentException e) {
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
             log.info("Illegal argument: {}", e.getMessage());
+
+            response.setStatus(problemDetail.getStatus());
+            response.setContentType("application/problem+json");
+            response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
+
+        } catch (Exception e) {
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "An error has occurred. Please contact the administrator.");
+            log.error("Unknown error: {}", e.getMessage(), e);
 
             response.setStatus(problemDetail.getStatus());
             response.setContentType("application/problem+json");

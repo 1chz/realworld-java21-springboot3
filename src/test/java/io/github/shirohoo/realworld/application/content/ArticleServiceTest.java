@@ -1,9 +1,10 @@
 package io.github.shirohoo.realworld.application.content;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.shirohoo.realworld.domain.content.Article;
+import io.github.shirohoo.realworld.domain.content.ArticleFacets;
 import io.github.shirohoo.realworld.domain.content.ArticleRepository;
 import io.github.shirohoo.realworld.domain.content.ArticleVO;
 import io.github.shirohoo.realworld.domain.content.Tag;
@@ -46,17 +47,29 @@ class ArticleServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        james = new User().email("james@gmail.com").username("james");
+        james = User.builder()
+                .email("james@gmail.com")
+                .username("james")
+                .password("1234")
+                .build();
         userRepository.save(james);
 
-        simpson = new User().email("simpson@gmail.com").username("simpson");
+        simpson = User.builder()
+                .email("simpson@gmail.com")
+                .username("simpson")
+                .password("1234")
+                .build();
         userRepository.save(james);
 
-        Tag java = new Tag().name("java");
+        Tag java = new Tag("java");
         tagRepository.save(java);
 
-        Article effectiveJava =
-                new Article().title("Effective Java").author(james).addTag(java).favoritedBy(simpson);
+        Article effectiveJava = Article.builder()
+                .title("Effective Java")
+                .author(james)
+                .build()
+                .addTag(java)
+                .favoritedBy(simpson);
         articleRepository.save(effectiveJava);
     }
 

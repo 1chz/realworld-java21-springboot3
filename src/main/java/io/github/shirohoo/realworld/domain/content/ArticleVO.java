@@ -22,7 +22,7 @@ public record ArticleVO(
                 article.title(),
                 article.description(),
                 article.content(),
-                article.tagList(),
+                article.tags(),
                 article.createdAt(),
                 article.updatedAt(),
                 article.hasFavorited(me),
