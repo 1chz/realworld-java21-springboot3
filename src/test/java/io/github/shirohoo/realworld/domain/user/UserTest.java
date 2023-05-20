@@ -2,7 +2,7 @@ package io.github.shirohoo.realworld.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.shirohoo.realworld.domain.content.Article;
+import io.github.shirohoo.realworld.domain.article.Article;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,67 +16,66 @@ class UserTest {
     @DisplayName("users can follow each other.")
     void follow() {
         // given
-        User user1 = User.builder()
+        User james = User.builder()
                 .id(UUID.randomUUID())
-                .email("test1@example.com")
-                .username("test1")
+                .email("james@example.com")
+                .username("james")
                 .password("password")
                 .build();
-        User user2 = User.builder()
+        User alice = User.builder()
                 .id(UUID.randomUUID())
-                .email("test2@example.com")
-                .username("test2")
+                .email("alice@example.com")
+                .username("alice")
                 .password("password")
                 .build();
 
         // when
-        user1.follow(user2);
+        james.follow(alice);
 
         // then
-        assertThat(user1.isFollowing(user2)).isTrue();
-        assertThat(user2.followers()).containsExactly(user1);
+        assertThat(james.isFollowing(alice)).isTrue();
+        assertThat(alice.hasFollower(james)).isTrue();
     }
 
     @Test
     @DisplayName("users can unfollow each other.")
     void unfollow() {
         // given
-        User user1 = User.builder()
+        User james = User.builder()
                 .id(UUID.randomUUID())
-                .email("test1@example.com")
-                .username("test1")
+                .email("james@example.com")
+                .username("james")
                 .password("password")
                 .build();
-        User user2 = User.builder()
+        User alice = User.builder()
                 .id(UUID.randomUUID())
-                .email("test2@example.com")
-                .username("test2")
+                .email("alice@example.com")
+                .username("alice")
                 .password("password")
                 .build();
 
         // when
-        user1.follow(user2);
-        user1.unfollow(user2);
+        james.follow(alice);
+        james.unfollow(alice);
 
         // then
-        assertThat(user1.isFollowing(user2)).isFalse();
-        assertThat(user2.followers()).isEmpty();
+        assertThat(james.isFollowing(alice)).isFalse();
+        assertThat(alice.hasFollower(james)).isFalse();
     }
 
     @Test
     @DisplayName("users can favorite articles.")
     void favorite() {
         // given
-        User user = User.builder()
+        User james = User.builder()
                 .id(UUID.randomUUID())
-                .email("test@example.com")
-                .username("test")
+                .email("james@example.com")
+                .username("james")
                 .password("password")
                 .build();
         Article article = Article.builder()
                 .id(1)
-                .author(user)
-                .slug("article-1")
+                .author(james)
                 .title("Article 1")
                 .description("This is article 1")
                 .content("This is the content of article 1.")
@@ -84,39 +83,38 @@ class UserTest {
                 .build();
 
         // when
-        article.favoritedBy(user);
+        article.favorite(james);
 
         // then
-        assertThat(article.hasFavorited(user)).isTrue();
+        assertThat(article.isFavoriteBy(james)).isTrue();
     }
 
     @Test
     @DisplayName("users can unfavorite articles.")
     void unfavorite() {
         // given
-        User user = User.builder()
+        User james = User.builder()
                 .id(UUID.randomUUID())
-                .email("test@example.com")
-                .username("test")
+                .email("james@example.com")
+                .username("james")
                 .password("password")
                 .build();
         Article article = Article.builder()
                 .id(1)
-                .author(user)
-                .slug("article-1")
+                .author(james)
                 .title("Article 1")
                 .description("This is article 1")
                 .content("This is the content of article 1.")
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        user.favorite(article);
+        james.favorite(article);
 
         // when
-        user.unfavorite(article);
+        james.unfavorite(article);
 
         // then
-        assertThat(user.favoritedArticles()).isEmpty();
-        assertThat(article.favorites()).isEmpty();
+        assertThat(james.hasFavorite(article)).isFalse();
+        assertThat(article.favoriteCount()).isZero();
     }
 }

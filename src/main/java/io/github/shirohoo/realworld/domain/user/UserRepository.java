@@ -1,5 +1,6 @@
 package io.github.shirohoo.realworld.domain.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByUsername(String username);
+
+    List<User> findByFollowers(User user);
 }

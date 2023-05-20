@@ -17,14 +17,14 @@ class ProfileVOTest {
                 .id(UUID.randomUUID())
                 .username("james")
                 .email("james@example.com")
-                .password("1234")
+                .password("password")
                 .build();
 
         User simpson = User.builder()
                 .id(UUID.randomUUID())
                 .username("simpson")
                 .email("simpson@example.com")
-                .password("1234")
+                .password("password")
                 .bio("My name is simpson.")
                 .image("https://example.com/image.jpg")
                 .build();
@@ -47,14 +47,14 @@ class ProfileVOTest {
                 .id(UUID.randomUUID())
                 .username("james")
                 .email("james@example.com")
-                .password("1234")
+                .password("password")
                 .build();
 
         User simpson = User.builder()
                 .id(UUID.randomUUID())
                 .username("simpson")
                 .email("simpson@example.com")
-                .password("1234")
+                .password("password")
                 .bio("My name is simpson.")
                 .image("https://example.com/image.jpg")
                 .build();

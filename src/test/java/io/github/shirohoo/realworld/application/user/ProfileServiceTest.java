@@ -2,6 +2,8 @@ package io.github.shirohoo.realworld.application.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.shirohoo.realworld.IntegrationTest;
+import io.github.shirohoo.realworld.application.user.service.ProfileService;
 import io.github.shirohoo.realworld.domain.user.ProfileVO;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
@@ -11,11 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@SpringBootTest
+@IntegrationTest
 @DisplayName("The Profile Services")
 class ProfileServiceTest {
     @Autowired
@@ -26,10 +25,11 @@ class ProfileServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        User james = new User().email("james@gmail.com").username("james");
+        User james = User.builder().email("james@example.com").username("james").build();
         userRepository.save(james);
 
-        User simpson = new User().email("simpson@gmail.com").username("simpson");
+        User simpson =
+                User.builder().email("simpson@example.com").username("simpson").build();
         userRepository.save(simpson);
     }
 
@@ -42,8 +42,8 @@ class ProfileServiceTest {
     @DisplayName("provides function to lookup profile.")
     void getProfile() throws Exception {
         // given
-        User james = userRepository.findByEmail("james@gmail.com").orElseThrow();
-        User simpson = userRepository.findByEmail("simpson@gmail.com").orElseThrow();
+        User james = userRepository.findByEmail("james@example.com").orElseThrow();
+        User simpson = userRepository.findByEmail("simpson@example.com").orElseThrow();
 
         // when
         ProfileVO simpsonProfile = sut.getProfile(james, simpson);
@@ -59,8 +59,8 @@ class ProfileServiceTest {
     @DisplayName("provides the function to follow other users.")
     void follow() throws Exception {
         // given
-        User james = userRepository.findByEmail("james@gmail.com").orElseThrow();
-        User simpson = userRepository.findByEmail("simpson@gmail.com").orElseThrow();
+        User james = userRepository.findByEmail("james@example.com").orElseThrow();
+        User simpson = userRepository.findByEmail("simpson@example.com").orElseThrow();
 
         // when
         ProfileVO simpsonProfile = sut.follow(james, simpson);
@@ -77,8 +77,8 @@ class ProfileServiceTest {
     void unfollow() throws Exception {
         // given
         // - fetch users
-        User james = userRepository.findByEmail("james@gmail.com").orElseThrow();
-        User simpson = userRepository.findByEmail("simpson@gmail.com").orElseThrow();
+        User james = userRepository.findByEmail("james@example.com").orElseThrow();
+        User simpson = userRepository.findByEmail("simpson@example.com").orElseThrow();
 
         // - james follow simpson
         sut.follow(james, simpson);

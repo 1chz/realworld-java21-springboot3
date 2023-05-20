@@ -6,12 +6,11 @@ import io.github.shirohoo.realworld.domain.user.UserRepository;
 import java.util.UUID;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -31,9 +30,9 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(
-            @NonNull MethodParameter parameter,
+            MethodParameter parameter,
             ModelAndViewContainer mavContainer,
-            @NonNull NativeWebRequest webRequest,
+            NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
@@ -42,13 +41,13 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             return null;
         }
 
-        JwtAuthenticationToken jwt = (JwtAuthenticationToken) authentication;
-        String userId = jwt.getName();
-        String token = jwt.getToken().getTokenValue();
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+        String userId = jwtAuthenticationToken.getName().strip();
+        String token = jwtAuthenticationToken.getToken().getTokenValue().strip();
 
         return userRepository
                 .findById(UUID.fromString(userId))
-                .map(it -> it.token(token))
-                .orElseThrow(() -> new BadCredentialsException("Invalid token"));
+                .map(it -> it.setToken(token))
+                .orElseThrow(() -> new InvalidBearerTokenException("`%s` is invalid token".formatted(token)));
     }
 }

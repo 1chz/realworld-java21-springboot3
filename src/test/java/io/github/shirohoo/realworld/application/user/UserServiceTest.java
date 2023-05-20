@@ -2,17 +2,19 @@ package io.github.shirohoo.realworld.application.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.shirohoo.realworld.IntegrationTest;
+import io.github.shirohoo.realworld.application.user.controller.LoginUserRequest;
+import io.github.shirohoo.realworld.application.user.controller.SignUpUserRequest;
+import io.github.shirohoo.realworld.application.user.controller.UpdateUserRequest;
+import io.github.shirohoo.realworld.application.user.service.UserService;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserVO;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@SpringBootTest
+@IntegrationTest
 @DisplayName("The User Services")
 class UserServiceTest {
     @Autowired
@@ -23,16 +25,16 @@ class UserServiceTest {
     void signUp() throws Exception {
         // given
         // - sign up request
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
 
         // when
         User user = sut.signUp(signUpRequest);
 
         // then
-        assertThat(user.id()).isNotNull();
-        assertThat(user.email()).isEqualTo("james@gmail.com");
-        assertThat(user.username()).isEqualTo("james");
-        assertThat(user.password()).isNotEqualTo("1234");
+        assertThat(user.getId()).isNotNull();
+        assertThat(user.getEmail()).isEqualTo("james@example.com");
+        assertThat(user.getUsername()).isEqualTo("james");
+        assertThat(user.getPassword()).isNotEqualTo("password");
     }
 
     @Test
@@ -40,14 +42,14 @@ class UserServiceTest {
     void login() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
         sut.signUp(signUpRequest);
 
         // when
-        UserVO user = sut.login(new LoginUserRequest("james@gmail.com", "1234"));
+        UserVO user = sut.login(new LoginUserRequest("james@example.com", "password"));
 
         // then
-        assertThat(user.email()).isEqualTo("james@gmail.com");
+        assertThat(user.email()).isEqualTo("james@example.com");
         assertThat(user.username()).isEqualTo("james");
         assertThat(user.token()).isNotEmpty();
         assertThat(user.bio()).isNull();
@@ -59,11 +61,11 @@ class UserServiceTest {
     void update() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "1234");
         User user = sut.signUp(signUpRequest);
 
         // - update request
-        String email = "james.to@gmail.com";
+        String email = "james.to@example.com";
         String username = "james.to";
         String password = "5678";
         String bio = "I like to skateboard";
@@ -74,7 +76,7 @@ class UserServiceTest {
         UserVO userVO = sut.update(user, updateRequest);
 
         // then
-        assertThat(userVO.email()).isEqualTo("james.to@gmail.com");
+        assertThat(userVO.email()).isEqualTo("james.to@example.com");
         assertThat(userVO.username()).isEqualTo("james.to");
         assertThat(userVO.bio()).isEqualTo("I like to skateboard");
         assertThat(userVO.image()).isEqualTo("https://i.stack.imgur.com/xHWG8.jpg");

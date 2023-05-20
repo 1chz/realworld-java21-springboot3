@@ -1,15 +1,14 @@
 package io.github.shirohoo.realworld.application.user;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import io.github.shirohoo.realworld.IntegrationTest;
+import io.github.shirohoo.realworld.application.user.controller.LoginUserRequest;
+import io.github.shirohoo.realworld.application.user.controller.SignUpUserRequest;
+import io.github.shirohoo.realworld.application.user.controller.UpdateUserRequest;
+import io.github.shirohoo.realworld.application.user.service.UserService;
 import io.github.shirohoo.realworld.domain.user.UserVO;
 
 import java.util.Map;
@@ -17,22 +16,17 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
+@IntegrationTest
 @DisplayName("The User APIs")
 class UserControllerTest {
     @Autowired
-    private MockMvc sut;
+    private MockMvc mockMvc;
 
     @Autowired
     private UserService userService;
@@ -45,10 +39,10 @@ class UserControllerTest {
     void signUp() throws Exception {
         // given
         // - sign up request
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
 
         // when
-        ResultActions resultActions = sut.perform(post("/api/users")
+        ResultActions resultActions = mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", signUpRequest))));
 
@@ -57,7 +51,8 @@ class UserControllerTest {
                 .andExpect(status().isTemporaryRedirect())
                 .andExpect(view().name("redirect:/api/users/login"))
                 .andExpect(model().attributeExists("user"))
-                .andExpect(model().attribute("user", Map.of("user", new LoginUserRequest("james@gmail.com", "1234"))))
+                .andExpect(model().attribute(
+                                "user", Map.of("user", new LoginUserRequest("james@example.com", "password"))))
                 .andDo(print());
     }
 
@@ -66,14 +61,14 @@ class UserControllerTest {
     void login() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
         userService.signUp(signUpRequest);
 
         // - login request
-        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");
 
         // when
-        ResultActions resultActions = sut.perform(post("/api/users/login")
+        ResultActions resultActions = mockMvc.perform(post("/api/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", loginRequest))));
 
@@ -81,7 +76,7 @@ class UserControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.user.email").value("james@gmail.com"))
+                .andExpect(jsonPath("$.user.email").value("james@example.com"))
                 .andExpect(jsonPath("$.user.username").value("james"))
                 .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andExpect(jsonPath("$.user.bio").isEmpty())
@@ -94,21 +89,21 @@ class UserControllerTest {
     void getCurrentUser() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
         userService.signUp(signUpRequest);
 
         // - login and get authorization token
-        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");
         String jamesToken = userService.login(loginRequest).token();
 
         // when
-        ResultActions resultActions = sut.perform(get("/api/user").header("Authorization", "Token " + jamesToken));
+        ResultActions resultActions = mockMvc.perform(get("/api/user").header("Authorization", "Token " + jamesToken));
 
         // then
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.user.email").value("james@gmail.com"))
+                .andExpect(jsonPath("$.user.email").value("james@example.com"))
                 .andExpect(jsonPath("$.user.username").value("james"))
                 .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andExpect(jsonPath("$.user.bio").isEmpty())
@@ -121,15 +116,15 @@ class UserControllerTest {
     void update() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@gmail.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
         userService.signUp(signUpRequest);
 
         // - login and get authorization token
-        LoginUserRequest loginRequest = new LoginUserRequest("james@gmail.com", "1234");
+        LoginUserRequest loginRequest = new LoginUserRequest("james@example.com", "password");
         UserVO userVO = userService.login(loginRequest);
 
         // - update request
-        String email = "james.to@gmail.com";
+        String email = "james.to@example.com";
         String username = "james.to";
         String password = "5678";
         String bio = "I like to skateboard";
@@ -137,7 +132,7 @@ class UserControllerTest {
         UpdateUserRequest updateRequest = new UpdateUserRequest(email, username, password, bio, image);
 
         // when
-        ResultActions resultActions = sut.perform(put("/api/user")
+        ResultActions resultActions = mockMvc.perform(put("/api/user")
                 .header("Authorization", "Token " + userVO.token())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("user", updateRequest))));
@@ -146,7 +141,7 @@ class UserControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.user.email").value("james.to@gmail.com"))
+                .andExpect(jsonPath("$.user.email").value("james.to@example.com"))
                 .andExpect(jsonPath("$.user.username").value("james.to"))
                 .andExpect(jsonPath("$.user.token").isNotEmpty())
                 .andExpect(jsonPath("$.user.bio").value("I like to skateboard"))

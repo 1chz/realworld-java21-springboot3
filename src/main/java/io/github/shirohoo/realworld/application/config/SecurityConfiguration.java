@@ -22,7 +22,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -41,7 +40,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, FilterExceptionHandler filterExceptionHandler)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ExceptionHandleFilter exceptionHandleFilter)
             throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -65,7 +64,7 @@ public class SecurityConfiguration {
                 .exceptionHandling(
                         handler -> handler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                                 .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                .addFilterBefore(filterExceptionHandler, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -98,10 +97,5 @@ public class SecurityConfiguration {
         JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
-    }
-
-    @Bean
-    public BearerTokenResolver bearerTokenResolver() {
-        return new CustomBearerTokenResolver();
     }
 }
