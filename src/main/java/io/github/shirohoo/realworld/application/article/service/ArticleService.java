@@ -3,13 +3,23 @@ package io.github.shirohoo.realworld.application.article.service;
 import io.github.shirohoo.realworld.application.article.controller.CreateArticleRequest;
 import io.github.shirohoo.realworld.application.article.controller.CreateCommentRequest;
 import io.github.shirohoo.realworld.application.article.controller.UpdateArticleRequest;
-import io.github.shirohoo.realworld.domain.article.*;
+import io.github.shirohoo.realworld.domain.article.Article;
+import io.github.shirohoo.realworld.domain.article.ArticleFacets;
+import io.github.shirohoo.realworld.domain.article.ArticleRepository;
+import io.github.shirohoo.realworld.domain.article.ArticleVO;
+import io.github.shirohoo.realworld.domain.article.Comment;
+import io.github.shirohoo.realworld.domain.article.CommentRepository;
+import io.github.shirohoo.realworld.domain.article.CommentVO;
+import io.github.shirohoo.realworld.domain.article.Tag;
+import io.github.shirohoo.realworld.domain.article.TagRepository;
+import io.github.shirohoo.realworld.domain.user.FollowId;
+import io.github.shirohoo.realworld.domain.user.FollowRepository;
 import io.github.shirohoo.realworld.domain.user.User;
-import io.github.shirohoo.realworld.domain.user.UserRepository;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArticleService {
     private final TagRepository tagRepository;
-    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
 
@@ -49,7 +59,7 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public List<ArticleVO> getFeedArticles(User me, ArticleFacets facets) {
-        List<User> followings = userRepository.findByFollowers(me);
+        List<User> followings = me.getFollowing();
         Pageable pageable = facets.getPageable();
 
         return articleRepository
@@ -59,14 +69,23 @@ public class ArticleService {
     }
 
     @Transactional
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public ArticleVO createArticle(User me, CreateArticleRequest request) {
         Article newArticle = Article.builder()
                 .author(me)
                 .title(request.title())
                 .description(request.description())
                 .content(request.body())
-                .tags(new HashSet<>(tagRepository.saveAll(request.tags())))
                 .build();
+
+        for (Tag tag : request.tags()) {
+            if (tagRepository.existsByName(tag.getName())) {
+                tag = tagRepository.findByName(tag.getName()).get();
+            } else {
+                tag = tagRepository.save(tag);
+            }
+            tag.tagging(newArticle);
+        }
 
         newArticle = articleRepository.save(newArticle);
         return new ArticleVO(me, newArticle);
@@ -100,24 +119,37 @@ public class ArticleService {
         return articleRepository
                 .findBySlug(slug)
                 .map(article -> Comment.builder()
-                        .author(me)
                         .article(article)
+                        .author(me)
                         .content(request.body())
                         .build())
                 .map(commentRepository::save)
-                .map(c -> new CommentVO(me, c))
+                .map(CommentVO::myComment)
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
     }
 
     @Transactional
     public List<CommentVO> getArticleComments(User me, String slug) {
-        return articleRepository
+        Set<Comment> comments = articleRepository
                 .findBySlug(slug)
                 .map(commentRepository::findByArticleOrderByCreatedAtDesc)
-                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)))
-                .stream()
-                .map(comment -> new CommentVO(me, comment))
-                .toList();
+                .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
+
+        if (me == null) {
+            return comments.stream().map(CommentVO::unfollowing).toList();
+        }
+
+        List<CommentVO> results = new ArrayList<>();
+        for (Comment comment : comments) {
+            User author = comment.getAuthor();
+            FollowId userFollowId = new FollowId(me.getId(), author.getId());
+            CommentVO commentVO = followRepository.existsById(userFollowId)
+                    ? CommentVO.following(comment)
+                    : CommentVO.unfollowing(comment);
+            results.add(commentVO);
+        }
+
+        return results;
     }
 
     @Transactional
@@ -138,7 +170,7 @@ public class ArticleService {
     public ArticleVO favoriteArticle(User me, String slug) {
         return articleRepository
                 .findBySlug(slug)
-                .map(article -> new ArticleVO(me, article.favorite(me)))
+                .map(me::favorite)
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
     }
 
@@ -146,7 +178,7 @@ public class ArticleService {
     public ArticleVO unfavoriteArticle(User me, String slug) {
         return articleRepository
                 .findBySlug(slug)
-                .map(article -> new ArticleVO(me, article.unfavorite(me)))
+                .map(me::unfavorite)
                 .orElseThrow(() -> new NoSuchElementException("Article not found by slug: `%s`".formatted(slug)));
     }
 }

@@ -22,11 +22,11 @@ public record ArticleVO(
                 article.getTitle(),
                 article.getDescription(),
                 article.getContent(),
-                article.tags(),
+                article.getTagNames(),
                 article.getCreatedAt(),
                 article.getUpdatedAt(),
-                article.isFavoriteBy(me),
-                article.favoriteCount(),
+                me != null && me.isFavorited(article),
+                article.numberOfLikes(),
                 new ProfileVO(me, article.getAuthor()));
     }
 }

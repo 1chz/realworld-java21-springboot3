@@ -17,24 +17,28 @@ public class ProfileService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public ProfileVO getProfile(User following, String followerName) {
-        return userRepository
-                .findByUsername(followerName)
-                .map(follower -> follower.fetchProfileBy(following))
-                .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(followerName)));
+    public ProfileVO getProfile(User me, String targetUsername) {
+        return this.getProfile(
+                me,
+                userRepository
+                        .findByUsername(targetUsername)
+                        .orElseThrow(
+                                () -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername))));
     }
 
     @Transactional(readOnly = true)
-    public ProfileVO getProfile(User following, User follower) {
-        return follower.fetchProfileBy(following);
+    public ProfileVO getProfile(User me, User target) {
+        return new ProfileVO(me, target);
     }
 
     @Transactional
-    public ProfileVO follow(User me, String targetName) {
-        return userRepository
-                .findByUsername(targetName)
-                .map(me::follow)
-                .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(targetName)));
+    public ProfileVO follow(User me, String targetUsername) {
+        return this.follow(
+                me,
+                userRepository
+                        .findByUsername(targetUsername)
+                        .orElseThrow(
+                                () -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername))));
     }
 
     @Transactional
@@ -43,11 +47,13 @@ public class ProfileService {
     }
 
     @Transactional
-    public ProfileVO unfollow(User me, String targetName) {
-        return userRepository
-                .findByUsername(targetName)
-                .map(me::unfollow)
-                .orElseThrow(() -> new NoSuchElementException("User(`%s`) not found".formatted(targetName)));
+    public ProfileVO unfollow(User me, String targetUsername) {
+        return this.unfollow(
+                me,
+                userRepository
+                        .findByUsername(targetUsername)
+                        .orElseThrow(
+                                () -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername))));
     }
 
     @Transactional

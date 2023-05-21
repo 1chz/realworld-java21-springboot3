@@ -25,11 +25,18 @@ class ProfileServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        User james = User.builder().email("james@example.com").username("james").build();
+        User james = User.builder()
+                .email("james@example.com")
+                .username("james")
+                .password("password")
+                .build();
         userRepository.save(james);
 
-        User simpson =
-                User.builder().email("simpson@example.com").username("simpson").build();
+        User simpson = User.builder()
+                .email("simpson@example.com")
+                .username("simpson")
+                .password("password")
+                .build();
         userRepository.save(simpson);
     }
 
@@ -50,7 +57,7 @@ class ProfileServiceTest {
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
-        assertThat(simpsonProfile.bio()).isNull();
+        assertThat(simpsonProfile.bio()).isEmpty();
         assertThat(simpsonProfile.image()).isNull();
         assertThat(simpsonProfile.following()).isFalse();
     }
@@ -67,7 +74,7 @@ class ProfileServiceTest {
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
-        assertThat(simpsonProfile.bio()).isNull();
+        assertThat(simpsonProfile.bio()).isEmpty();
         assertThat(simpsonProfile.image()).isNull();
         assertThat(simpsonProfile.following()).isTrue();
     }
@@ -88,7 +95,7 @@ class ProfileServiceTest {
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
-        assertThat(simpsonProfile.bio()).isNull();
+        assertThat(simpsonProfile.bio()).isEmpty();
         assertThat(simpsonProfile.image()).isNull();
         assertThat(simpsonProfile.following()).isFalse();
     }

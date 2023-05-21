@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.shirohoo.realworld.domain.user.User;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,10 +27,9 @@ class ArticleVOTest {
                         .bio("Test bio")
                         .image("https://test.com/image.png")
                         .build())
-                .createdAt(LocalDateTime.of(2022, 1, 1, 0, 0))
-                .updatedAt(LocalDateTime.of(2022, 1, 2, 0, 0))
-                .build()
-                .favorite(james);
+                .build();
+
+        james.favorite(article);
 
         // when
         ArticleVO articleVO = new ArticleVO(james, article);
@@ -43,8 +40,6 @@ class ArticleVOTest {
         assertThat(articleVO.description()).isEqualTo("This is a test article.");
         assertThat(articleVO.body()).isEqualTo("Test content.");
         assertThat(articleVO.tagList()).isEmpty();
-        assertThat(articleVO.createdAt()).isEqualTo(LocalDateTime.of(2022, 1, 1, 0, 0));
-        assertThat(articleVO.updatedAt()).isEqualTo(LocalDateTime.of(2022, 1, 2, 0, 0));
         assertThat(articleVO.favorited()).isTrue();
         assertThat(articleVO.favoritesCount()).isOne();
         assertThat(articleVO.author().username()).isEqualTo("james");

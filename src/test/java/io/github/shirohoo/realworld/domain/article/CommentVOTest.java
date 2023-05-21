@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.domain.article;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import io.github.shirohoo.realworld.domain.user.User;
 
@@ -22,14 +23,15 @@ class CommentVOTest {
                 .build();
         Comment comment = Comment.builder()
                 .id(1)
-                .content("Test comment")
+                .article(mock(Article.class))
                 .author(james)
+                .content("Test comment")
                 .createdAt(LocalDateTime.of(2022, 1, 1, 0, 0))
                 .updatedAt(LocalDateTime.of(2022, 1, 2, 0, 0))
                 .build();
 
         // when
-        CommentVO commentVO = new CommentVO(james, comment);
+        CommentVO commentVO = CommentVO.myComment(comment);
 
         // then
         assertThat(commentVO.id()).isEqualTo(1);

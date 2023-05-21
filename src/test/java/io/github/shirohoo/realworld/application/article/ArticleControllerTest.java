@@ -2,7 +2,10 @@ package io.github.shirohoo.realworld.application.article;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,10 +60,10 @@ class ArticleControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SignUpUserRequest jamesSignUpRequest = new SignUpUserRequest("james@example.com", "james", "1234");
+        SignUpUserRequest jamesSignUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
         User james = userService.signUp(jamesSignUpRequest);
 
-        SignUpUserRequest simpsonSignUpRequest = new SignUpUserRequest("simpson@example.com", "simpson", "1234");
+        SignUpUserRequest simpsonSignUpRequest = new SignUpUserRequest("simpson@example.com", "simpson", "password");
         User simpson = userService.signUp(simpsonSignUpRequest);
 
         simpson.follow(james);
@@ -69,17 +72,20 @@ class ArticleControllerTest {
         tagRepository.save(java);
 
         Article effectiveJava = Article.builder()
+                .description("description")
                 .title("Effective Java")
                 .author(james)
-                .build()
-                .addTag(java)
-                .favorite(simpson);
+                .content("content")
+                .build();
+
+        java.tagging(effectiveJava);
+        simpson.favorite(effectiveJava);
         articleRepository.save(effectiveJava);
 
-        LoginUserRequest jamesLoginRequest = new LoginUserRequest("james@example.com", "1234");
+        LoginUserRequest jamesLoginRequest = new LoginUserRequest("james@example.com", "password");
         jamesToken = "Token " + userService.login(jamesLoginRequest).token();
 
-        LoginUserRequest simpsonLoginRequest = new LoginUserRequest("simpson@example.com", "1234");
+        LoginUserRequest simpsonLoginRequest = new LoginUserRequest("simpson@example.com", "password");
         simpsonToken = "Token " + userService.login(simpsonLoginRequest).token();
     }
 

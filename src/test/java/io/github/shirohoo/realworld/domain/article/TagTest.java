@@ -20,11 +20,10 @@ class TagTest {
         Tag java = new Tag("java");
 
         // when
-        java.tag(article);
+        java.tagging(article);
 
         // then
-        assertThat(article.isTaggedBy(java)).isTrue();
-        assertThat(java.isTagged(article)).isTrue();
+        assertThat(article.tags()).contains(java);
     }
 
     @Test

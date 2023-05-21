@@ -91,7 +91,11 @@ public class UserService {
     }
 
     private void updateUserDetails(User user, UpdateUserRequest request) {
-        user.setBio(request.bio());
+        if (request.bio() == null) {
+            user.setBio("");
+        } else {
+            user.setBio(request.bio());
+        }
         user.setImage(request.image());
     }
 }

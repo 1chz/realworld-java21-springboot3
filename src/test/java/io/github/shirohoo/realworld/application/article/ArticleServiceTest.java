@@ -9,7 +9,15 @@ import io.github.shirohoo.realworld.application.article.controller.CreateArticle
 import io.github.shirohoo.realworld.application.article.controller.CreateCommentRequest;
 import io.github.shirohoo.realworld.application.article.controller.UpdateArticleRequest;
 import io.github.shirohoo.realworld.application.article.service.ArticleService;
-import io.github.shirohoo.realworld.domain.article.*;
+import io.github.shirohoo.realworld.domain.article.Article;
+import io.github.shirohoo.realworld.domain.article.ArticleFacets;
+import io.github.shirohoo.realworld.domain.article.ArticleRepository;
+import io.github.shirohoo.realworld.domain.article.ArticleVO;
+import io.github.shirohoo.realworld.domain.article.Comment;
+import io.github.shirohoo.realworld.domain.article.CommentRepository;
+import io.github.shirohoo.realworld.domain.article.CommentVO;
+import io.github.shirohoo.realworld.domain.article.Tag;
+import io.github.shirohoo.realworld.domain.article.TagRepository;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
@@ -66,8 +74,13 @@ class ArticleServiceTest {
         Tag java = new Tag("java");
         tagRepository.save(java);
 
-        effectiveJava =
-                Article.builder().title("Effective Java").author(james).build().addTag(java);
+        effectiveJava = Article.builder()
+                .description("description")
+                .title("Effective Java")
+                .author(james)
+                .content("content")
+                .build();
+        java.tagging(effectiveJava);
         articleRepository.save(effectiveJava);
     }
 
@@ -241,9 +254,9 @@ class ArticleServiceTest {
     void getArticleComments() throws Exception {
         // given
         Comment comment = Comment.builder()
+                .article(effectiveJava)
                 .author(simpson)
                 .content("Test Comment")
-                .article(effectiveJava)
                 .build();
         commentRepository.saveAndFlush(comment);
 
@@ -266,8 +279,12 @@ class ArticleServiceTest {
                 .build();
         articleRepository.save(article);
 
-        Comment comment =
-                Comment.builder().author(james).content("Test Comment").build();
+        Comment comment = Comment.builder()
+                .article(article)
+                .author(james)
+                .content("Test Comment")
+                .build();
+
         commentRepository.save(comment);
 
         // when
@@ -284,7 +301,7 @@ class ArticleServiceTest {
         sut.favoriteArticle(simpson, effectiveJava.getSlug());
 
         // then
-        assertThat(effectiveJava.favoriteCount()).isOne();
+        assertThat(effectiveJava.numberOfLikes()).isOne();
     }
 
     @Test
@@ -294,6 +311,6 @@ class ArticleServiceTest {
         sut.unfavoriteArticle(simpson, effectiveJava.getSlug());
 
         // then
-        assertThat(effectiveJava.favoriteCount()).isZero();
+        assertThat(effectiveJava.numberOfLikes()).isZero();
     }
 }

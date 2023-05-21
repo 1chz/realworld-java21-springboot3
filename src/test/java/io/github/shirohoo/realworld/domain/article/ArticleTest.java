@@ -29,7 +29,6 @@ class ArticleTest {
                 .title("How to write unit tests")
                 .description("Unit testing is an essential part of software development.")
                 .content("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                .createdAt(LocalDateTime.now())
                 .author(author)
                 .build();
     }
@@ -41,11 +40,10 @@ class ArticleTest {
         Tag tag = new Tag("java");
 
         // when
-        article.addTag(tag);
+        tag.tagging(article);
 
         // then
-        assertThat(article.isTaggedBy(tag)).isTrue();
-        assertThat(tag.isTagged(article)).isTrue();
+        assertThat(article.tags()).contains(tag);
     }
 
     @Test
@@ -57,14 +55,12 @@ class ArticleTest {
         Tag junit = new Tag("junit");
 
         // when
-        article.addTag(java);
-        article.addTag(spring);
-        article.addTag(junit);
+        java.tagging(article);
+        spring.tagging(article);
+        junit.tagging(article);
 
         // then
-        assertThat(article.isTaggedBy(java)).isTrue();
-        assertThat(article.isTaggedBy(spring)).isTrue();
-        assertThat(article.isTaggedBy(junit)).isTrue();
+        assertThat(article.tags()).contains(java, spring, junit);
     }
 
     @Test
@@ -81,12 +77,11 @@ class ArticleTest {
                 .build();
 
         // when
-        article.favorite(alice);
+        alice.favorite(article);
 
         // then
-        assertThat(article.isFavoriteBy(alice)).isTrue();
-        assertThat(article.favoriteCount()).isOne();
-        assertThat(alice.hasFavorite(article)).isTrue();
+        assertThat(alice.isFavorited(article)).isTrue();
+        assertThat(article.numberOfLikes()).isOne();
     }
 
     @Test
@@ -101,14 +96,14 @@ class ArticleTest {
                 .image("https://i.pravatar.cc/150?img=1")
                 .createdAt(LocalDateTime.now())
                 .build();
-        article.favorite(alice);
+
+        alice.favorite(article);
 
         // when
-        article.unfavorite(alice);
+        alice.unfavorite(article);
 
         // then
-        assertThat(article.isFavoriteBy(alice)).isFalse();
-        assertThat(article.favoriteCount()).isZero();
-        assertThat(alice.hasFavorite(article)).isFalse();
+        assertThat(alice.isFavorited(article)).isFalse();
+        assertThat(article.numberOfLikes()).isZero();
     }
 }

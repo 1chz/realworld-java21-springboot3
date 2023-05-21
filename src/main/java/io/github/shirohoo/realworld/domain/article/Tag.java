@@ -1,10 +1,19 @@
 package io.github.shirohoo.realworld.domain.article;
 
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,34 +22,40 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "tag")
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
     @Id
+    @Column(name = "tag_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(length = 20, unique = true, nullable = false)
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
-    private Set<Article> articles = new HashSet<>();
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Tag(String name) {
         this.name = name;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public void tag(Article article) {
-        if (this.isTagged(article)) {
+    public void tagging(@NotNull Article article) {
+        ArticleTag articleTag = ArticleTag.builder()
+                .id(new ArticleTagId(article.getId(), this.getId()))
+                .article(article)
+                .tag(this)
+                .build();
+
+        if (article.getTags().contains(articleTag)) {
             return;
         }
 
-        this.articles.add(article);
-        article.addTag(this);
-    }
-
-    public boolean isTagged(Article article) {
-        return this.articles.contains(article);
+        article.getTags().add(articleTag);
     }
 
     @Override

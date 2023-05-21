@@ -4,10 +4,21 @@ import io.github.shirohoo.realworld.domain.user.User;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -24,63 +35,50 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
     @Id
+    @Column(name = "article_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @Column(unique = true)
-    private String slug;
-
-    @Column(unique = true)
-    private String title;
-
+    @Column(length = 50, nullable = false)
     private String description;
 
-    private String content;
+    @Column(length = 50, unique = true, nullable = false)
+    private String title;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "article_favorites",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> favorites = new HashSet<>();
+    @Column(length = 50, unique = true, nullable = false)
+    private String slug;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "article_tags",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> tags = new HashSet<>();
+    @Column(length = 1_000, nullable = false)
+    private String content = "";
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ArticleFavorite> favoritedUsers = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ArticleTag> tags = new HashSet<>();
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Builder
-    private Article(
-            Integer id,
-            User author,
-            String title,
-            String description,
-            String content,
-            Set<User> favorites,
-            Set<Tag> tags,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
+    private Article(Integer id, User author, String description, String title, String content) {
         this.id = id;
         this.author = author;
-        this.slug = createSlugBy(title);
-        this.title = title;
         this.description = description;
+        this.title = title;
+        this.slug = createSlugBy(title);
         this.content = content;
-        this.favorites = favorites == null ? new HashSet<>() : favorites;
-        this.tags = tags == null ? new HashSet<>() : tags;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.favoritedUsers = new HashSet<>();
+        this.tags = new HashSet<>();
+        this.createdAt = LocalDateTime.now();
     }
 
     public Article update(User author, String title, String description, String content) {
@@ -89,7 +87,8 @@ public class Article {
         }
 
         if (title != null && !title.isBlank()) {
-            this.title(title);
+            this.slug = createSlugBy(title);
+            this.title = title;
         }
 
         if (description != null && !description.isBlank()) {
@@ -103,63 +102,28 @@ public class Article {
         return this;
     }
 
-    public Article title(String title) {
-        this.slug = createSlugBy(title);
-        this.title = title;
-        return this;
-    }
-
-    public Article addTag(Tag tag) {
-        if (this.tags.contains(tag)) {
-            return this;
-        }
-
-        this.tags.add(tag);
-        tag.tag(this);
-
-        return this;
-    }
-
-    public Article favorite(User user) {
-        if (this.favorites.contains(user)) {
-            return this;
-        }
-
-        this.favorites.add(user);
-        user.favorite(this);
-
-        return this;
-    }
-
-    public Article unfavorite(User user) {
-        if (!this.favorites.contains(user)) {
-            return this;
-        }
-
-        this.favorites.remove(user);
-        user.unfavorite(this);
-
-        return this;
-    }
-
-    public boolean isFavoriteBy(User user) {
-        return this.favorites.contains(user);
+    public ArticleVO fetchDetailBy(User me) {
+        return new ArticleVO(me, this);
     }
 
     public boolean isWritten(User user) {
         return this.author.equals(user);
     }
 
-    public boolean isTaggedBy(Tag tag) {
-        return this.tags.contains(tag);
+    public int numberOfLikes() {
+        return this.favoritedUsers.size();
     }
 
-    public int favoriteCount() {
-        return this.favorites.size();
+    public List<Tag> tags() {
+        return this.tags.stream().map(ArticleTag::getTag).toList();
     }
 
-    public String[] tags() {
-        return this.tags.stream().map(Tag::getName).sorted().toArray(String[]::new);
+    public String[] getTagNames() {
+        return this.tags.stream()
+                .map(ArticleTag::getTag)
+                .map(Tag::getName)
+                .sorted()
+                .toArray(String[]::new);
     }
 
     private String createSlugBy(String title) {

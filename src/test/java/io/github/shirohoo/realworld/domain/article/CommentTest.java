@@ -19,6 +19,7 @@ class CommentTest {
         User mockUser = mock(User.class);
         Comment comment = Comment.builder()
                 .id(1)
+                .article(mock(Article.class))
                 .author(mockUser)
                 .content("This is a comment.")
                 .createdAt(LocalDateTime.now())
@@ -40,6 +41,7 @@ class CommentTest {
         User otherUser = mock(User.class);
         Comment comment = Comment.builder()
                 .id(1)
+                .article(mock(Article.class))
                 .author(author)
                 .content("This is a comment.")
                 .createdAt(LocalDateTime.now())

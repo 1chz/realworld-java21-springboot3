@@ -52,7 +52,7 @@ class UserServiceTest {
         assertThat(user.email()).isEqualTo("james@example.com");
         assertThat(user.username()).isEqualTo("james");
         assertThat(user.token()).isNotEmpty();
-        assertThat(user.bio()).isNull();
+        assertThat(user.bio()).isEmpty();
         assertThat(user.image()).isNull();
     }
 
@@ -61,7 +61,7 @@ class UserServiceTest {
     void update() throws Exception {
         // given
         // - sign up
-        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "1234");
+        SignUpUserRequest signUpRequest = new SignUpUserRequest("james@example.com", "james", "password");
         User user = sut.signUp(signUpRequest);
 
         // - update request

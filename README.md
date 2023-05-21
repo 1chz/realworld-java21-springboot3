@@ -117,4 +117,4 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 1. Run application (**important**)
 2. [Run integration test](api/README.md#running-api-tests-locally)
 
-<img width="1127" alt="image" src="https://user-images.githubusercontent.com/71188307/231559354-1673e52b-3be7-4d7d-922c-e34d19eff1c3.png">
+<img width="931" alt="image" src="https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/e747e660-cb3f-4c98-86fc-abd717bb0c30">

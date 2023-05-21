@@ -12,25 +12,9 @@ class ProfileVOTest {
     @Test
     @DisplayName("constructor works fine.")
     void constructor() {
-        // given
-        User james = User.builder()
-                .id(UUID.randomUUID())
-                .username("james")
-                .email("james@example.com")
-                .password("password")
-                .build();
-
-        User simpson = User.builder()
-                .id(UUID.randomUUID())
-                .username("simpson")
-                .email("simpson@example.com")
-                .password("password")
-                .bio("My name is simpson.")
-                .image("https://example.com/image.jpg")
-                .build();
-
         // when
-        ProfileVO simpsonProfile = new ProfileVO(james, simpson);
+        ProfileVO simpsonProfile =
+                new ProfileVO("simpson", "My name is simpson.", "https://example.com/image.jpg", false);
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
