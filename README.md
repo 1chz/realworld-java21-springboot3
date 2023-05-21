@@ -90,7 +90,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ./gradlew test
 ```
 
-<img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/2\682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
+<img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/231682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
 
 ## Check code style
 
