@@ -64,7 +64,7 @@ deciding which technology stack to choose through comparisons with various other
 
 > **Note:** I paid attention to data types, but did not pay much attention to size.
 
-Many developers who use JPA tend to use Long as the id type. However, it's worth considering whether your table with an id of Long will ever need to store 2^31 records.
+Many developers who use JPA tend to use Long as the id type. However, it's worth considering whether your table with an id of Long will ever need to store 2^63 records.
 
 - [schema.sql](database/schema.sql)
 
@@ -90,7 +90,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ./gradlew test
 ```
 
-<img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/231682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
+<img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/2\682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
 
 ## Check code style
 
