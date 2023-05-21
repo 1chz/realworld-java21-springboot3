@@ -68,7 +68,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 - [schema.sql](database/schema.sql)
 
-<img width="1789" alt="image" src="https://user-images.githubusercontent.com/71188307/231541178-f463b813-d022-45c3-9e41-58864df46112.png">
+<img width="1428" alt="image" src="https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/edd1e4ec-3622-4fb3-ac3d-9d8c51192742">
 
 # Getting started
 
