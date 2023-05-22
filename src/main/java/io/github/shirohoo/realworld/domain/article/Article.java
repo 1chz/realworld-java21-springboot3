@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -81,7 +82,7 @@ public class Article {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Article update(User author, String title, String description, String content) {
+    public Article update(@NotNull User author, String title, String description, String content) {
         if (!this.isWritten(author)) {
             throw new IllegalArgumentException("You can't edit articles written by others.");
         }
@@ -102,7 +103,7 @@ public class Article {
         return this;
     }
 
-    public boolean isWritten(User user) {
+    public boolean isWritten(@NotNull User user) {
         return this.author.equals(user);
     }
 
@@ -114,17 +115,17 @@ public class Article {
         return this.includeTags.stream().map(ArticleTag::getTag).toList();
     }
 
-    public boolean hasTag(Tag tag) {
+    public boolean hasTag(@NotNull Tag tag) {
         ArticleTag articleTag = createArticleTag(tag);
         return this.includeTags.stream().anyMatch(articleTag::equals);
     }
 
-    public void addTag(Tag tag) {
+    public void addTag(@NotNull Tag tag) {
         ArticleTag articleTag = createArticleTag(tag);
         this.includeTags.add(articleTag);
     }
 
-    private ArticleTag createArticleTag(Tag tag) {
+    private ArticleTag createArticleTag(@NotNull Tag tag) {
         return ArticleTag.builder()
                 .id(new ArticleTagId(this.getId(), tag.getId()))
                 .article(this)
@@ -136,8 +137,12 @@ public class Article {
         return this.getTags().stream().map(Tag::getName).sorted().toArray(String[]::new);
     }
 
-    private String createSlugBy(String title) {
+    private String createSlugBy(@NotNull String title) {
         return title.toLowerCase().replaceAll("\\s+", "-");
+    }
+
+    public boolean equalsArticle(@NotNull ArticleFavorite articleFavorite) {
+        return Objects.equals(this, articleFavorite.getArticle());
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -89,6 +90,10 @@ public class User {
     private String token;
 
     public boolean isAlreadyFollowing(User target) {
+        if (target == null) {
+            return false;
+        }
+
         Follow follow = createFollow(this, target);
         return this.following.stream().anyMatch(follow::equals);
     }
@@ -122,36 +127,36 @@ public class User {
     }
 
     public ProfileVO unfollow(@NotNull User target) {
-        Follow follow = findFollowing(target);
-        if (follow != null) {
+        findFollowing(target).ifPresent(follow -> {
             this.removeFollowing(follow);
             target.removeFollower(follow);
-        }
+        });
 
         return new ProfileVO(this, target);
     }
 
-    private Follow findFollowing(User target) {
-        return this.following.stream()
-                .filter(following -> following.getTo().equals(target))
-                .findFirst()
-                .orElse(null);
+    private Optional<Follow> findFollowing(User target) {
+        return this.following.stream().filter(target::isFollowing).findFirst();
     }
 
-    private void removeFollowing(Follow follow) {
+    private boolean isFollowing(@NotNull Follow follow) {
+        return follow.getTo().equals(this);
+    }
+
+    private void removeFollowing(@NotNull Follow follow) {
         this.following.remove(follow);
     }
 
-    private void removeFollower(Follow follow) {
+    private void removeFollower(@NotNull Follow follow) {
         this.follower.remove(follow);
     }
 
-    public boolean isAlreadyFavorite(Article article) {
+    public boolean isAlreadyFavorite(@NotNull Article article) {
         ArticleFavorite articleFavorite = createArticleFavorite(this, article);
         return this.favoriteArticles.stream().anyMatch(articleFavorite::equals);
     }
 
-    private ArticleFavorite createArticleFavorite(User user, Article article) {
+    private ArticleFavorite createArticleFavorite(@NotNull User user, @NotNull Article article) {
         return ArticleFavorite.builder()
                 .id(new ArticleFavoriteId(user.getId(), article.getId()))
                 .user(user)
@@ -159,7 +164,7 @@ public class User {
                 .build();
     }
 
-    public ArticleVO favorite(Article article) {
+    public ArticleVO favorite(@NotNull Article article) {
         if (isAlreadyFavorite(article)) {
             return new ArticleVO(this, article);
         }
@@ -171,36 +176,32 @@ public class User {
         return new ArticleVO(this, article);
     }
 
-    private void addFavoriteArticle(ArticleFavorite articleFavorite) {
+    private void addFavoriteArticle(@NotNull ArticleFavorite articleFavorite) {
         this.favoriteArticles.add(articleFavorite);
     }
 
-    private void addThisUserToFavorite(ArticleFavorite articleFavorite) {
+    private void addThisUserToFavorite(@NotNull ArticleFavorite articleFavorite) {
         articleFavorite.getArticle().getFavoriteUsers().add(articleFavorite);
     }
 
-    public ArticleVO unfavorite(Article article) {
-        ArticleFavorite articleFavorite = findArticleFavorite(article);
-        if (articleFavorite != null) {
+    public ArticleVO unfavorite(@NotNull Article article) {
+        findArticleFavorite(article).ifPresent(articleFavorite -> {
             removeFavoriteArticle(articleFavorite);
             removeUserFromFavorite(articleFavorite);
-        }
+        });
 
         return new ArticleVO(this, article);
     }
 
-    private ArticleFavorite findArticleFavorite(Article article) {
-        return this.favoriteArticles.stream()
-                .filter(articleFavorite -> articleFavorite.getArticle().equals(article))
-                .findFirst()
-                .orElse(null);
+    private Optional<ArticleFavorite> findArticleFavorite(@NotNull Article article) {
+        return this.favoriteArticles.stream().filter(article::equalsArticle).findFirst();
     }
 
-    private void removeFavoriteArticle(ArticleFavorite articleFavorite) {
+    private void removeFavoriteArticle(@NotNull ArticleFavorite articleFavorite) {
         this.favoriteArticles.remove(articleFavorite);
     }
 
-    private void removeUserFromFavorite(ArticleFavorite articleFavorite) {
+    private void removeUserFromFavorite(@NotNull ArticleFavorite articleFavorite) {
         articleFavorite.getArticle().getFavoriteUsers().remove(articleFavorite);
     }
 
