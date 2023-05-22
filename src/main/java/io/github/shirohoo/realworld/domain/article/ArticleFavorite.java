@@ -3,6 +3,7 @@ package io.github.shirohoo.realworld.domain.article;
 import io.github.shirohoo.realworld.domain.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -48,4 +49,17 @@ public class ArticleFavorite {
     @Builder.Default
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ArticleFavorite other
+                && Objects.equals(this.id, other.id)
+                && Objects.equals(this.user, other.user)
+                && Objects.equals(this.article, other.article);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id, this.user, this.article);
+    }
 }

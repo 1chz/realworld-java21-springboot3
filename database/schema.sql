@@ -2,7 +2,7 @@ create table realworld.tag
 (
     tag_id     int auto_increment primary key,
     created_at datetime(6) not null,
-    name       varchar(20) null,
+    name       varchar(20) not null,
     constraint UK_1wdpsed5kna2y38hnbgrnhi5b unique (name)
 );
 

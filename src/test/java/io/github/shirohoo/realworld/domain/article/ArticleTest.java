@@ -43,7 +43,7 @@ class ArticleTest {
         tag.tagging(article);
 
         // then
-        assertThat(article.tags()).contains(tag);
+        assertThat(article.getTags()).contains(tag);
     }
 
     @Test
@@ -60,7 +60,7 @@ class ArticleTest {
         junit.tagging(article);
 
         // then
-        assertThat(article.tags()).contains(java, spring, junit);
+        assertThat(article.getTags()).contains(java, spring, junit);
     }
 
     @Test
@@ -80,7 +80,7 @@ class ArticleTest {
         alice.favorite(article);
 
         // then
-        assertThat(alice.isFavorited(article)).isTrue();
+        assertThat(alice.isAlreadyFavorite(article)).isTrue();
         assertThat(article.numberOfLikes()).isOne();
     }
 
@@ -103,7 +103,7 @@ class ArticleTest {
         alice.unfavorite(article);
 
         // then
-        assertThat(alice.isFavorited(article)).isFalse();
+        assertThat(alice.isAlreadyFavorite(article)).isFalse();
         assertThat(article.numberOfLikes()).isZero();
     }
 }

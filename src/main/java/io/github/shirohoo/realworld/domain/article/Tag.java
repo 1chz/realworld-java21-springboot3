@@ -45,26 +45,18 @@ public class Tag {
     }
 
     public void tagging(@NotNull Article article) {
-        ArticleTag articleTag = ArticleTag.builder()
-                .id(new ArticleTagId(article.getId(), this.getId()))
-                .article(article)
-                .tag(this)
-                .build();
-
-        if (article.getTags().contains(articleTag)) {
-            return;
+        if (!article.hasTag(this)) {
+            article.addTag(this);
         }
-
-        article.getTags().add(articleTag);
     }
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Tag other && Objects.equals(this.name, other.name);
+        return o instanceof Tag other && Objects.equals(this.id, other.id) && Objects.equals(this.name, other.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(this.id, this.name);
     }
 }

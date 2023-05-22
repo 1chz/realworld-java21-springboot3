@@ -15,9 +15,9 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query(
             """
                     SELECT a FROM Article a
-                    WHERE (:tag IS NULL OR :tag IN (SELECT t.tag.name FROM a.tags t))
+                    WHERE (:tag IS NULL OR :tag IN (SELECT t.tag.name FROM a.includeTags t))
                     AND (:author IS NULL OR a.author.username = :author)
-                    AND (:favorited IS NULL OR :favorited IN (SELECT fu.user.username FROM a.favoritedUsers fu))
+                    AND (:favorited IS NULL OR :favorited IN (SELECT fu.user.username FROM a.favoriteUsers fu))
                     ORDER BY a.createdAt DESC
                     """)
     Page<Article> findByFacets(

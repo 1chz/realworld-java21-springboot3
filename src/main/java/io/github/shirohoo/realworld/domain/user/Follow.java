@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.domain.user;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -46,4 +47,17 @@ public class Follow {
     @Builder.Default
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Follow other
+                && Objects.equals(this.id, other.id)
+                && Objects.equals(this.from, other.from)
+                && Objects.equals(this.to, other.to);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id, this.from, this.to);
+    }
 }

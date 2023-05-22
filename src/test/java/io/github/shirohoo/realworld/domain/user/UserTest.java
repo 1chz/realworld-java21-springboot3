@@ -33,7 +33,7 @@ class UserTest {
         james.favorite(article);
 
         // then
-        assertThat(james.isFavorited(article)).isTrue();
+        assertThat(james.isAlreadyFavorite(article)).isTrue();
     }
 
     @Test
@@ -60,7 +60,7 @@ class UserTest {
         james.unfavorite(article);
 
         // then
-        assertThat(james.isFavorited(article)).isFalse();
+        assertThat(james.isAlreadyFavorite(article)).isFalse();
         assertThat(article.numberOfLikes()).isZero();
     }
 }

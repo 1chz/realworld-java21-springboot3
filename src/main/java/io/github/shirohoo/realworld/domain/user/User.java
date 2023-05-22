@@ -88,74 +88,120 @@ public class User {
     @Transient
     private String token;
 
-    public ProfileVO follow(@NotNull User userToFollow) {
-        Follow follow = Follow.builder()
-                .id(new FollowId(this.getId(), userToFollow.getId()))
-                .from(this)
-                .to(userToFollow)
+    public boolean isAlreadyFollowing(User target) {
+        Follow follow = createFollow(this, target);
+        return this.following.stream().anyMatch(follow::equals);
+    }
+
+    public ProfileVO follow(@NotNull User target) {
+        if (isAlreadyFollowing(target)) {
+            return new ProfileVO(this, target);
+        }
+
+        Follow follow = createFollow(this, target);
+        addFollowingToCurrentUser(follow);
+        addFollowerToTargetUser(follow);
+
+        return new ProfileVO(this, target);
+    }
+
+    private Follow createFollow(User from, User to) {
+        return Follow.builder()
+                .id(new FollowId(from.getId(), to.getId()))
+                .from(from)
+                .to(to)
                 .build();
+    }
 
-        if (this.following.contains(follow)) {
-            return new ProfileVO(this, userToFollow);
-        }
-
+    private void addFollowingToCurrentUser(Follow follow) {
         this.following.add(follow);
-        userToFollow.getFollower().add(follow);
-
-        return new ProfileVO(this, userToFollow);
     }
 
-    public ProfileVO unfollow(@NotNull User userToUnfollow) {
-        Follow unfollow = null;
-        for (Follow following : this.following) {
-            if (following.getTo().equals(userToUnfollow)) {
-                unfollow = following;
-                break;
-            }
-        }
-        if (unfollow != null) {
-            this.following.remove(unfollow);
-            userToUnfollow.getFollower().remove(unfollow);
-        }
-
-        return new ProfileVO(this, userToUnfollow);
+    private void addFollowerToTargetUser(Follow follow) {
+        follow.getTo().getFollower().add(follow);
     }
 
-    public boolean isFollowing(User target) {
-        return this.following.stream().map(Follow::getTo).anyMatch(target::equals);
+    public ProfileVO unfollow(@NotNull User target) {
+        Follow follow = findFollowing(target);
+        if (follow != null) {
+            this.removeFollowing(follow);
+            target.removeFollower(follow);
+        }
+
+        return new ProfileVO(this, target);
+    }
+
+    private Follow findFollowing(User target) {
+        return this.following.stream()
+                .filter(following -> following.getTo().equals(target))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void removeFollowing(Follow follow) {
+        this.following.remove(follow);
+    }
+
+    private void removeFollower(Follow follow) {
+        this.follower.remove(follow);
+    }
+
+    public boolean isAlreadyFavorite(Article article) {
+        ArticleFavorite articleFavorite = createArticleFavorite(this, article);
+        return this.favoriteArticles.stream().anyMatch(articleFavorite::equals);
+    }
+
+    private ArticleFavorite createArticleFavorite(User user, Article article) {
+        return ArticleFavorite.builder()
+                .id(new ArticleFavoriteId(user.getId(), article.getId()))
+                .user(user)
+                .article(article)
+                .build();
     }
 
     public ArticleVO favorite(Article article) {
-        ArticleFavorite like = ArticleFavorite.builder()
-                .id(new ArticleFavoriteId(this.getId(), article.getId()))
-                .user(this)
-                .article(article)
-                .build();
+        if (isAlreadyFavorite(article)) {
+            return new ArticleVO(this, article);
+        }
 
-        this.favoriteArticles.add(like);
-        article.getFavoritedUsers().add(like);
+        ArticleFavorite articleFavorite = createArticleFavorite(this, article);
+        addFavoriteArticle(articleFavorite);
+        addThisUserToFavorite(articleFavorite);
 
-        return article.fetchDetailBy(this);
+        return new ArticleVO(this, article);
+    }
+
+    private void addFavoriteArticle(ArticleFavorite articleFavorite) {
+        this.favoriteArticles.add(articleFavorite);
+    }
+
+    private void addThisUserToFavorite(ArticleFavorite articleFavorite) {
+        articleFavorite.getArticle().getFavoriteUsers().add(articleFavorite);
     }
 
     public ArticleVO unfavorite(Article article) {
-        ArticleFavorite articleFavorite = null;
-        for (ArticleFavorite like : this.getFavoriteArticles()) {
-            if (like.getArticle().equals(article)) {
-                articleFavorite = like;
-                break;
-            }
-        }
+        ArticleFavorite articleFavorite = findArticleFavorite(article);
         if (articleFavorite != null) {
-            this.getFavoriteArticles().remove(articleFavorite);
-            article.getFavoritedUsers().remove(articleFavorite);
+            removeFavoriteArticle(articleFavorite);
+            removeUserFromFavorite(articleFavorite);
         }
 
-        return article.fetchDetailBy(this);
+        return new ArticleVO(this, article);
     }
 
-    public boolean isFavorited(Article article) {
-        return this.favoriteArticles.stream().map(ArticleFavorite::getArticle).anyMatch(article::equals);
+    private ArticleFavorite findArticleFavorite(Article article) {
+        return this.favoriteArticles.stream()
+                .filter(articleFavorite -> articleFavorite.getArticle().equals(article))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void removeFavoriteArticle(ArticleFavorite articleFavorite) {
+        this.favoriteArticles.remove(articleFavorite);
+    }
+
+    private void removeUserFromFavorite(ArticleFavorite articleFavorite) {
+        articleFavorite.getArticle().getFavoriteUsers().remove(articleFavorite);
     }
 
     public List<User> getFollowing() {
@@ -174,6 +220,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(this.id);
     }
 }

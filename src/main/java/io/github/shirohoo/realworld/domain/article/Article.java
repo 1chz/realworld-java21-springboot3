@@ -56,10 +56,10 @@ public class Article {
     private String content = "";
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ArticleFavorite> favoritedUsers = new HashSet<>();
+    private Set<ArticleFavorite> favoriteUsers = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ArticleTag> tags = new HashSet<>();
+    private Set<ArticleTag> includeTags = new HashSet<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -76,8 +76,8 @@ public class Article {
         this.title = title;
         this.slug = createSlugBy(title);
         this.content = content;
-        this.favoritedUsers = new HashSet<>();
-        this.tags = new HashSet<>();
+        this.favoriteUsers = new HashSet<>();
+        this.includeTags = new HashSet<>();
         this.createdAt = LocalDateTime.now();
     }
 
@@ -102,28 +102,38 @@ public class Article {
         return this;
     }
 
-    public ArticleVO fetchDetailBy(User me) {
-        return new ArticleVO(me, this);
-    }
-
     public boolean isWritten(User user) {
         return this.author.equals(user);
     }
 
     public int numberOfLikes() {
-        return this.favoritedUsers.size();
+        return this.favoriteUsers.size();
     }
 
-    public List<Tag> tags() {
-        return this.tags.stream().map(ArticleTag::getTag).toList();
+    public List<Tag> getTags() {
+        return this.includeTags.stream().map(ArticleTag::getTag).toList();
+    }
+
+    public boolean hasTag(Tag tag) {
+        ArticleTag articleTag = createArticleTag(tag);
+        return this.includeTags.stream().anyMatch(articleTag::equals);
+    }
+
+    public void addTag(Tag tag) {
+        ArticleTag articleTag = createArticleTag(tag);
+        this.includeTags.add(articleTag);
+    }
+
+    private ArticleTag createArticleTag(Tag tag) {
+        return ArticleTag.builder()
+                .id(new ArticleTagId(this.getId(), tag.getId()))
+                .article(this)
+                .tag(tag)
+                .build();
     }
 
     public String[] getTagNames() {
-        return this.tags.stream()
-                .map(ArticleTag::getTag)
-                .map(Tag::getName)
-                .sorted()
-                .toArray(String[]::new);
+        return this.getTags().stream().map(Tag::getName).sorted().toArray(String[]::new);
     }
 
     private String createSlugBy(String title) {
@@ -137,6 +147,6 @@ public class Article {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(this.id);
     }
 }

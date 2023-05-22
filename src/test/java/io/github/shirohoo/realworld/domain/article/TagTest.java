@@ -23,7 +23,7 @@ class TagTest {
         java.tagging(article);
 
         // then
-        assertThat(article.tags()).contains(java);
+        assertThat(article.getTags()).contains(java);
     }
 
     @Test

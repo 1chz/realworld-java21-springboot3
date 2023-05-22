@@ -1,6 +1,7 @@
 package io.github.shirohoo.realworld.domain.article;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -46,4 +47,17 @@ public class ArticleTag {
     @Builder.Default
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ArticleTag other
+                && Objects.equals(this.id, other.id)
+                && Objects.equals(this.article, other.article)
+                && Objects.equals(this.tag, other.tag);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id, this.article, this.tag);
+    }
 }

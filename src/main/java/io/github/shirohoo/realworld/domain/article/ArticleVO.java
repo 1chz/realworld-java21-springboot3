@@ -25,7 +25,7 @@ public record ArticleVO(
                 article.getTagNames(),
                 article.getCreatedAt(),
                 article.getUpdatedAt(),
-                me != null && me.isFavorited(article),
+                me != null && me.isAlreadyFavorite(article),
                 article.numberOfLikes(),
                 new ProfileVO(me, article.getAuthor()));
     }
