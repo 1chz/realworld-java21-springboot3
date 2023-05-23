@@ -2,7 +2,6 @@ package io.github.shirohoo.realworld.domain.user;
 
 import io.github.shirohoo.realworld.domain.article.Article;
 import io.github.shirohoo.realworld.domain.article.ArticleFavorite;
-import io.github.shirohoo.realworld.domain.article.ArticleFavoriteId;
 import io.github.shirohoo.realworld.domain.article.ArticleVO;
 
 import java.time.LocalDateTime;
@@ -28,14 +27,16 @@ import jakarta.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
 @Getter
 @Builder
@@ -49,24 +50,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Setter
     @Column(length = 30, nullable = false, unique = true)
     private String email;
 
-    @Setter
     @Column(length = 200, nullable = false)
     private String password;
 
-    @Setter
     @Column(length = 30, nullable = false, unique = true)
     private String username;
 
-    @Setter
     @Builder.Default
     @Column(length = 500, nullable = false)
     private String bio = "";
 
-    @Setter
     private String image;
 
     @CreatedDate
@@ -89,13 +85,26 @@ public class User {
     @Transient
     private String token;
 
-    public boolean isAlreadyFollowing(User target) {
-        if (target == null) {
-            return false;
-        }
+    @Transient
+    @Builder.Default
+    private boolean anonymous = false;
 
-        Follow follow = createFollow(this, target);
+    public static User anonymous() {
+        return User.builder().id(null).anonymous(true).build();
+    }
+
+    public boolean isAnonymous() {
+        return this.id == null && this.anonymous;
+    }
+
+    public boolean isAlreadyFollowing(@NotNull User target) {
+        Follow follow = new Follow(this, target);
         return this.following.stream().anyMatch(follow::equals);
+    }
+
+    public boolean isAlreadyFavorite(@NotNull Article article) {
+        ArticleFavorite articleFavorite = new ArticleFavorite(this, article);
+        return this.favoriteArticles.stream().anyMatch(articleFavorite::equals);
     }
 
     public ProfileVO follow(@NotNull User target) {
@@ -103,27 +112,11 @@ public class User {
             return new ProfileVO(this, target);
         }
 
-        Follow follow = createFollow(this, target);
+        Follow follow = new Follow(this, target);
         addFollowingToCurrentUser(follow);
         addFollowerToTargetUser(follow);
 
         return new ProfileVO(this, target);
-    }
-
-    private Follow createFollow(User from, User to) {
-        return Follow.builder()
-                .id(new FollowId(from.getId(), to.getId()))
-                .from(from)
-                .to(to)
-                .build();
-    }
-
-    private void addFollowingToCurrentUser(Follow follow) {
-        this.following.add(follow);
-    }
-
-    private void addFollowerToTargetUser(Follow follow) {
-        follow.getTo().getFollower().add(follow);
     }
 
     public ProfileVO unfollow(@NotNull User target) {
@@ -133,6 +126,80 @@ public class User {
         });
 
         return new ProfileVO(this, target);
+    }
+
+    public ArticleVO favorite(@NotNull Article article) {
+        if (isAlreadyFavorite(article)) {
+            return new ArticleVO(this, article);
+        }
+
+        ArticleFavorite articleFavorite = new ArticleFavorite(this, article);
+        addFavoriteArticle(articleFavorite);
+        addThisUserToFavorite(articleFavorite);
+
+        return new ArticleVO(this, article);
+    }
+
+    public ArticleVO unfavorite(@NotNull Article article) {
+        findArticleFavorite(article).ifPresent(articleFavorite -> {
+            removeFavoriteArticle(articleFavorite);
+            removeUserFromFavorite(articleFavorite);
+        });
+
+        return new ArticleVO(this, article);
+    }
+
+    public List<User> followUsers() {
+        return this.following.stream().map(Follow::getTo).toList();
+    }
+
+    public User possessToken(String token) {
+        this.token = token;
+        return this;
+    }
+
+    public void updateEmail(@NotNull String email) {
+        if (email.isBlank() || this.email.equals(email)) {
+            log.info("Email is blank or same as current email.");
+            return;
+        }
+
+        // Note: Add email validation (ex. regex)
+        this.email = email;
+    }
+
+    public void updateUsername(@NotNull String username) {
+        if (username.isBlank() || this.username.equals(username)) {
+            log.info("Username is blank or same as current username.");
+            return;
+        }
+
+        this.username = username;
+    }
+
+    public void updatePassword(@NotNull PasswordEncoder passwordEncoder, @NotNull String plaintext) {
+        if (plaintext.isBlank()) {
+            log.info("Password is blank.");
+            return;
+        }
+
+        this.password = passwordEncoder.encode(plaintext);
+    }
+
+    public void updateBio(@NotNull String bio) {
+        this.bio = bio;
+    }
+
+    public void updateImage(String imageUrl) {
+        this.image = imageUrl;
+    }
+
+    private void addFollowingToCurrentUser(Follow follow) {
+        this.following.add(follow);
+    }
+
+    private void addFollowerToTargetUser(Follow follow) {
+        follow.getTo().getFollower().add(follow);
     }
 
     private Optional<Follow> findFollowing(User target) {
@@ -151,46 +218,12 @@ public class User {
         this.follower.remove(follow);
     }
 
-    public boolean isAlreadyFavorite(@NotNull Article article) {
-        ArticleFavorite articleFavorite = createArticleFavorite(this, article);
-        return this.favoriteArticles.stream().anyMatch(articleFavorite::equals);
-    }
-
-    private ArticleFavorite createArticleFavorite(@NotNull User user, @NotNull Article article) {
-        return ArticleFavorite.builder()
-                .id(new ArticleFavoriteId(user.getId(), article.getId()))
-                .user(user)
-                .article(article)
-                .build();
-    }
-
-    public ArticleVO favorite(@NotNull Article article) {
-        if (isAlreadyFavorite(article)) {
-            return new ArticleVO(this, article);
-        }
-
-        ArticleFavorite articleFavorite = createArticleFavorite(this, article);
-        addFavoriteArticle(articleFavorite);
-        addThisUserToFavorite(articleFavorite);
-
-        return new ArticleVO(this, article);
-    }
-
     private void addFavoriteArticle(@NotNull ArticleFavorite articleFavorite) {
         this.favoriteArticles.add(articleFavorite);
     }
 
     private void addThisUserToFavorite(@NotNull ArticleFavorite articleFavorite) {
         articleFavorite.getArticle().getFavoriteUsers().add(articleFavorite);
-    }
-
-    public ArticleVO unfavorite(@NotNull Article article) {
-        findArticleFavorite(article).ifPresent(articleFavorite -> {
-            removeFavoriteArticle(articleFavorite);
-            removeUserFromFavorite(articleFavorite);
-        });
-
-        return new ArticleVO(this, article);
     }
 
     private Optional<ArticleFavorite> findArticleFavorite(@NotNull Article article) {
@@ -203,15 +236,6 @@ public class User {
 
     private void removeUserFromFavorite(@NotNull ArticleFavorite articleFavorite) {
         articleFavorite.getArticle().getFavoriteUsers().remove(articleFavorite);
-    }
-
-    public List<User> getFollowing() {
-        return this.following.stream().map(Follow::getTo).toList();
-    }
-
-    public User setToken(String token) {
-        this.token = token;
-        return this;
     }
 
     @Override

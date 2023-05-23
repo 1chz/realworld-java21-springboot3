@@ -27,10 +27,10 @@ class CommentTest {
                 .build();
 
         // when
-        boolean result = comment.isWritten(mockUser);
+        boolean result = comment.isNotWritten(mockUser);
 
         // then
-        assertThat(result).isTrue();
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -49,9 +49,9 @@ class CommentTest {
                 .build();
 
         // when
-        boolean result = comment.isWritten(otherUser);
+        boolean result = comment.isNotWritten(otherUser);
 
         // then
-        assertThat(result).isFalse();
+        assertThat(result).isTrue();
     }
 }

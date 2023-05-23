@@ -80,7 +80,7 @@ class ArticleServiceTest {
                 .author(james)
                 .content("content")
                 .build();
-        java.tagging(effectiveJava);
+        java.addTo(effectiveJava);
         articleRepository.save(effectiveJava);
     }
 
@@ -191,7 +191,7 @@ class ArticleServiceTest {
         sut.deleteArticle(james, "effective-java");
 
         // then
-        assertThat(articleRepository.existsBySlug("effective-java")).isFalse();
+        assertThat(articleRepository.existsByTitle("Effective Java")).isFalse();
     }
 
     @Test
@@ -204,7 +204,7 @@ class ArticleServiceTest {
         thrownBy.isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("You can't delete articles written by others.");
 
-        assertThat(articleRepository.existsBySlug("effective-java")).isTrue();
+        assertThat(articleRepository.existsByTitle("Effective Java")).isTrue();
     }
 
     @Test

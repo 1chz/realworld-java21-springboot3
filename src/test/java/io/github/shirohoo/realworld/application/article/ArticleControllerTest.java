@@ -78,7 +78,7 @@ class ArticleControllerTest {
                 .content("content")
                 .build();
 
-        java.tagging(effectiveJava);
+        java.addTo(effectiveJava);
         simpson.favorite(effectiveJava);
         articleRepository.save(effectiveJava);
 

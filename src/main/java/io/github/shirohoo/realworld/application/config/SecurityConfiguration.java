@@ -71,12 +71,15 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
+
         cors.setAllowedOriginPatterns(List.of("*"));
         cors.setAllowedMethods(List.of("*"));
         cors.setAllowedHeaders(List.of("*"));
         cors.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
+
         return source;
     }
 

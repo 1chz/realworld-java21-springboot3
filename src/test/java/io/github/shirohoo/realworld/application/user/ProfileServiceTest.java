@@ -8,7 +8,6 @@ import io.github.shirohoo.realworld.domain.user.ProfileVO;
 import io.github.shirohoo.realworld.domain.user.User;
 import io.github.shirohoo.realworld.domain.user.UserRepository;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,20 +39,14 @@ class ProfileServiceTest {
         userRepository.save(simpson);
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
-        userRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("provides function to lookup profile.")
     void getProfile() throws Exception {
         // given
         User james = userRepository.findByEmail("james@example.com").orElseThrow();
-        User simpson = userRepository.findByEmail("simpson@example.com").orElseThrow();
 
         // when
-        ProfileVO simpsonProfile = sut.getProfile(james, simpson);
+        ProfileVO simpsonProfile = sut.getProfile(james, "simpson");
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
@@ -67,10 +60,9 @@ class ProfileServiceTest {
     void follow() throws Exception {
         // given
         User james = userRepository.findByEmail("james@example.com").orElseThrow();
-        User simpson = userRepository.findByEmail("simpson@example.com").orElseThrow();
 
         // when
-        ProfileVO simpsonProfile = sut.follow(james, simpson);
+        ProfileVO simpsonProfile = sut.follow(james, "simpson");
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");
@@ -85,13 +77,12 @@ class ProfileServiceTest {
         // given
         // - fetch users
         User james = userRepository.findByEmail("james@example.com").orElseThrow();
-        User simpson = userRepository.findByEmail("simpson@example.com").orElseThrow();
 
         // - james follow simpson
-        sut.follow(james, simpson);
+        sut.follow(james, "simpson");
 
         // when
-        ProfileVO simpsonProfile = sut.unfollow(james, simpson);
+        ProfileVO simpsonProfile = sut.unfollow(james, "simpson");
 
         // then
         assertThat(simpsonProfile.username()).isEqualTo("simpson");

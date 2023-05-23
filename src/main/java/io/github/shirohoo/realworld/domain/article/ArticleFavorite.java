@@ -50,6 +50,12 @@ public class ArticleFavorite {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public ArticleFavorite(User user, Article article) {
+        this.id = new ArticleFavoriteId(user.getId(), article.getId());
+        this.user = user;
+        this.article = article;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof ArticleFavorite other

@@ -30,5 +30,5 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     Optional<Article> findBySlug(String slug);
 
-    boolean existsBySlug(String slug);
+    boolean existsByTitle(String title);
 }

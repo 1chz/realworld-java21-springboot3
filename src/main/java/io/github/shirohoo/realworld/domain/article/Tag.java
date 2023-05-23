@@ -44,10 +44,8 @@ public class Tag {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void tagging(@NotNull Article article) {
-        if (!article.hasTag(this)) {
-            article.addTag(this);
-        }
+    public void addTo(@NotNull Article article) {
+        article.addTag(this);
     }
 
     @Override

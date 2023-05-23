@@ -60,8 +60,8 @@ public class Comment {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public boolean isWritten(@NotNull User user) {
-        return this.author.equals(user);
+    public boolean isNotWritten(@NotNull User user) {
+        return !this.author.equals(user);
     }
 
     @Override

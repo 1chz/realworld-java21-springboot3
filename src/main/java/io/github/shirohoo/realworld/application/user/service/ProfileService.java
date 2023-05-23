@@ -18,46 +18,24 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public ProfileVO getProfile(User me, String targetUsername) {
-        return this.getProfile(
-                me,
-                userRepository
-                        .findByUsername(targetUsername)
-                        .orElseThrow(
-                                () -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername))));
-    }
-
-    @Transactional(readOnly = true)
-    public ProfileVO getProfile(User me, User target) {
-        return new ProfileVO(me, target);
+        User targetUser = findUserByUsername(targetUsername);
+        return new ProfileVO(me, targetUser);
     }
 
     @Transactional
     public ProfileVO follow(User me, String targetUsername) {
-        return this.follow(
-                me,
-                userRepository
-                        .findByUsername(targetUsername)
-                        .orElseThrow(
-                                () -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername))));
-    }
-
-    @Transactional
-    public ProfileVO follow(User me, User target) {
-        return me.follow(target);
+        User targetUser = findUserByUsername(targetUsername);
+        return me.follow(targetUser);
     }
 
     @Transactional
     public ProfileVO unfollow(User me, String targetUsername) {
-        return this.unfollow(
-                me,
-                userRepository
-                        .findByUsername(targetUsername)
-                        .orElseThrow(
-                                () -> new NoSuchElementException("User(`%s`) not found".formatted(targetUsername))));
+        User targetUser = findUserByUsername(targetUsername);
+        return me.unfollow(targetUser);
     }
 
-    @Transactional
-    public ProfileVO unfollow(User me, User target) {
-        return me.unfollow(target);
+    private User findUserByUsername(String username) {
+        String message = "User(`%s`) not found".formatted(username);
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(message));
     }
 }

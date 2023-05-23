@@ -40,7 +40,7 @@ class ArticleTest {
         Tag tag = new Tag("java");
 
         // when
-        tag.tagging(article);
+        tag.addTo(article);
 
         // then
         assertThat(article.getTags()).contains(tag);
@@ -55,9 +55,9 @@ class ArticleTest {
         Tag junit = new Tag("junit");
 
         // when
-        java.tagging(article);
-        spring.tagging(article);
-        junit.tagging(article);
+        java.addTo(article);
+        spring.addTo(article);
+        junit.addTo(article);
 
         // then
         assertThat(article.getTags()).contains(java, spring, junit);

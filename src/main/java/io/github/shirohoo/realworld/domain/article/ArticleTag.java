@@ -48,6 +48,12 @@ public class ArticleTag {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public ArticleTag(Article article, Tag tag) {
+        this.id = new ArticleTagId(article.getId(), tag.getId());
+        this.article = article;
+        this.tag = tag;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof ArticleTag other

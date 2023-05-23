@@ -20,7 +20,7 @@ class TagTest {
         Tag java = new Tag("java");
 
         // when
-        java.tagging(article);
+        java.addTo(article);
 
         // then
         assertThat(article.getTags()).contains(java);

@@ -38,7 +38,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         Authentication authentication = securityContext.getAuthentication();
 
         if (authentication instanceof AnonymousAuthenticationToken) {
-            return null;
+            return User.anonymous();
         }
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
@@ -47,7 +47,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
         return userRepository
                 .findById(UUID.fromString(userId))
-                .map(it -> it.setToken(token))
+                .map(it -> it.possessToken(token))
                 .orElseThrow(() -> new InvalidBearerTokenException("`%s` is invalid token".formatted(token)));
     }
 }

@@ -48,6 +48,12 @@ public class Follow {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public Follow(User from, User to) {
+        this.id = new FollowId(from.getId(), to.getId());
+        this.from = from;
+        this.to = to;
+    }
+
     @Override
     public boolean equals(Object o) {
         return o instanceof Follow other

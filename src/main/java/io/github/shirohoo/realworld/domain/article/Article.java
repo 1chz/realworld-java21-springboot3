@@ -29,7 +29,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
@@ -82,67 +84,66 @@ public class Article {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Article update(@NotNull User author, String title, String description, String content) {
-        if (!this.isWritten(author)) {
-            throw new IllegalArgumentException("You can't edit articles written by others.");
+    public void updateTitle(@NotNull String title) {
+        if (title.isBlank()) {
+            log.info("Title is blank.");
+            return;
         }
 
-        if (title != null && !title.isBlank()) {
-            this.slug = createSlugBy(title);
-            this.title = title;
-        }
-
-        if (description != null && !description.isBlank()) {
-            this.description = description;
-        }
-
-        if (content != null && !content.isBlank()) {
-            this.content = content;
-        }
-
-        return this;
+        this.title = title;
+        this.slug = createSlugBy(title);
     }
 
-    public boolean isWritten(@NotNull User user) {
-        return this.author.equals(user);
+    public void updateDescription(@NotNull String description) {
+        if (description.isBlank()) {
+            log.info("Description is blank.");
+            return;
+        }
+
+        this.description = description;
+    }
+
+    public void updateContent(@NotNull String content) {
+        if (content.isBlank()) {
+            log.info("Content is blank.");
+            return;
+        }
+
+        this.content = content;
+    }
+
+    public boolean isNotWritten(@NotNull User user) {
+        return !this.author.equals(user);
     }
 
     public int numberOfLikes() {
         return this.favoriteUsers.size();
     }
 
-    public List<Tag> getTags() {
-        return this.includeTags.stream().map(ArticleTag::getTag).toList();
-    }
-
-    public boolean hasTag(@NotNull Tag tag) {
-        ArticleTag articleTag = createArticleTag(tag);
-        return this.includeTags.stream().anyMatch(articleTag::equals);
-    }
-
     public void addTag(@NotNull Tag tag) {
-        ArticleTag articleTag = createArticleTag(tag);
+        ArticleTag articleTag = new ArticleTag(this, tag);
+
+        if (this.includeTags.stream().anyMatch(articleTag::equals)) {
+            return;
+        }
+
         this.includeTags.add(articleTag);
     }
 
-    private ArticleTag createArticleTag(@NotNull Tag tag) {
-        return ArticleTag.builder()
-                .id(new ArticleTagId(this.getId(), tag.getId()))
-                .article(this)
-                .tag(tag)
-                .build();
+    public List<Tag> getTags() {
+        return this.includeTags.stream().map(ArticleTag::getTag).toList();
     }
 
     public String[] getTagNames() {
         return this.getTags().stream().map(Tag::getName).sorted().toArray(String[]::new);
     }
 
-    private String createSlugBy(@NotNull String title) {
-        return title.toLowerCase().replaceAll("\\s+", "-");
-    }
-
     public boolean equalsArticle(@NotNull ArticleFavorite articleFavorite) {
         return Objects.equals(this, articleFavorite.getArticle());
+    }
+
+    private String createSlugBy(@NotNull String title) {
+        return title.toLowerCase().replaceAll("\\s+", "-");
     }
 
     @Override
