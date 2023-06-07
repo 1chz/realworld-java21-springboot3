@@ -14,7 +14,7 @@ import com.p6spy.engine.spy.P6SpyOptions;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 
 @Configuration
-public class QueryFormattingConfiguration {
+public class QueryLogConfiguration {
     @PostConstruct
     public void setLogMessageFormat() {
         P6SpyOptions.getActiveInstance().setLogMessageFormat(CustomMessageFormattingStrategy.class.getName());
@@ -30,37 +30,37 @@ public class QueryFormattingConfiguration {
                 String prepared,
                 String query,
                 String url) {
-
             if (query == null || query.isBlank()) {
                 return "";
             }
 
-            FormatStyle formatStyle = isDDL(query) ? FormatStyle.DDL : FormatStyle.BASIC;
-            Formatter queryFormatter = formatStyle.getFormatter();
-
-            String prettyQuery =
-                    queryFormatter.format(query).replace("+0900", "").strip();
-
+            Formatter queryFormatter = getQueryFormatter(query);
+            String prettyQuery = getPrettyQuery(query, queryFormatter);
             return summary(prettyQuery, connectionId, elapsed, stacktrace());
         }
 
-        private boolean isDDL(String query) {
-            return query.startsWith("create") || query.startsWith("alter") || query.startsWith("comment");
+        private Formatter getQueryFormatter(String query) {
+            if (query.startsWith("create") || query.startsWith("alter") || query.startsWith("comment")) {
+                return FormatStyle.DDL.getFormatter();
+            }
+            return FormatStyle.HIGHLIGHT.getFormatter();
+        }
+
+        private String getPrettyQuery(String query, Formatter queryFormatter) {
+            return queryFormatter.format(query).replace("+0900", "").strip();
         }
 
         private String summary(String query, int connectionId, long elapsed, String stacktrace) {
             return """
 
                 ----------------------------------------------------------------------------------------------------
-                                                               QUERY
+                                                            QUERY LOG
                 ----------------------------------------------------------------------------------------------------
                 \t%s
                 ----------------------------------------------------------------------------------------------------
-                                                            INFORMATION
-                ----------------------------------------------------------------------------------------------------
-                Connection ID                           : %s
-                Execution Time                          : %s ms
-                Call Stack (number 1 is entry point)    :
+                - Connection ID                           : %s
+                - Execution Time                          : %s ms
+                - Call Stacks                             :
                 %s
                 ----------------------------------------------------------------------------------------------------
                 """
@@ -71,15 +71,16 @@ public class QueryFormattingConfiguration {
             Stack<String> callstack = new Stack<>();
             stream(new Throwable().getStackTrace())
                     .map(StackTraceElement::toString)
-                    .filter(trace -> trace.startsWith("io.github.shirohoo")
-                            && !trace.contains(getClass().getSimpleName()))
+                    .filter(trace -> trace.startsWith("io.github.shirohoo"))
+                    .filter(trace -> !trace.contains(getClass().getSimpleName()))
+                    .filter(trace -> !trace.contains("CGLIB"))
                     .forEach(callstack::push);
 
             StringBuilder traceBuilder = new StringBuilder();
             int order = 1;
 
             while (!callstack.empty()) {
-                String trace = "\t%s. %s\n".formatted(order++, callstack.pop());
+                String trace = "\t %s. %s\n".formatted(order++, callstack.pop());
                 traceBuilder.append(trace);
             }
 
