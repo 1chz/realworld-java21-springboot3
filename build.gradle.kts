@@ -62,7 +62,7 @@ spotless {
         formatAnnotations()
         removeUnusedImports()
         trimTrailingWhitespace()
-        importOrder("io.github.shirohoo", "java", "javax", "jakarta", "org", "com", "lombok")
+        importOrder("io.shirohoo", "java", "javax", "jakarta", "org", "com", "lombok")
     }
 
     kotlin {
