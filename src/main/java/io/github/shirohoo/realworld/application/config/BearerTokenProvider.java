@@ -29,7 +29,7 @@ public class BearerTokenProvider {
 
         JwtEncoderParameters parameters = JwtEncoderParameters.from(claimsSet);
         String token = jwtEncoder.encode(parameters).getTokenValue();
-        log.info("Generated bearer token with user id `{}`: {}", user.getId(), token);
+        log.debug("Generated bearer token with user id `{}`: {}", user.getId(), token);
         return token;
     }
 }
