@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class ExceptionHandleFilter extends OncePerRequestFilter {
-    private final ExceptionHandleInterceptor exceptionHandler;
+    private final ExceptionHandleInterceptor delegator;
 
     @Override
     @SuppressWarnings("NullableProblems")
@@ -23,7 +23,7 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            exceptionHandler.handle(e);
+            delegator.handle(e);
         }
     }
 }
