@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
 }
 
-group = "io.github.shirohoo"
+group = "io.shirohoo"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -26,7 +26,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
