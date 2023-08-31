@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class CustomPrefixBearerTokenResolver implements BearerTokenResolver {
     private static final Pattern AUTHORIZATION_PATTERN =
-            Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^(Bearer|Token) (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
 
     @Override
     public String resolve(HttpServletRequest request) {
@@ -41,7 +41,10 @@ public class CustomPrefixBearerTokenResolver implements BearerTokenResolver {
 
     private String resolveFromAuthorizationHeader(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!StringUtils.startsWithIgnoreCase(authorization, "token")) return null;
+        if (
+                !StringUtils.startsWithIgnoreCase(authorization, "bearer") &&
+                !StringUtils.startsWithIgnoreCase(authorization, "token")
+        ) return null;
         Matcher matcher = AUTHORIZATION_PATTERN.matcher(authorization);
         if (!matcher.matches()) {
             BearerTokenError error = BearerTokenErrors.invalidToken("Bearer token is malformed");
