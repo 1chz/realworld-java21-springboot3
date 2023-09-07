@@ -1,32 +1,61 @@
 package io.shirohoo.realworld.domain.order;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-import java.io.Serializable;
+import io.shirohoo.realworld.domain.article.Article;
+import jakarta.persistence.*;
 
 @Entity
-public class OrderArticle implements Serializable {
+public class OrderArticle {
+    @EmbeddedId
+    private OrderArticleId id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderId;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int articleId;
+    @MapsId("orderId")
+    @JoinColumn(name = "order_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ArticleOrder articleOrder;
+    @MapsId("articleId")
+    @JoinColumn(name = "article_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Article article;
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+    public ArticleOrder getArticleOrder() {
+        return articleOrder;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public void setArticleOrder(ArticleOrder articleOrder) {
+        this.articleOrder = articleOrder;
     }
 
+    public OrderArticle(ArticleOrder articleOrder, Article article) {
+        this.id = new OrderArticleId(articleOrder.getId(), article.getId());
+        this.articleOrder = articleOrder;
+        this.article = article;
+    }
 
+    public OrderArticle() {
+    }
+
+    public ArticleOrder getOrder() {
+        return articleOrder;
+    }
+
+    public void setOrder(ArticleOrder articleOrder) {
+        this.articleOrder = articleOrder;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
+    }
+
+    public OrderArticleId getId() {
+        return id;
+    }
+
+    public void setId(OrderArticleId id) {
+        this.id = id;
+    }
 }
