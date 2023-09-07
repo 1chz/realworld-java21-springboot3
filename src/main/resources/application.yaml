@@ -1,12 +1,13 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb?MODE=MYSQL
-    username: sa
+     driver-class-name: org.postgresql.Driver
+     url: jdbc:postgresql://localhost:5444/postgres
+     username: postgres
+     password: realworldpassword
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         default_batch_fetch_size: 500
