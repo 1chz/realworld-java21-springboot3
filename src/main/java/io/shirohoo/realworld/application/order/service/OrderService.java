@@ -2,7 +2,6 @@ package io.shirohoo.realworld.application.order.service;
 
 
 import io.shirohoo.realworld.application.order.controller.CreateOrderRequest;
-import io.shirohoo.realworld.application.order.controller.OrderController;
 import io.shirohoo.realworld.domain.order.OrderRepository;
 import io.shirohoo.realworld.domain.order.Orders;
 import org.springframework.stereotype.Service;
@@ -11,12 +10,11 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
 
-    private final OrderController orderController;
+    private final OrderRepository orderRepository;
 
-    public OrderService(OrderController orderController) {
+    public OrderService(OrderRepository orderRepository) {
+            this.orderRepository = orderRepository;
 
-
-        this.orderController = orderController;
     }
 
 
@@ -36,13 +34,14 @@ public class OrderService {
             orders.setPrice(1000);
         }
 
-        orderController.saveOrder(orders);
+        orderRepository.save(orders);
+
 
 return orders;
 
     }
 
-    public OrderController getOrderController() {
-        return orderController;
+    public OrderRepository orderRepository() {
+        return orderRepository;
     }
 }

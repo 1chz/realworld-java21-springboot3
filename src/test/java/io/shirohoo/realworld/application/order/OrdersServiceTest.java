@@ -13,8 +13,6 @@ import io.shirohoo.realworld.domain.order.OrderArticleRepository;
 import io.shirohoo.realworld.domain.order.OrderRepository;
 import io.shirohoo.realworld.domain.user.User;
 import io.shirohoo.realworld.domain.user.UserRepository;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -103,21 +101,14 @@ public class OrdersServiceTest {
 
     @Test
     @DisplayName("Should transform CreateOrderRequest to Order")
-    public void saveCreateOrderRequestasOrder(){
+    public void saveCreateOrderRequestAsOrder(){
 
 
         CreateOrderRequest createOrderRequest = new CreateOrderRequest(james, "Some address", james.getEmail());
         Orders orders = orderService.createOrder(createOrderRequest);
+        System.out.println(orders.getId() + " : " + orders.getEmail());
 
-
-
-//        Orders returnedOrder = orderRepository.findById(orders.getId()).get();
-
-
-//        assertNotNull(orders.getId());
         assertThat(orders.getId(), greaterThan(0));
-//        assertEquals(orders, returnedOrder);
-//        assertTrue(orders == returnedOrder);
 
 
 
