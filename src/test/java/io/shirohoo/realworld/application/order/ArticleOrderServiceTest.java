@@ -52,10 +52,6 @@ public class ArticleOrderServiceTest {
     @BeforeEach
     void setUp() throws Exception {
 
-        tagRepository.deleteAll();
-//        articleRepository.deleteAll();
-        userRepository.deleteAll();
-
         james = User.builder()
             .email("james@example.com")
             .username("james")
