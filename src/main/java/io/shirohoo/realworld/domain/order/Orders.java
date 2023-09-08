@@ -3,6 +3,7 @@ package io.shirohoo.realworld.domain.order;
 
 import jakarta.persistence.*;
 
+import javax.lang.model.type.ErrorType;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,7 +20,8 @@ public class Orders {
     private String email;
     private String snailMailAddress;
     private boolean processed;
-    private String errorType;
+    private ErrorType errorType;
+    private Integer price;
     @OneToMany(mappedBy = "article" )
     private Set<OrderArticle> orderArticles = new HashSet<>();
 
@@ -46,7 +48,7 @@ public class Orders {
         return processed;
     }
 
-    public String getErrorType() {
+    public ErrorType getErrorType() {
         return errorType;
     }
 
@@ -79,8 +81,19 @@ public class Orders {
     }
 
 
-    public void setErrorType(String errorType) {
+    public void setErrorType(ErrorType errorType) {
         this.errorType = errorType;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+    enum ErrorType{
+        UNKNOWN, INVALID_ADDRESS
     }
 }
 

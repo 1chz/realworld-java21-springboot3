@@ -1,6 +1,8 @@
 package io.shirohoo.realworld.application.order;
 
 import io.shirohoo.realworld.IntegrationTest;
+import io.shirohoo.realworld.application.order.controller.CreateOrderRequest;
+import io.shirohoo.realworld.application.order.service.OrderService;
 import io.shirohoo.realworld.domain.article.Article;
 import io.shirohoo.realworld.domain.article.ArticleRepository;
 import io.shirohoo.realworld.domain.article.Tag;
@@ -11,6 +13,8 @@ import io.shirohoo.realworld.domain.order.OrderArticleRepository;
 import io.shirohoo.realworld.domain.order.OrderRepository;
 import io.shirohoo.realworld.domain.user.User;
 import io.shirohoo.realworld.domain.user.UserRepository;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @IntegrationTest
@@ -36,6 +41,8 @@ public class OrdersServiceTest {
     TagRepository tagRepository;
 @Autowired
     OrderArticleRepository orderArticleRepository;
+@Autowired
+    OrderService orderService;
 
     private Article effectiveJava;
     private Article unEffectiveJava;
@@ -94,6 +101,28 @@ public class OrdersServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Should transform CreateOrderRequest to Order")
+    public void saveCreateOrderRequestasOrder(){
+
+
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest(james, "Some address", james.getEmail());
+        Orders orders = orderService.createOrder(createOrderRequest);
+
+
+
+//        Orders returnedOrder = orderRepository.findById(orders.getId()).get();
+
+
+//        assertNotNull(orders.getId());
+        assertThat(orders.getId(), greaterThan(0));
+//        assertEquals(orders, returnedOrder);
+//        assertTrue(orders == returnedOrder);
+
+
+
+
+    }
 
      @Test
      @DisplayName("Should create an order with multiple articles")
