@@ -9,7 +9,7 @@ import java.util.UUID;
 
 
 @Entity
-public class ArticleOrder {
+public class Orders {
 
     @Id
     @Column(name = "order_id")
@@ -23,7 +23,7 @@ public class ArticleOrder {
     @OneToMany(mappedBy = "article" )
     private Set<OrderArticle> orderArticles = new HashSet<>();
 
-    public ArticleOrder() {
+    public Orders() {
     }
 
     public Integer getId() {

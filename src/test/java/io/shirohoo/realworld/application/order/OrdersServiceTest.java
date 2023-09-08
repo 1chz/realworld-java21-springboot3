@@ -5,23 +5,17 @@ import io.shirohoo.realworld.domain.article.Article;
 import io.shirohoo.realworld.domain.article.ArticleRepository;
 import io.shirohoo.realworld.domain.article.Tag;
 import io.shirohoo.realworld.domain.article.TagRepository;
-import io.shirohoo.realworld.domain.order.ArticleOrder;
+import io.shirohoo.realworld.domain.order.Orders;
 import io.shirohoo.realworld.domain.order.OrderArticle;
 import io.shirohoo.realworld.domain.order.OrderArticleRepository;
 import io.shirohoo.realworld.domain.order.OrderRepository;
 import io.shirohoo.realworld.domain.user.User;
 import io.shirohoo.realworld.domain.user.UserRepository;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IntegrationTest
 @DisplayName("The order service")
-public class ArticleOrderServiceTest {
+public class OrdersServiceTest {
 
 @Autowired
     ArticleRepository articleRepository;
@@ -105,26 +99,26 @@ public class ArticleOrderServiceTest {
      @DisplayName("Should create an order with multiple articles")
      public void createOrderWithMultipleArticles(){
 
-        ArticleOrder articleOrder = new ArticleOrder();
-        articleOrder.setEmail(simpson.getEmail());
-        articleOrder.setUser_id(UUID.fromString("bf46c3cb-6215-4748-a09f-136da25bd183"));
-        orderRepository.save(articleOrder);
+        Orders orders = new Orders();
+        orders.setEmail(simpson.getEmail());
+        orders.setUser_id(UUID.fromString("bf46c3cb-6215-4748-a09f-136da25bd183"));
+        orderRepository.save(orders);
 
-         OrderArticle orderArticle = new OrderArticle(articleOrder, effectiveJava);
+         OrderArticle orderArticle = new OrderArticle(orders, effectiveJava);
          orderArticleRepository.save(orderArticle);
-         OrderArticle anotherOrderArticle = new OrderArticle(articleOrder, unEffectiveJava);
+         OrderArticle anotherOrderArticle = new OrderArticle(orders, unEffectiveJava);
          orderArticleRepository.save(anotherOrderArticle);
-         OrderArticle thirdOrderArticle = new OrderArticle(articleOrder, tdd);
+         OrderArticle thirdOrderArticle = new OrderArticle(orders, tdd);
          orderArticleRepository.save(thirdOrderArticle);
 
-         articleOrder.addOrderArticle(orderArticle);
-         articleOrder.addOrderArticle(anotherOrderArticle);
-         articleOrder.addOrderArticle(thirdOrderArticle);
+         orders.addOrderArticle(orderArticle);
+         orders.addOrderArticle(anotherOrderArticle);
+         orders.addOrderArticle(thirdOrderArticle);
 
-         orderRepository.save(articleOrder);
+         orderRepository.save(orders);
 
-         ArticleOrder fetchedArticleOrder = orderRepository.findById(articleOrder.getId()).get();
-         assertTrue(fetchedArticleOrder.getOrderArticles().size() > 2);
+         Orders fetchedOrders = orderRepository.findById(orders.getId()).get();
+         assertTrue(fetchedOrders.getOrderArticles().size() > 2);
 
 
      }
@@ -133,22 +127,22 @@ public class ArticleOrderServiceTest {
     @DisplayName("Should create an order with one article")
     public void createOrderWithOneArticle(){
 
-        ArticleOrder articleOrder = new ArticleOrder();
-        articleOrder.setEmail("email@email.com");
-        articleOrder.setProcessed(false);
-        articleOrder.setUser_id(UUID.fromString("bf46c3cb-6215-4748-a09f-136da25bd183"));
-        orderRepository.save(articleOrder);
+        Orders orders = new Orders();
+        orders.setEmail("email@email.com");
+        orders.setProcessed(false);
+        orders.setUser_id(UUID.fromString("bf46c3cb-6215-4748-a09f-136da25bd183"));
+        orderRepository.save(orders);
 
-        OrderArticle orderArticle = new OrderArticle(articleOrder, effectiveJava);
+        OrderArticle orderArticle = new OrderArticle(orders, effectiveJava);
         orderArticleRepository.save(orderArticle);
 
 
-        articleOrder.addOrderArticle(orderArticle);
-        orderRepository.save(articleOrder);
+        orders.addOrderArticle(orderArticle);
+        orderRepository.save(orders);
 
-        ArticleOrder savedOrder = orderRepository.findById(articleOrder.getId()).get();
+        Orders savedOrder = orderRepository.findById(orders.getId()).get();
 
-        assertEquals(savedOrder, articleOrder);
+        assertEquals(savedOrder, orders);
 
 
     }

@@ -12,35 +12,35 @@ public class OrderArticle {
     @MapsId("orderId")
     @JoinColumn(name = "order_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private ArticleOrder articleOrder;
+    private Orders orders;
     @MapsId("articleId")
     @JoinColumn(name = "article_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
 
-    public ArticleOrder getArticleOrder() {
-        return articleOrder;
+    public Orders getArticleOrder() {
+        return orders;
     }
 
-    public void setArticleOrder(ArticleOrder articleOrder) {
-        this.articleOrder = articleOrder;
+    public void setArticleOrder(Orders orders) {
+        this.orders = orders;
     }
 
-    public OrderArticle(ArticleOrder articleOrder, Article article) {
-        this.id = new OrderArticleId(articleOrder.getId(), article.getId());
-        this.articleOrder = articleOrder;
+    public OrderArticle(Orders orders, Article article) {
+        this.id = new OrderArticleId(orders.getId(), article.getId());
+        this.orders = orders;
         this.article = article;
     }
 
     public OrderArticle() {
     }
 
-    public ArticleOrder getOrder() {
-        return articleOrder;
+    public Orders getOrder() {
+        return orders;
     }
 
-    public void setOrder(ArticleOrder articleOrder) {
-        this.articleOrder = articleOrder;
+    public void setOrder(Orders orders) {
+        this.orders = orders;
     }
 
     public Article getArticle() {

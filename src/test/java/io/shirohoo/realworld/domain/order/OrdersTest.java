@@ -5,7 +5,7 @@ import io.shirohoo.realworld.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ArticleOrderTest {
+public class OrdersTest {
 
 
     private Article effectiveJava;
@@ -17,7 +17,7 @@ public class ArticleOrderTest {
     }
     @Test
     public void shouldCreateOrderWithOneArticle(){
-        
+
     }
 
 
