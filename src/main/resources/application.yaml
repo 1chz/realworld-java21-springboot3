@@ -5,14 +5,19 @@ logging:
 
 spring:
   datasource:
-     driver-class-name: org.postgresql.Driver
-     url: jdbc:postgresql://localhost:5444/postgres
-     username: postgres
-     password: realworldpassword
+    #     driver-class-name: org.postgresql.Driver
+    #     url: jdbc:postgresql://localhost:5444/postgres
+    #     username: postgres
+    #     password: realworldpassword
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:data;
+    username: sa
+    password:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      #      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         # for read (where in clause)
