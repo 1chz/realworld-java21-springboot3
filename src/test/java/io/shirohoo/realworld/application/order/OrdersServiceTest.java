@@ -100,13 +100,48 @@ public class OrdersServiceTest {
     }
 
     @Test
+    @DisplayName("Should calculate price of order")
+    public void calculateOrderPrice(){
+
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest(james, "Some address", james.getEmail());
+        Orders orders = orderService.createOrder(createOrderRequest);
+        orders.setUser_id(UUID.fromString("bf46c3cb-6215-4748-a09f-136da25bd183"));
+        orderRepository.save(orders);
+
+        orderService.addArticleToOrder(effectiveJava, orders);
+        orderService.addArticleToOrder(unEffectiveJava, orders);
+        orderService.addArticleToOrder(tdd, orders);
+
+        orderService.updateOrder(orders);
+        assertTrue(orders.getPrice() > 0);
+    }
+
+    @Test
+    @DisplayName("Should add article to existing order")
+    public void addArticleToOrder(){
+
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest(james, "Some address", james.getEmail());
+        Orders orders = orderService.createOrder(createOrderRequest);
+        OrderArticle orderArticle1 = new OrderArticle(orders, effectiveJava);
+        orders.addOrderArticle(orderArticle1);
+        orderArticleRepository.save(orderArticle1);
+
+        System.out.println(orders);
+        orderService.updateOrder(orders);
+        assertFalse(orders.getOrderArticles().isEmpty());
+
+
+
+    }
+
+    @Test
     @DisplayName("Should transform CreateOrderRequest to Order")
     public void saveCreateOrderRequestAsOrder(){
 
 
         CreateOrderRequest createOrderRequest = new CreateOrderRequest(james, "Some address", james.getEmail());
         Orders orders = orderService.createOrder(createOrderRequest);
-        System.out.println(orders.getId() + " : " + orders.getEmail());
+        System.out.println(orders);
 
         assertThat(orders.getId(), greaterThan(0));
 

@@ -95,5 +95,19 @@ public class Orders {
     enum ErrorType{
         UNKNOWN, INVALID_ADDRESS
     }
+
+    @Override
+    public String toString() {
+        return "Orders{" +
+            "id=" + id +
+            ", user_id=" + user_id +
+            ", email='" + email + '\'' +
+            ", snailMailAddress='" + snailMailAddress + '\'' +
+            ", processed=" + processed +
+            ", errorType=" + errorType +
+            ", price=" + price +
+            ", orderArticles=" + orderArticles +
+            '}';
+    }
 }
 
