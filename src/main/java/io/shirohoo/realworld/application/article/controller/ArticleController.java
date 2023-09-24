@@ -37,8 +37,8 @@ public class ArticleController {
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "favorited", required = false) String favorited,
-            @RequestParam(value = "limit", required = false, defaultValue = "0") int offset,
-            @RequestParam(value = "offset", required = false, defaultValue = "20") int limit) {
+            @RequestParam(value = "limit", required = false, defaultValue = "0") int limit,
+            @RequestParam(value = "offset", required = false, defaultValue = "20") int offset) {
         ArticleFacets facets = new ArticleFacets(tag, author, favorited, offset, limit);
         List<ArticleVO> articles = articleService.getArticles(me, facets);
         return new MultipleArticlesResponse(articles);
@@ -66,8 +66,8 @@ public class ArticleController {
     @GetMapping("/api/articles/feed")
     public MultipleArticlesResponse getFeedArticles(
             User me,
-            @RequestParam(value = "limit", required = false, defaultValue = "0") int offset,
-            @RequestParam(value = "offset", required = false, defaultValue = "20") int limit) {
+            @RequestParam(value = "limit", required = false, defaultValue = "0") int limit,
+            @RequestParam(value = "offset", required = false, defaultValue = "20") int offset) {
         ArticleFacets facets = new ArticleFacets(null, null, null, offset, limit);
         List<ArticleVO> articles = articleService.getFeedArticles(me, facets);
         return new MultipleArticlesResponse(articles);
