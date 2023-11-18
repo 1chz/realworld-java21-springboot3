@@ -1,20 +1,20 @@
-spring:
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb?MODE=MYSQL
-    username: sa
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        default_batch_fetch_size: 500
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
 
 security:
   key:
     private: classpath:app.key
     public: classpath:app.pub
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb?MODE=MYSQL;
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
 
 decorator:
   datasource:

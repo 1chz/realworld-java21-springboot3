@@ -1,37 +1,57 @@
 # ![RealWorld Example App](logo.png)
 
-> ### **Java 17 + Spring Boot 3** codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
+> ### **java 17 + Spring Boot 3** codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
 ### [Demo](https://demo.realworld.io/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
-This codebase was created to demonstrate a fully fledged fullstack application built with ****Java 17 + Spring Boot 3**** including CRUD operations, authentication, routing, pagination, and more.
+This codebase was created to demonstrate a fully fledged fullstack application built with ****java 17 + Spring Boot 3**** including CRUD operations, authentication, routing, pagination, and more.
 
-I have gone to great lengths to adhere to the **Java 17 + Spring Boot 3** community styleguides & best practices.
+I have gone to great lengths to adhere to the **java 17 + Spring Boot 3** community styleguide & best practices.
 
 For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
-# Considerations
+---
 
+## Table of Contents
+* [Considerations](#considerations)
+* [How it works](#how-it-works)
+  * [Project structures](#project-structures)
+     * [Packages](#packages)
+     * [Classes](#classes)
+* [Database architecture](#database-architecture)
+* [Getting started](#getting-started)
+   * [Run application](#run-application)
+   * [Run test](#run-test)
+   * [Check code style](#check-code-style)
+   * [Apply code style](#apply-code-style)
+   * [Run build](#run-build)
+   * [Run integration test](#run-integration-test)
+* [Migrate to Java 21](#migrate-to-java-21)
+
+---
+
+## Considerations
 While implementing this application, I had the following considerations. If there are any developers who are trying to learn by looking at this repository, or who are planning to develop something based on this repository, it might be helpful to
 consider these points:
 
-1. Proper error handling and logging: Ensure that the application handles errors gracefully and logs them appropriately. This will make it easier to debug issues in production and improve the overall reliability of the application.
-2. Scalability: Consider the scalability of the application, especially if it is expected to handle a large volume of traffic or data. This includes things like database sharding, load balancing, and caching.
-3. Security: Make sure the application is secure, including protecting against common attacks such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF). Use proper authentication and authorization mechanisms to ensure
+1. Ensure that the application handles errors gracefully and logs them appropriately. This will make it easier to debug issues in production and improve the overall reliability of the application.
+2. Scalability: Consider the scalability of the application, especially if it is expected to handle a large volume of traffic or data. For example, a User class can have both followers and following, but will this code work properly if the number of followers is in the hundreds of millions?
+3. Make sure the application is secure, including protecting against common attacks such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF). Use proper authentication and authorization mechanisms to ensure
    that only authorized users can access sensitive data or perform critical actions.
-4. Code maintainability: Write clean, maintainable code that is easy to understand and modify. Use best practices such as code commenting, code reviews, and version control to make it easier to maintain and evolve the application over time.
+4. Write clean, maintainable code that is easy to understand and modify. Use best practices such as code commenting, code reviews, and version control to make it easier to maintain and evolve the application over time.
 5. Performance: Optimize the performance of the application, especially for frequently used or resource-intensive operations. This includes things like database indexing, query optimization, and caching.
 6. If you implement JWT yourself, even if you use Spring Security, you will have to write a lot of code. That's why I used OAuth 2.0 Resource Server, which makes implementation much simpler.
-7. I was curious about mixing Layered Architecture and DDD style, so I tried it out myself.
-8. I have encountered various frameworks such as Django, Flask, FastAPI, Express, NestJS, Ktor, Quarkus, but I have not seen any framework as great as Spring yet. (The backward compatibility guaranteed by the Java ecosystem is truly amazing.)
+7. I have encountered various frameworks such as Django, Flask, FastAPI, Express, NestJS, Ktor, Quarkus, but I have not seen any framework as great as Spring yet. (The backward compatibility guaranteed by the Java ecosystem is truly amazing.)
    Therefore, I implemented it in a tightly coupled manner with the Spring framework, assuming that the framework would not change in the future.
-9. I was implemented it so that the dependency on the database layer is only through JPA. This makes it very easy to change databases. However, if you have a deep understanding of the database, you may be concerned about inefficient queries.
-10. I used H2 for the database. Although H2 is a memory database, it operates in MySQL mode and provides almost the same functionality as MySQL.
-11. I have excluded input validation. If necessary, it can be easily implemented using JSR-303(380) or similar technologies, so there should be no problem.
-12. I struggled with whether the slug and title of the article table should be unique, but ultimately decided to make them unique in accordance with the API specification.
+8. I was implemented it so that the dependency on the database layer is only through JPA. This makes it very easy to change databases. However, if you have a deep understanding of the database, you may be concerned about inefficient queries.
+9. I used H2 for the database. Although H2 is a memory database, it operates in MySQL mode and provides almost the same functionality as MySQL.
+10. I have excluded input validation. If necessary, it can be easily implemented using JSR-303(380) or similar technologies, so there should be no problem.
+11. I struggled with whether the slug and title of the article table should be unique, but ultimately decided to make them unique in accordance with the API specification.
+12. Dependencies were configured to converge to the domain package as much as possible. Dependencies can be more easily identified by looking at the import statement of each class.
 
-# How it works
+---
 
+## How it works
 The RealWorld project aims to create mini-blog applications with the same specifications using various technology stacks, allowing for a comparison between them.
 
 This application provides the following key features:
@@ -42,57 +62,58 @@ This application provides the following key features:
 4. Comment creation/viewing/editing/deletion on articles
 5. User profile viewing/editing
 
-The project is implemented based on Java 17 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database and JUnit5 for writing test codes.
+### Project structures
+The project is implemented based on java 17 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database. and JUnit5 for writing test codes.
 
 To run the project, JDK 17 must be installed first. Then, execute the ./gradlew bootRun command in the project root directory to run the application. After that, you can use the application by accessing http://localhost:8080 in your browser.
 
 Taking a closer look at the project structure, the main code of the application is located in the src/main/java directory, while the test code is located in the src/test/java directory. Additionally, configuration files and such can be found in the
 src/main/resources directory.
 
-The core logic of the application is organized as follows:
+The application's package dependencies and core logic are implemented as follows:
 
+#### Packages
+![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/e1181fae-1641-4938-8297-f70bdd9609c2)
+
+#### Classes
 - ~Controller: Processes HTTP requests, calls business logic, and generates responses.
 - ~Service: Implements business logic and interacts with the database through Repositories.
-- ~Repository: An interface for interacting with the database, implemented using Spring Data JPA.
+- ~Repository: An interface for interacting with the database, implemented using Spring Data JPA. 
+
+By using ~Repository in the core package as an interface, I was applied DIP so that the dependency of the persistence package is also directed to the core package.
+Finally, I was configured the dependencies so that all packages in the project depend on the core package. Please refer to the import statements for each class.
 
 Authentication and authorization management are implemented using Spring Security, with token-based authentication using JWT. Moreover, various features of Spring Boot are utilized to implement exception handling, logging, testing, and more.
 
 Through this project, you can learn how to implement backend applications based on Spring and how to utilize various Spring technologies. Additionally, by implementing an application following the RealWorld specifications, it provides a basis for
 deciding which technology stack to choose through comparisons with various other technology stacks.
 
-# Database Architecture
+---
 
+## Database architecture
 > **Note:** I paid attention to data types, but did not pay much attention to size.
 
 Many developers who use JPA tend to use Long as the id type. However, it's worth considering whether your table with an id of Long will ever need to store 2^63 records.
 
 - [schema.sql](database/schema.sql)
 
-<img width="3126" alt="image" src="https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/bc1bc799-fb2d-42a9-af04-12cd30630d59">
+![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/3603da86-b1bd-49a6-b0d9-cee296f98f33)
 
-# Getting started
+---
+
+## Getting started
 
 > **Note:** You just need to have JDK 17 installed.
 >
 > **Note:** If permission denied occurs when running the gradle task, enter `chmod +x gradlew` to grant the permission.
 
-## Run application
+### Run application
 
 ```shell
 ./gradlew bootRun
 ```
 
-## Run test
-
-> **Note:** Running this task will generate a test coverage report at `build/jacoco/html/index.html`.
-
-```shell
-./gradlew test
-```
-
-<img width="1101" alt="image" src="https://user-images.githubusercontent.com/71188307/231682992-c5b16c47-388f-4e29-80fd-3e3759464698.png">
-
-## Check code style
+### Check code style
 
 > **Note:** When you run the `build` task, this task runs automatically. If the code style doesn't match, the build will fail.
 
@@ -100,21 +121,51 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ./gradlew spotlessCheck
 ```
 
-## Apply code style
+### Apply code style
 
 ```shell
 ./gradlew spotlessApply
 ```
 
-## Run build
+### Run build
 
 ```shell
 ./gradlew build
 ```
 
-## Run integration test
+### Run test
+
+> **Note:** Running this task will generate a test coverage report at `build/jacoco/html/index.html`.
+
+```shell
+./gradlew test
+```
+
+### Run integration test
 
 1. Run application (**important**)
 2. [Run integration test](api/README.md#running-api-tests-locally)
 
 <img width="931" alt="image" src="https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/e747e660-cb3f-4c98-86fc-abd717bb0c30">
+
+---
+
+## Migrate to Java 21
+
+First of all, you need to install Java 21, and just change the Java version in `build.gradle.kts` as follows.
+
+```gradle
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+```
+
+Additionally, you may need to upgrade your gradle version to 8+ or higher. In this case, you can modify the distributionUrl in the gradle-wrapper.properties file as follows.
+
+```properties
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
+```
+
+Please note that there may be compatibility issues with the formatter used in this project when upgrading to Java 21. 
+Currently, this project utilizes [palantir-java-format](https://github.com/palantir/palantir-java-format), and as of the time of writing this document, there are [issues](https://github.com/palantir/palantir-java-format/issues/943) with upgrading to Java 21. 
+If you still encounter problems resolving this issue during your migration to Java 21, you may consider applying alternatives such as [google-java-format](https://github.com/google/google-java-format).

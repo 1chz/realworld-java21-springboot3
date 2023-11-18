@@ -1,0 +1,1 @@
+This application is for demonstration purposes only. Real production code should not manage keys like this.
