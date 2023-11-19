@@ -60,9 +60,8 @@ This application provides the following key features:
 2. CRU- users (sign up & settings page - no deleting required)
 3. CRUD Articles (offset based pagination, filtering by facets, sorting)
 4. CR-D Comments on articles (no updating required)
-5. GET and display paginated lists of articles
-6. Favorite articles
-7. Follow other users
+5. Favorite articles
+6. Follow other users
 
 ### Project structures
 The project is implemented based on java 17 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database. and JUnit5 for writing test codes.
