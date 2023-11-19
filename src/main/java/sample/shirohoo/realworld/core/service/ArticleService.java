@@ -51,7 +51,7 @@ public class ArticleService {
      * @return Returns articles
      */
     public List<Article> readArticles(ArticleFacets facets) {
-        return articleRepository.findByFacets(facets);
+        return articleRepository.findAll(facets);
     }
 
     /**

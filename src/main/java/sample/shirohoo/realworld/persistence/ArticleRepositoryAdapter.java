@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,16 +27,19 @@ class ArticleRepositoryAdapter implements ArticleRepository {
     }
 
     @Override
-    public Optional<Article> findBySlug(String slug) {
-        return articleJpaRepository.findBySlug(slug);
+    public List<Article> findAll(ArticleFacets facets) {
+        Specification<Article> spec = Specification.where(ArticleSpecifications.hasAuthorName(facets.author()))
+                .or(ArticleSpecifications.hasTagName(facets.tag()))
+                .or(ArticleSpecifications.hasFavoritedUsername(facets.favorited()));
+
+        PageRequest pageable = PageRequest.of(facets.page(), facets.size());
+
+        return articleJpaRepository.findAll(spec, pageable).getContent();
     }
 
     @Override
-    public List<Article> findByFacets(ArticleFacets facets) {
-        return articleJpaRepository
-                .findByFacets(
-                        facets.tag(), facets.author(), facets.favorited(), PageRequest.of(facets.page(), facets.size()))
-                .getContent();
+    public Optional<Article> findBySlug(String slug) {
+        return articleJpaRepository.findBySlug(slug);
     }
 
     @Override

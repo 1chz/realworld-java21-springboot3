@@ -7,9 +7,9 @@ import java.util.Optional;
 public interface ArticleRepository {
     Article save(Article article);
 
-    Optional<Article> findBySlug(String slug);
+    List<Article> findAll(ArticleFacets facets);
 
-    List<Article> findByFacets(ArticleFacets facets);
+    Optional<Article> findBySlug(String slug);
 
     List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets);
 
