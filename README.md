@@ -16,7 +16,7 @@ For more information on how to this works with other frontends/backends, head ov
 * [Considerations](#considerations)
 * [How it works](#how-it-works)
   * [Project structures](#project-structures)
-     * [Packages](#packages)
+     * [Modules](#modules)
      * [Classes](#classes)
 * [Database architecture](#database-architecture)
 * [Getting started](#getting-started)
@@ -73,8 +73,13 @@ src/main/resources directory.
 
 The application's package dependencies and core logic are implemented as follows:
 
-#### Packages
-![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/e1181fae-1641-4938-8297-f70bdd9609c2)
+#### Modules
+`core`, `persistence`, `api` and `modular-application` modules exist, and each module performs the following roles.
+
+- core: Contains the core logic of the application, including the domain model, service, and exception handling.
+- persistence: Contains the persistence layer logic of the application, including the repository and entity.
+- api: Contains the API layer logic of the application, including the controller and DTO.
+- modular-application: All existing modules are put together to form an executable application.
 
 #### Classes
 - ~Controller: Processes HTTP requests, calls business logic, and generates responses.
