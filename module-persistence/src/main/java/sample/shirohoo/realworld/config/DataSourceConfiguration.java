@@ -14,7 +14,7 @@ import com.p6spy.engine.spy.P6SpyOptions;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 
 @Configuration
-public class DataSourceConfiguration {
+class DataSourceConfiguration {
     @PostConstruct
     public void setQueryLogMessageFormat() {
         P6SpyOptions.getActiveInstance().setLogMessageFormat(PrettyQueryFormatStrategy.class.getName());

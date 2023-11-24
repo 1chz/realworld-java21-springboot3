@@ -29,7 +29,7 @@ import sample.shirohoo.realworld.core.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-class UserController {
+public class UserController {
     private static final String LOGIN_URL = "/api/users/login";
 
     private final UserService userService;

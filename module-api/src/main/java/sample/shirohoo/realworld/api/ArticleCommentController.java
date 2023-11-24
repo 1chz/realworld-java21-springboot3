@@ -28,7 +28,7 @@ import sample.shirohoo.realworld.core.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-class ArticleCommentController {
+public class ArticleCommentController {
     private final UserService userService;
     private final ArticleService articleService;
     private final SocialService socialService;
