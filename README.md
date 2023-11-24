@@ -74,6 +74,8 @@ src/main/resources directory.
 The application's package dependencies and core logic are implemented as follows:
 
 #### Modules
+![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/2b6310ce-215d-46e4-8f00-77cc62a383da)
+
 `core`, `persistence`, `api` and `modular-application` modules exist, and each module performs the following roles.
 
 - core: Contains the core logic of the application, including the domain model, service, and exception handling.

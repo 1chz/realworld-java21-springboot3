@@ -10,7 +10,6 @@ plugins {
 
 dependencies {
     // modules
-    implementation(project(":module-core"))
     implementation(project(":module-api"))
     implementation(project(":module-persistence"))
 
