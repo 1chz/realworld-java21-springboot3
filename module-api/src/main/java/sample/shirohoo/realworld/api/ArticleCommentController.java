@@ -28,7 +28,7 @@ import sample.shirohoo.realworld.core.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-public class ArticleCommentController {
+class ArticleCommentController {
     private final UserService userService;
     private final ArticleService articleService;
     private final SocialService socialService;
@@ -64,9 +64,9 @@ public class ArticleCommentController {
                 .toList());
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
-    public void doDelete(Authentication authentication, @PathVariable String slug, @PathVariable("id") int commentId) {
+    public void doDelete(Authentication authentication, @PathVariable("id") int commentId) {
         User requester = userService.getUserById(UUID.fromString(authentication.getName()));
         ArticleComment articleComment = articleCommentService.readComment(commentId);
 

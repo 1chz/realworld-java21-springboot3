@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class UserFollowTest {
     @Test
+    @SuppressWarnings("DataFlowIssue")
     void if_follower_is_null_an_exception_is_thrown() {
         assertThatThrownBy(() -> new UserFollow(null, null))
                 .isInstanceOf(IllegalArgumentException.class)

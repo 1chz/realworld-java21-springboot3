@@ -37,7 +37,7 @@ import sample.shirohoo.realworld.core.model.PasswordEncoder;
 
 @Configuration
 @EnableMethodSecurity
-public class SecurityConfiguration {
+class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.httpBasic(AbstractHttpConfigurer::disable)

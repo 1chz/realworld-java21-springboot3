@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import sample.shirohoo.realworld.core.model.PasswordEncoder;
 
 @RequiredArgsConstructor
-public class PasswordEncoderAdapter implements PasswordEncoder {
+class PasswordEncoderAdapter implements PasswordEncoder {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override

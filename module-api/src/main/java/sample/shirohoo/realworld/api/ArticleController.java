@@ -1,6 +1,7 @@
 package sample.shirohoo.realworld.api;
 
-import java.util.List;
+import static java.util.stream.Collectors.*;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ import sample.shirohoo.realworld.api.response.MultipleArticlesResponse;
 import sample.shirohoo.realworld.api.response.SingleArticleResponse;
 import sample.shirohoo.realworld.core.model.Article;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
+import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.model.ArticleTag;
 import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.service.ArticleService;
@@ -31,7 +33,7 @@ import sample.shirohoo.realworld.core.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-public class ArticleController {
+class ArticleController {
     private final UserService userService;
     private final ArticleService articleService;
 
@@ -45,7 +47,7 @@ public class ArticleController {
                 request.article().body()));
         Set<ArticleTag> articleTags = articleService.addArticleTags(article, request.tags());
 
-        return SingleArticleResponse.from(article, articleTags, false, 0);
+        return new SingleArticleResponse(new ArticleInfo(article, articleTags, 0, false));
     }
 
     @GetMapping("/api/articles")
@@ -58,19 +60,28 @@ public class ArticleController {
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         ArticleFacets facets = new ArticleFacets(tag, author, favorited, offset, limit);
 
-        // Todo: You can optimize the lookup query by modifying it to bulk operation.
-        List<ArticleResponse> articleResponses = articleService.readArticles(facets).stream()
-                .map(article -> this.toArticleResponse(authentication, article))
-                .toList();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return articleService.readArticles(facets).stream()
+                    .map(ArticleResponse::new)
+                    .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
+        }
 
-        return new MultipleArticlesResponse(articleResponses);
+        User user = userService.getUserById(UUID.fromString(authentication.getName()));
+        return articleService.readArticles(user, facets).stream()
+                .map(ArticleResponse::new)
+                .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
     }
 
     @GetMapping("/api/articles/{slug}")
     public SingleArticleResponse doGet(Authentication authentication, @PathVariable String slug) {
         Article article = articleService.readArticleBySlug(slug);
 
-        return new SingleArticleResponse(this.toArticleResponse(authentication, article));
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return new SingleArticleResponse(articleService.getArticleInfoByAnonymous(article));
+        }
+
+        User user = userService.getUserById(UUID.fromString(authentication.getName()));
+        return new SingleArticleResponse(articleService.getArticleInfoByUser(user, article));
     }
 
     @PutMapping("/api/articles/{slug}")
@@ -94,7 +105,8 @@ public class ArticleController {
                     requester, article, request.article().body());
         }
 
-        return new SingleArticleResponse(this.toArticleResponse(requester, article));
+        ArticleInfo articleInfo = articleService.getArticleInfoByUser(requester, article);
+        return new SingleArticleResponse(articleInfo);
     }
 
     @DeleteMapping("/api/articles/{slug}")
@@ -107,38 +119,14 @@ public class ArticleController {
 
     @GetMapping("/api/articles/feed")
     public MultipleArticlesResponse doGet(
-            Authentication authentication,
+            Authentication authentication, // Must be verified
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         ArticleFacets facets = new ArticleFacets(offset, limit);
-
         User requester = userService.getUserById(UUID.fromString(authentication.getName()));
 
-        // Todo: You can optimize the lookup query by modifying it to bulk operation.
-        List<ArticleResponse> articleResponses = articleService.readFeeds(requester, facets).stream()
-                .map(article -> this.toArticleResponse(authentication, article))
-                .toList();
-
-        return new MultipleArticlesResponse(articleResponses);
-    }
-
-    private ArticleResponse toArticleResponse(Authentication authentication, Article article) {
-        Set<ArticleTag> articleTags = articleService.getArticleTags(article);
-        int countFavorites = articleService.getTotalFavorites(article);
-
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return ArticleResponse.from(article, articleTags, false, countFavorites);
-        }
-
-        User user = userService.getUserById(UUID.fromString(authentication.getName()));
-        boolean favorited = articleService.isFavorited(user, article);
-        return ArticleResponse.from(article, articleTags, favorited, countFavorites);
-    }
-
-    private ArticleResponse toArticleResponse(User user, Article article) {
-        Set<ArticleTag> articleTags = articleService.getArticleTags(article);
-        int countFavorites = articleService.getTotalFavorites(article);
-        boolean favorited = articleService.isFavorited(user, article);
-        return ArticleResponse.from(article, articleTags, favorited, countFavorites);
+        return articleService.readFeeds(requester, facets).stream()
+                .map(ArticleResponse::new)
+                .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
     }
 }

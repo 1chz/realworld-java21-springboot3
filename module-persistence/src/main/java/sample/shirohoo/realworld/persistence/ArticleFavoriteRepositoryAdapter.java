@@ -30,9 +30,4 @@ class ArticleFavoriteRepositoryAdapter implements ArticleFavoriteRepository {
     public boolean existsByUserAndArticle(User user, Article article) {
         return articleFavoriteJpaRepository.existsByUserAndArticle(user, article);
     }
-
-    @Override
-    public int countByArticle(Article article) {
-        return articleFavoriteJpaRepository.countByArticle(article);
-    }
 }

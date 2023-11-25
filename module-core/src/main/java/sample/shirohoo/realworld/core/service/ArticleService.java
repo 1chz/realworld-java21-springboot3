@@ -17,6 +17,7 @@ import sample.shirohoo.realworld.core.model.ArticleCommentRepository;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
 import sample.shirohoo.realworld.core.model.ArticleFavorite;
 import sample.shirohoo.realworld.core.model.ArticleFavoriteRepository;
+import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.model.ArticleRepository;
 import sample.shirohoo.realworld.core.model.ArticleTag;
 import sample.shirohoo.realworld.core.model.ArticleTagRepository;
@@ -30,8 +31,8 @@ import sample.shirohoo.realworld.core.model.UserFollow;
 @RequiredArgsConstructor
 public class ArticleService {
     private final TagRepository tagRepository;
-    private final ArticleRepository articleRepository;
     private final SocialRepository socialRepository;
+    private final ArticleRepository articleRepository;
     private final ArticleTagRepository articleTagRepository;
     private final ArticleCommentRepository articleCommentRepository;
     private final ArticleFavoriteRepository articleFavoriteRepository;
@@ -48,24 +49,40 @@ public class ArticleService {
     /**
      * Get articles by facets.
      * @param facets article facets
-     * @return Returns articles
+     * @return Returns articles with information
      */
-    public List<Article> readArticles(ArticleFacets facets) {
-        return articleRepository.findAll(facets);
+    public List<ArticleInfo> readArticles(ArticleFacets facets) {
+        return articleRepository.findAll(facets).stream()
+                .map(articleRepository::findArticleInfoByAnonymous)
+                .toList();
+    }
+
+    /**
+     * Get articles by facets.
+     * @param requester user who requested
+     * @param facets article facets
+     * @return Returns articles with information
+     */
+    public List<ArticleInfo> readArticles(User requester, ArticleFacets facets) {
+        return articleRepository.findAll(facets).stream()
+                .map(article -> articleRepository.findArticleInfoByUser(requester, article))
+                .toList();
     }
 
     /**
      * Get articles by my followings.
      * @param user user who requested
      * @param facets article facets
-     * @return Returns articles
+     * @return Returns articles with information
      */
-    public List<Article> readFeeds(User user, ArticleFacets facets) {
+    public List<ArticleInfo> readFeeds(User user, ArticleFacets facets) {
         List<User> following = socialRepository.findByFollower(user).stream()
                 .map(UserFollow::getFollowing)
                 .toList();
 
-        return articleRepository.findByAuthorInOrderByCreatedAtDesc(following, facets);
+        return articleRepository.findByAuthorInOrderByCreatedAtDesc(following, facets).stream()
+                .map(article -> articleRepository.findArticleInfoByUser(user, article))
+                .toList();
     }
 
     /**
@@ -79,15 +96,6 @@ public class ArticleService {
         }
 
         return articleRepository.save(article);
-    }
-
-    /**
-     * Get article's tags.
-     * @param article article
-     * @return Returns article's tags
-     */
-    public Set<ArticleTag> getArticleTags(Article article) {
-        return articleTagRepository.findByArticle(article);
     }
 
     /**
@@ -231,11 +239,21 @@ public class ArticleService {
     }
 
     /**
-     * Get total favorites of article.
+     * Get article information for anonymous.
      * @param article article
-     * @return Returns total favorites
+     * @return Returns article information
      */
-    public int getTotalFavorites(Article article) {
-        return articleFavoriteRepository.countByArticle(article);
+    public ArticleInfo getArticleInfoByAnonymous(Article article) {
+        return articleRepository.findArticleInfoByAnonymous(article);
+    }
+
+    /**
+     * Get article information for user.
+     * @param requester user who requested
+     * @param article article
+     * @return Returns article information
+     */
+    public ArticleInfo getArticleInfoByUser(User requester, Article article) {
+        return articleRepository.findArticleInfoByUser(requester, article);
     }
 }

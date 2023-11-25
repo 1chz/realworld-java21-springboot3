@@ -40,6 +40,7 @@ public class UserService {
      * @param registry User registration information
      * @return Returns the registered user
      */
+    @SuppressWarnings("UnusedReturnValue")
     public User signup(UserRegistry registry) {
         if (userRepository.existsByEmailOrUsername(registry.email(), registry.username())) {
             throw new IllegalArgumentException("email or username is already exists.");

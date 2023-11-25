@@ -10,7 +10,7 @@ import sample.shirohoo.realworld.core.service.TagService;
 
 @RestController
 @RequiredArgsConstructor
-public class TagController {
+class TagController {
     private final TagService tagService;
 
     @GetMapping("/api/tags")

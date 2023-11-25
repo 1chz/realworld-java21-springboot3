@@ -14,7 +14,7 @@ import sample.shirohoo.realworld.core.model.User;
 
 @Component
 @RequiredArgsConstructor
-public class RealworldBearerTokenProvider {
+class RealworldBearerTokenProvider {
     private final JwtEncoder jwtEncoder;
 
     public Jwt getToken(User user) {

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
-public class ObjectMapperConfiguration {
+class ObjectMapperConfiguration {
     @Bean
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
         return builder.modules(iso8601SerializeModule()).build();

@@ -25,11 +25,6 @@ class ArticleTagRepositoryAdapter implements ArticleTagRepository {
     }
 
     @Override
-    public Set<ArticleTag> findByArticle(Article article) {
-        return articleTagJpaRepository.findByArticle(article);
-    }
-
-    @Override
     public Set<ArticleTag> findByArticleAndTagIn(Article article, Collection<Tag> tags) {
         return articleTagJpaRepository.findByArticleAndTagIn(article, tags);
     }

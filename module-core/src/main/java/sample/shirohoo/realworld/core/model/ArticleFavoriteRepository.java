@@ -6,6 +6,4 @@ public interface ArticleFavoriteRepository {
     void deleteByUserAndArticle(User user, Article article);
 
     boolean existsByUserAndArticle(User user, Article article);
-
-    int countByArticle(Article article);
 }

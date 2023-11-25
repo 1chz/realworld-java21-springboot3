@@ -19,7 +19,7 @@ public class TagService {
      * @return Returns all tags
      */
     public List<Tag> getTags() {
-        // Note: If there are too many tags, you can apply pagination.
+        // Note: If there are too many tags, recommend apply cursor based pagination.
         return tagRepository.findAll();
     }
 }

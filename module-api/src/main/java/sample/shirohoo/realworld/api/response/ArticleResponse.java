@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 import sample.shirohoo.realworld.core.model.Article;
+import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.model.ArticleTag;
 import sample.shirohoo.realworld.core.model.Tag;
 
@@ -18,9 +19,12 @@ public record ArticleResponse(
         boolean favorited,
         int favoritesCount,
         ProfileResponse author) {
-    public static ArticleResponse from(
-            Article article, Collection<ArticleTag> articleTags, boolean favorited, int favoritesCount) {
-        return new ArticleResponse(
+    public ArticleResponse(ArticleInfo articleInfo) {
+        this(articleInfo.article(), articleInfo.articleTags(), articleInfo.favorited(), articleInfo.favoritesCount());
+    }
+
+    public ArticleResponse(Article article, Collection<ArticleTag> articleTags, boolean favorited, int favoritesCount) {
+        this(
                 article.getSlug(),
                 article.getTitle(),
                 article.getDescription(),

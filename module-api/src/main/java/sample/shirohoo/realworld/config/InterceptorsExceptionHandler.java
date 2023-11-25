@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-public class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
+class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handleOn(IllegalArgumentException e) {
         log.info(e.getMessage(), e);
@@ -39,6 +39,11 @@ public class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
+    /**
+     * Errors that the developer did not expect are handled here and the log level is recorded as error.
+     * @param e Exception
+     * @return ProblemDetail
+     */
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleOn(Exception e) {
         log.error(e.getMessage(), e);
