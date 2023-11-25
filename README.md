@@ -26,6 +26,7 @@ For more information on how to this works with other frontends/backends, head ov
    * [Apply code style](#apply-code-style)
    * [Run build](#run-build)
    * [Run E2E test](#run-e2e-test)
+     * [Performance](#performance)
 * [Migrate to Java 21](#migrate-to-java-21)
 
 ---
@@ -154,7 +155,9 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 1. Run application (**important**)
 2. [Run E2E test](api/README.md#running-api-tests-locally)
 
-<img width="931" alt="image" src="https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/e747e660-cb3f-4c98-86fc-abd717bb0c30">
+#### Performance
+
+![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)
 
 ---
 
