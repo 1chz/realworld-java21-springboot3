@@ -119,7 +119,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ### Run application
 
 ```shell
-./gradlew bootRun
+./gradlew :modular-application:bootRun
 ```
 
 ### Check code style
