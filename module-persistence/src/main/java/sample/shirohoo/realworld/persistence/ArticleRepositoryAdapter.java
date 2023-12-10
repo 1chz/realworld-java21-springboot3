@@ -22,65 +22,67 @@ import sample.shirohoo.realworld.core.model.User;
 @Repository
 @RequiredArgsConstructor
 class ArticleRepositoryAdapter implements ArticleRepository {
-    private final ArticleJpaRepository articleJpaRepository;
-    private final ArticleTagJpaRepository articleTagJpaRepository;
-    private final ArticleFavoriteJpaRepository articleFavoriteJpaRepository;
+  private final ArticleJpaRepository articleJpaRepository;
+  private final ArticleTagJpaRepository articleTagJpaRepository;
+  private final ArticleFavoriteJpaRepository articleFavoriteJpaRepository;
 
-    @Override
-    public Article save(Article article) {
-        return articleJpaRepository.save(article);
-    }
+  @Override
+  public Article save(Article article) {
+    return articleJpaRepository.save(article);
+  }
 
-    @Override
-    public List<Article> findAll(ArticleFacets facets) {
-        Specification<Article> spec = Specification.where(ArticleSpecifications.hasAuthorName(facets.author()))
-                .or(ArticleSpecifications.hasTagName(facets.tag()))
-                .or(ArticleSpecifications.hasFavoritedUsername(facets.favorited()));
+  @Override
+  public List<Article> findAll(ArticleFacets facets) {
+    Specification<Article> spec =
+        Specification.where(ArticleSpecifications.hasAuthorName(facets.author()))
+            .or(ArticleSpecifications.hasTagName(facets.tag()))
+            .or(ArticleSpecifications.hasFavoritedUsername(facets.favorited()));
 
-        PageRequest pageable = PageRequest.of(facets.page(), facets.size());
+    PageRequest pageable = PageRequest.of(facets.page(), facets.size());
 
-        return articleJpaRepository.findAll(spec, pageable).getContent();
-    }
+    return articleJpaRepository.findAll(spec, pageable).getContent();
+  }
 
-    @Override
-    public Optional<Article> findBySlug(String slug) {
-        return articleJpaRepository.findBySlug(slug);
-    }
+  @Override
+  public Optional<Article> findBySlug(String slug) {
+    return articleJpaRepository.findBySlug(slug);
+  }
 
-    @Override
-    public List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets) {
-        return articleJpaRepository
-                .findByAuthorInOrderByCreatedAtDesc(authors, PageRequest.of(facets.page(), facets.size()))
-                .getContent();
-    }
+  @Override
+  public List<Article> findByAuthorInOrderByCreatedAtDesc(
+      Collection<User> authors, ArticleFacets facets) {
+    return articleJpaRepository
+        .findByAuthorInOrderByCreatedAtDesc(authors, PageRequest.of(facets.page(), facets.size()))
+        .getContent();
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ArticleInfo findArticleInfoByAnonymous(Article article) {
-        Set<ArticleTag> articleTags = articleTagJpaRepository.findByArticle(article);
-        int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
+  @Override
+  @Transactional(readOnly = true)
+  public ArticleInfo findArticleInfoByAnonymous(Article article) {
+    Set<ArticleTag> articleTags = articleTagJpaRepository.findByArticle(article);
+    int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
 
-        return ArticleInfo.unauthenticated(article, articleTags, totalFavorites);
-    }
+    return ArticleInfo.unauthenticated(article, articleTags, totalFavorites);
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ArticleInfo findArticleInfoByUser(User requester, Article article) {
-        Set<ArticleTag> articleTags = articleTagJpaRepository.findByArticle(article);
-        int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
-        boolean favorited = articleFavoriteJpaRepository.existsByUserAndArticle(requester, article);
+  @Override
+  @Transactional(readOnly = true)
+  public ArticleInfo findArticleInfoByUser(User requester, Article article) {
+    Set<ArticleTag> articleTags = articleTagJpaRepository.findByArticle(article);
+    int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
+    boolean favorited = articleFavoriteJpaRepository.existsByUserAndArticle(requester, article);
 
-        return new ArticleInfo(article, articleTags, totalFavorites, favorited);
-    }
+    return new ArticleInfo(article, articleTags, totalFavorites, favorited);
+  }
 
-    @Override
-    @Transactional
-    public void delete(Article article) {
-        articleJpaRepository.delete(article);
-    }
+  @Override
+  @Transactional
+  public void delete(Article article) {
+    articleJpaRepository.delete(article);
+  }
 
-    @Override
-    public boolean existsByTitle(String title) {
-        return articleJpaRepository.existsByTitle(title);
-    }
+  @Override
+  public boolean existsByTitle(String title) {
+    return articleJpaRepository.existsByTitle(title);
+  }
 }

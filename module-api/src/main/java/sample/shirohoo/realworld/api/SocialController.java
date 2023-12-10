@@ -20,40 +20,43 @@ import sample.shirohoo.realworld.core.service.UserService;
 @RestController
 @RequiredArgsConstructor
 class SocialController {
-    private final UserService userService;
-    private final SocialService socialService;
+  private final UserService userService;
+  private final SocialService socialService;
 
-    @GetMapping("/api/profiles/{username}")
-    public ProfilesResponse doGet(Authentication authentication, @PathVariable("username") String targetUsername) {
-        User targetUser = userService.getUserByUsername(targetUsername);
+  @GetMapping("/api/profiles/{username}")
+  public ProfilesResponse doGet(
+      Authentication authentication, @PathVariable("username") String targetUsername) {
+    User targetUser = userService.getUserByUsername(targetUsername);
 
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return ProfilesResponse.from(targetUser);
-        }
-
-        User me = userService.getUserById(UUID.fromString(authentication.getName()));
-        boolean isFollowing = socialService.isFollowing(me, targetUser);
-
-        return ProfilesResponse.from(targetUser, isFollowing);
+    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+      return ProfilesResponse.from(targetUser);
     }
 
-    @PostMapping("/api/profiles/{username}/follow")
-    public ProfilesResponse doPost(Authentication authentication, @PathVariable("username") String targetUsername) {
-        User follower = userService.getUserById(UUID.fromString(authentication.getName()));
-        User following = userService.getUserByUsername(targetUsername);
+    User me = userService.getUserById(UUID.fromString(authentication.getName()));
+    boolean isFollowing = socialService.isFollowing(me, targetUser);
 
-        socialService.follow(follower, following);
+    return ProfilesResponse.from(targetUser, isFollowing);
+  }
 
-        return ProfilesResponse.from(following, true);
-    }
+  @PostMapping("/api/profiles/{username}/follow")
+  public ProfilesResponse doPost(
+      Authentication authentication, @PathVariable("username") String targetUsername) {
+    User follower = userService.getUserById(UUID.fromString(authentication.getName()));
+    User following = userService.getUserByUsername(targetUsername);
 
-    @DeleteMapping("/api/profiles/{username}/follow")
-    public ProfilesResponse doDelete(Authentication authentication, @PathVariable("username") String targetUsername) {
-        User follower = userService.getUserById(UUID.fromString(authentication.getName()));
-        User following = userService.getUserByUsername(targetUsername);
+    socialService.follow(follower, following);
 
-        socialService.unfollow(follower, following);
+    return ProfilesResponse.from(following, true);
+  }
 
-        return ProfilesResponse.from(following, false);
-    }
+  @DeleteMapping("/api/profiles/{username}/follow")
+  public ProfilesResponse doDelete(
+      Authentication authentication, @PathVariable("username") String targetUsername) {
+    User follower = userService.getUserById(UUID.fromString(authentication.getName()));
+    User following = userService.getUserByUsername(targetUsername);
+
+    socialService.unfollow(follower, following);
+
+    return ProfilesResponse.from(following, false);
+  }
 }

@@ -8,7 +8,7 @@ import sample.shirohoo.realworld.core.model.Article;
 import sample.shirohoo.realworld.core.model.ArticleComment;
 
 interface ArticleCommentJpaRepository extends JpaRepository<ArticleComment, Integer> {
-    List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article);
+  List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article);
 
-    void deleteByArticle(Article article);
+  void deleteByArticle(Article article);
 }

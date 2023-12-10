@@ -21,43 +21,43 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-        name = "user_follow",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"follower_id", "following_id"})})
+    name = "user_follow",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"follower_id", "following_id"})})
 public class UserFollow {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "follower_id")
-    private User follower;
+  @ManyToOne
+  @JoinColumn(name = "follower_id")
+  private User follower;
 
-    @ManyToOne
-    @JoinColumn(name = "following_id")
-    private User following;
+  @ManyToOne
+  @JoinColumn(name = "following_id")
+  private User following;
 
-    @Column(nullable = false, updatable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
+  @Column(nullable = false, updatable = false)
+  private final LocalDateTime createdAt = LocalDateTime.now();
 
-    public UserFollow(User follower, User following) {
-        if (follower == null || follower.getId() == null) {
-            throw new IllegalArgumentException("follower is null or unknown user.");
-        }
-        if (following == null || following.getId() == null) {
-            throw new IllegalArgumentException("following is null or unknown user.");
-        }
-
-        this.follower = follower;
-        this.following = following;
+  public UserFollow(User follower, User following) {
+    if (follower == null || follower.getId() == null) {
+      throw new IllegalArgumentException("follower is null or unknown user.");
+    }
+    if (following == null || following.getId() == null) {
+      throw new IllegalArgumentException("following is null or unknown user.");
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof UserFollow other && Objects.equals(this.getId(), other.getId());
-    }
+    this.follower = follower;
+    this.following = following;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getId());
-    }
+  @Override
+  public boolean equals(Object o) {
+    return o instanceof UserFollow other && Objects.equals(this.getId(), other.getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.getId());
+  }
 }

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 public interface ArticleTagRepository {
-    @SuppressWarnings("UnusedReturnValue")
-    List<ArticleTag> saveAll(Collection<ArticleTag> articleTags);
+  @SuppressWarnings("UnusedReturnValue")
+  List<ArticleTag> saveAll(Collection<ArticleTag> articleTags);
 
-    Set<ArticleTag> findByArticleAndTagIn(Article article, Collection<Tag> tags);
+  Set<ArticleTag> findByArticleAndTagIn(Article article, Collection<Tag> tags);
 
-    void deleteByArticle(Article article);
+  void deleteByArticle(Article article);
 }

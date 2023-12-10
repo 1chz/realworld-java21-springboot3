@@ -8,9 +8,9 @@ import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.model.UserFollow;
 
 interface UserFollowJpaRepository extends JpaRepository<UserFollow, Integer> {
-    List<UserFollow> findByFollower(User follower);
+  List<UserFollow> findByFollower(User follower);
 
-    void deleteByFollowerAndFollowing(User follower, User following);
+  void deleteByFollowerAndFollowing(User follower, User following);
 
-    boolean existsByFollowerAndFollowing(User follower, User following);
+  boolean existsByFollowerAndFollowing(User follower, User following);
 }

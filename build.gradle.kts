@@ -22,7 +22,8 @@ allprojects {
     apply(plugin = "io.spring.dependency-management")
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     configurations {
@@ -72,7 +73,7 @@ allprojects {
 
     spotless {
         java {
-            palantirJavaFormat()
+            googleJavaFormat()
             indentWithSpaces()
             formatAnnotations()
             removeUnusedImports()

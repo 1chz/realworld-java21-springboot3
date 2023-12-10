@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import sample.shirohoo.realworld.core.model.Tag;
 
 interface TagJpaRepository extends JpaRepository<Tag, Integer> {
-    Set<Tag> findByNameIn(Collection<String> names);
+  Set<Tag> findByNameIn(Collection<String> names);
 }

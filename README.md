@@ -1,12 +1,12 @@
 # ![RealWorld Example App](logo.png)
 
-> ### **java 17 + Spring Boot 3** codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
+> ### **Java 21 + Spring Boot 3** codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
 ### [Demo](https://demo.realworld.io/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
-This codebase was created to demonstrate a fully fledged fullstack application built with ****java 17 + Spring Boot 3**** including CRUD operations, authentication, routing, pagination, and more.
+This codebase was created to demonstrate a fully fledged fullstack application built with ****Java 21 + Spring Boot 3**** including CRUD operations, authentication, routing, pagination, and more.
 
-I have gone to great lengths to adhere to the **java 17 + Spring Boot 3** community styleguide & best practices.
+I have gone to great lengths to adhere to the **Java 21 + Spring Boot 3** community styleguide & best practices.
 
 For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
@@ -65,9 +65,9 @@ This application provides the following key features:
 6. Follow other users
 
 ### Project structures
-The project is implemented based on java 17 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database. and JUnit5 for writing test codes.
+The project is implemented based on Java 21 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database. and JUnit5 for writing test codes.
 
-To run the project, JDK 17 must be installed first. Then, execute the ./gradlew bootRun command in the project root directory to run the application. After that, you can use the application by accessing http://localhost:8080 in your browser.
+To run the project, JDK(or JRE) 21 must be installed first. Then, execute the `./gradlew bootRun` command in the project root directory to run the application. After that, you can use the application by accessing http://localhost:8080 in your browser.
 
 Taking a closer look at the project structure, the main code of the application is located in the src/main/java directory, while the test code is located in the src/test/java directory. Additionally, configuration files and such can be found in the
 src/main/resources directory.
@@ -75,7 +75,7 @@ src/main/resources directory.
 The application's package dependencies and core logic are implemented as follows:
 
 #### Modules
-![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/2b6310ce-215d-46e4-8f00-77cc62a383da)
+![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2b6310ce-215d-46e4-8f00-77cc62a383da)
 
 `core`, `persistence`, `api` and `modular-application` modules exist, and each module performs the following roles.
 
@@ -106,13 +106,13 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 - [schema.sql](database/schema.sql)
 
-![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/3603da86-b1bd-49a6-b0d9-cee296f98f33)
+![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/3603da86-b1bd-49a6-b0d9-cee296f98f33)
 
 ---
 
 ## Getting started
 
-> **Note:** You just need to have JDK 17 installed.
+> **Note:** You just need to have JDK 21 installed.
 >
 > **Note:** If permission denied occurs when running the gradle task, enter `chmod +x gradlew` to grant the permission.
 
@@ -157,26 +157,4 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 #### Performance
 
-![image](https://github.com/shirohoo/realworld-java17-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)
-
----
-
-## Migrate to Java 21
-
-First of all, you need to install Java 21, and just change the Java version in `build.gradle.kts` as follows.
-
-```gradle
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-}
-```
-
-Additionally, you may need to upgrade your gradle version to 8+ or higher. In this case, you can modify the distributionUrl in the gradle-wrapper.properties file as follows.
-
-```properties
-distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
-```
-
-Please note that there may be compatibility issues with the formatter used in this project when upgrading to Java 21. 
-Currently, this project utilizes [palantir-java-format](https://github.com/palantir/palantir-java-format), and as of the time of writing this document, there are [issues](https://github.com/palantir/palantir-java-format/issues/943) with upgrading to Java 21. 
-If you still encounter problems resolving this issue during your migration to Java 21, you may consider applying alternatives such as [google-java-format](https://github.com/google/google-java-format).
+![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)

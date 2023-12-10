@@ -19,26 +19,26 @@ import sample.shirohoo.realworld.core.service.UserService;
 @RestController
 @RequiredArgsConstructor
 class ArticleFavoriteController {
-    private final UserService userService;
-    private final ArticleService articleService;
+  private final UserService userService;
+  private final ArticleService articleService;
 
-    @PostMapping("/api/articles/{slug}/favorite")
-    public SingleArticleResponse doPost(Authentication authentication, @PathVariable String slug) {
-        User requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        Article article = articleService.readArticleBySlug(slug);
+  @PostMapping("/api/articles/{slug}/favorite")
+  public SingleArticleResponse doPost(Authentication authentication, @PathVariable String slug) {
+    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
+    Article article = articleService.readArticleBySlug(slug);
 
-        articleService.favoriteArticle(requester, article);
+    articleService.favoriteArticle(requester, article);
 
-        return new SingleArticleResponse(articleService.getArticleInfoByUser(requester, article));
-    }
+    return new SingleArticleResponse(articleService.getArticleInfoByUser(requester, article));
+  }
 
-    @DeleteMapping("/api/articles/{slug}/favorite")
-    public SingleArticleResponse doDelete(Authentication authentication, @PathVariable String slug) {
-        User requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        Article article = articleService.readArticleBySlug(slug);
+  @DeleteMapping("/api/articles/{slug}/favorite")
+  public SingleArticleResponse doDelete(Authentication authentication, @PathVariable String slug) {
+    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
+    Article article = articleService.readArticleBySlug(slug);
 
-        articleService.unfavoriteArticle(requester, article);
+    articleService.unfavoriteArticle(requester, article);
 
-        return new SingleArticleResponse(articleService.getArticleInfoByUser(requester, article));
-    }
+    return new SingleArticleResponse(articleService.getArticleInfoByUser(requester, article));
+  }
 }

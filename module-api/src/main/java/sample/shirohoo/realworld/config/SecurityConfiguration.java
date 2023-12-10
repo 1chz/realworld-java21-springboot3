@@ -38,64 +38,68 @@ import sample.shirohoo.realworld.core.model.PasswordEncoder;
 @Configuration
 @EnableMethodSecurity
 class SecurityConfiguration {
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
-                                .permitAll()
-                                .requestMatchers(
-                                        HttpMethod.GET,
-                                        "/api/articles/{slug}/comments",
-                                        "/api/articles/{slug}",
-                                        "/api/articles",
-                                        "/api/profiles/{username}",
-                                        "/api/tags")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
-                .exceptionHandling(exceptionHandler -> exceptionHandler
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                .build();
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http.httpBasic(AbstractHttpConfigurer::disable)
+        .csrf(AbstractHttpConfigurer::disable)
+        .formLogin(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(
+            requests ->
+                requests
+                    .requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/articles/{slug}/comments",
+                        "/api/articles/{slug}",
+                        "/api/articles",
+                        "/api/profiles/{username}",
+                        "/api/tags")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+        .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
+        .exceptionHandling(
+            exceptionHandler ->
+                exceptionHandler
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+        .build();
+  }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration cors = new CorsConfiguration();
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration cors = new CorsConfiguration();
 
-        cors.setAllowedOriginPatterns(List.of("*"));
-        cors.setAllowedMethods(List.of("*"));
-        cors.setAllowedHeaders(List.of("*"));
-        cors.setAllowCredentials(true);
+    cors.setAllowedOriginPatterns(List.of("*"));
+    cors.setAllowedMethods(List.of("*"));
+    cors.setAllowedHeaders(List.of("*"));
+    cors.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", cors);
 
-        return source;
-    }
+    return source;
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return new PasswordEncoderAdapter(bCryptPasswordEncoder);
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    return new PasswordEncoderAdapter(bCryptPasswordEncoder);
+  }
 
-    @Bean
-    public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
-        return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
-    }
+  @Bean
+  public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
+    return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+  }
 
-    @Bean
-    public JwtEncoder jwtEncoder(
-            @Value("${security.key.public}") RSAPublicKey rsaPublicKey,
-            @Value("${security.key.private}") RSAPrivateKey rsaPrivateKey) {
-        JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwks);
-    }
+  @Bean
+  public JwtEncoder jwtEncoder(
+      @Value("${security.key.public}") RSAPublicKey rsaPublicKey,
+      @Value("${security.key.private}") RSAPrivateKey rsaPrivateKey) {
+    JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
+    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+    return new NimbusJwtEncoder(jwks);
+  }
 }

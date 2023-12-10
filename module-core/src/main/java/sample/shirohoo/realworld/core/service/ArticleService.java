@@ -30,230 +30,246 @@ import sample.shirohoo.realworld.core.model.UserFollow;
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
-    private final TagRepository tagRepository;
-    private final SocialRepository socialRepository;
-    private final ArticleRepository articleRepository;
-    private final ArticleTagRepository articleTagRepository;
-    private final ArticleCommentRepository articleCommentRepository;
-    private final ArticleFavoriteRepository articleFavoriteRepository;
+  private final TagRepository tagRepository;
+  private final SocialRepository socialRepository;
+  private final ArticleRepository articleRepository;
+  private final ArticleTagRepository articleTagRepository;
+  private final ArticleCommentRepository articleCommentRepository;
+  private final ArticleFavoriteRepository articleFavoriteRepository;
 
-    /**
-     * Get article by slug.
-     * @param slug article slug
-     * @return Returns article
-     */
-    public Article readArticleBySlug(String slug) {
-        return articleRepository.findBySlug(slug).orElseThrow(() -> new NoSuchElementException("article not found."));
+  /**
+   * Get article by slug.
+   *
+   * @param slug article slug
+   * @return Returns article
+   */
+  public Article readArticleBySlug(String slug) {
+    return articleRepository
+        .findBySlug(slug)
+        .orElseThrow(() -> new NoSuchElementException("article not found."));
+  }
+
+  /**
+   * Get articles by facets.
+   *
+   * @param facets article facets
+   * @return Returns articles with information
+   */
+  public List<ArticleInfo> readArticles(ArticleFacets facets) {
+    return articleRepository.findAll(facets).stream()
+        .map(articleRepository::findArticleInfoByAnonymous)
+        .toList();
+  }
+
+  /**
+   * Get articles by facets.
+   *
+   * @param requester user who requested
+   * @param facets article facets
+   * @return Returns articles with information
+   */
+  public List<ArticleInfo> readArticles(User requester, ArticleFacets facets) {
+    return articleRepository.findAll(facets).stream()
+        .map(article -> articleRepository.findArticleInfoByUser(requester, article))
+        .toList();
+  }
+
+  /**
+   * Get articles by my followings.
+   *
+   * @param user user who requested
+   * @param facets article facets
+   * @return Returns articles with information
+   */
+  public List<ArticleInfo> readFeeds(User user, ArticleFacets facets) {
+    List<User> following =
+        socialRepository.findByFollower(user).stream().map(UserFollow::getFollowing).toList();
+
+    return articleRepository.findByAuthorInOrderByCreatedAtDesc(following, facets).stream()
+        .map(article -> articleRepository.findArticleInfoByUser(user, article))
+        .toList();
+  }
+
+  /**
+   * Write a new article.
+   *
+   * @param article article
+   * @return Returns the written article
+   */
+  public Article writeArticle(Article article) {
+    if (articleRepository.existsByTitle(article.getTitle())) {
+      throw new IllegalArgumentException("title is already exists.");
     }
 
-    /**
-     * Get articles by facets.
-     * @param facets article facets
-     * @return Returns articles with information
-     */
-    public List<ArticleInfo> readArticles(ArticleFacets facets) {
-        return articleRepository.findAll(facets).stream()
-                .map(articleRepository::findArticleInfoByAnonymous)
-                .toList();
+    return articleRepository.save(article);
+  }
+
+  /**
+   * Add tags to article.
+   *
+   * @param article article
+   * @param tags tags
+   * @return Returns article's tags
+   */
+  public Set<ArticleTag> addArticleTags(Article article, Collection<Tag> tags) {
+    // Find existing tags by name.
+    Set<Tag> existingTags = tagRepository.findByNameIn(tags.stream().map(Tag::getName).toList());
+
+    // Save tags that do not exist yet.
+    List<Tag> newTags = tags.stream().filter(tag -> !existingTags.contains(tag)).collect(toList());
+    tagRepository.saveAll(newTags);
+
+    // Merge existing and new tags.
+    Set<Tag> allTags = new HashSet<>(existingTags);
+    allTags.addAll(newTags);
+
+    // Find existing article tags for the given article and tags.
+    Set<ArticleTag> existingArticleTags =
+        articleTagRepository.findByArticleAndTagIn(article, allTags);
+
+    // Save article tags for tags that do not exist in the article.
+    List<ArticleTag> newArticleTags =
+        allTags.stream()
+            .filter(tag -> existingArticleTags.stream().noneMatch(tag::equalsArticleTag))
+            .map(tag -> new ArticleTag(article, tag))
+            .collect(toList());
+    articleTagRepository.saveAll(newArticleTags);
+
+    // Combine and return the final set of ArticleTags.
+    Set<ArticleTag> allArticleTags = new HashSet<>(existingArticleTags);
+    allArticleTags.addAll(newArticleTags);
+
+    return allArticleTags;
+  }
+
+  /**
+   * Edit article title.
+   *
+   * @param requester user who requested
+   * @param article article
+   * @param title new title
+   * @return Returns the edited article
+   */
+  public Article editTitle(User requester, Article article, String title) {
+    if (article.isNotAuthor(requester)) {
+      throw new IllegalArgumentException("you can't edit articles written by others.");
     }
 
-    /**
-     * Get articles by facets.
-     * @param requester user who requested
-     * @param facets article facets
-     * @return Returns articles with information
-     */
-    public List<ArticleInfo> readArticles(User requester, ArticleFacets facets) {
-        return articleRepository.findAll(facets).stream()
-                .map(article -> articleRepository.findArticleInfoByUser(requester, article))
-                .toList();
+    if (articleRepository.existsByTitle(title)) {
+      throw new IllegalArgumentException("title is already exists.");
     }
 
-    /**
-     * Get articles by my followings.
-     * @param user user who requested
-     * @param facets article facets
-     * @return Returns articles with information
-     */
-    public List<ArticleInfo> readFeeds(User user, ArticleFacets facets) {
-        List<User> following = socialRepository.findByFollower(user).stream()
-                .map(UserFollow::getFollowing)
-                .toList();
+    article.setTitle(title);
+    return articleRepository.save(article);
+  }
 
-        return articleRepository.findByAuthorInOrderByCreatedAtDesc(following, facets).stream()
-                .map(article -> articleRepository.findArticleInfoByUser(user, article))
-                .toList();
+  /**
+   * Edit article description.
+   *
+   * @param requester user who requested
+   * @param article article
+   * @param description new description
+   * @return Returns the edited article
+   */
+  public Article editDescription(User requester, Article article, String description) {
+    if (article.isNotAuthor(requester)) {
+      throw new IllegalArgumentException("you can't edit articles written by others.");
     }
 
-    /**
-     * Write a new article.
-     * @param article article
-     * @return Returns the written article
-     */
-    public Article writeArticle(Article article) {
-        if (articleRepository.existsByTitle(article.getTitle())) {
-            throw new IllegalArgumentException("title is already exists.");
-        }
+    article.setDescription(description);
+    return articleRepository.save(article);
+  }
 
-        return articleRepository.save(article);
+  /**
+   * Edit article content.
+   *
+   * @param requester user who requested
+   * @param article article
+   * @param content new content
+   * @return Returns the edited article
+   */
+  public Article editContent(User requester, Article article, String content) {
+    if (article.isNotAuthor(requester)) {
+      throw new IllegalArgumentException("you can't edit articles written by others.");
     }
 
-    /**
-     * Add tags to article.
-     * @param article article
-     * @param tags tags
-     * @return Returns article's tags
-     */
-    public Set<ArticleTag> addArticleTags(Article article, Collection<Tag> tags) {
-        // Find existing tags by name.
-        Set<Tag> existingTags =
-                tagRepository.findByNameIn(tags.stream().map(Tag::getName).toList());
+    article.setContent(content);
+    return articleRepository.save(article);
+  }
 
-        // Save tags that do not exist yet.
-        List<Tag> newTags =
-                tags.stream().filter(tag -> !existingTags.contains(tag)).collect(toList());
-        tagRepository.saveAll(newTags);
-
-        // Merge existing and new tags.
-        Set<Tag> allTags = new HashSet<>(existingTags);
-        allTags.addAll(newTags);
-
-        // Find existing article tags for the given article and tags.
-        Set<ArticleTag> existingArticleTags = articleTagRepository.findByArticleAndTagIn(article, allTags);
-
-        // Save article tags for tags that do not exist in the article.
-        List<ArticleTag> newArticleTags = allTags.stream()
-                .filter(tag -> existingArticleTags.stream().noneMatch(tag::equalsArticleTag))
-                .map(tag -> new ArticleTag(article, tag))
-                .collect(toList());
-        articleTagRepository.saveAll(newArticleTags);
-
-        // Combine and return the final set of ArticleTags.
-        Set<ArticleTag> allArticleTags = new HashSet<>(existingArticleTags);
-        allArticleTags.addAll(newArticleTags);
-
-        return allArticleTags;
+  /**
+   * Delete article.
+   *
+   * @param requester user who requested
+   * @param article article
+   */
+  public void deleteArticle(User requester, Article article) {
+    if (article.isNotAuthor(requester)) {
+      throw new IllegalArgumentException("you can't delete articles written by others.");
     }
 
-    /**
-     * Edit article title.
-     * @param requester user who requested
-     * @param article article
-     * @param title new title
-     * @return Returns the edited article
-     */
-    public Article editTitle(User requester, Article article, String title) {
-        if (article.isNotAuthor(requester)) {
-            throw new IllegalArgumentException("you can't edit articles written by others.");
-        }
+    articleTagRepository.deleteByArticle(article);
+    articleCommentRepository.deleteByArticle(article);
+    articleRepository.delete(article);
+  }
 
-        if (articleRepository.existsByTitle(title)) {
-            throw new IllegalArgumentException("title is already exists.");
-        }
+  /**
+   * Check if the requester has favorited the article.
+   *
+   * @param requester user who requested
+   * @param article article
+   * @return Returns true if already favorited
+   */
+  public boolean isFavorited(User requester, Article article) {
+    return articleFavoriteRepository.existsByUserAndArticle(requester, article);
+  }
 
-        article.setTitle(title);
-        return articleRepository.save(article);
+  /**
+   * Favorite article.
+   *
+   * @param requester user who requested
+   * @param article article
+   */
+  public void favoriteArticle(User requester, Article article) {
+    if (this.isFavorited(requester, article)) {
+      throw new IllegalArgumentException("you already favorited this article.");
     }
 
-    /**
-     * Edit article description.
-     * @param requester user who requested
-     * @param article article
-     * @param description new description
-     * @return Returns the edited article
-     */
-    public Article editDescription(User requester, Article article, String description) {
-        if (article.isNotAuthor(requester)) {
-            throw new IllegalArgumentException("you can't edit articles written by others.");
-        }
+    articleFavoriteRepository.save(new ArticleFavorite(requester, article));
+  }
 
-        article.setDescription(description);
-        return articleRepository.save(article);
+  /**
+   * Unfavorite article.
+   *
+   * @param requester user who requested
+   * @param article article
+   */
+  public void unfavoriteArticle(User requester, Article article) {
+    if (!this.isFavorited(requester, article)) {
+      throw new IllegalArgumentException("you already unfavorited this article.");
     }
 
-    /**
-     * Edit article content.
-     * @param requester user who requested
-     * @param article article
-     * @param content new content
-     * @return Returns the edited article
-     */
-    public Article editContent(User requester, Article article, String content) {
-        if (article.isNotAuthor(requester)) {
-            throw new IllegalArgumentException("you can't edit articles written by others.");
-        }
+    articleFavoriteRepository.deleteByUserAndArticle(requester, article);
+  }
 
-        article.setContent(content);
-        return articleRepository.save(article);
-    }
+  /**
+   * Get article information for anonymous.
+   *
+   * @param article article
+   * @return Returns article information
+   */
+  public ArticleInfo getArticleInfoByAnonymous(Article article) {
+    return articleRepository.findArticleInfoByAnonymous(article);
+  }
 
-    /**
-     * Delete article.
-     * @param requester user who requested
-     * @param article article
-     */
-    public void deleteArticle(User requester, Article article) {
-        if (article.isNotAuthor(requester)) {
-            throw new IllegalArgumentException("you can't delete articles written by others.");
-        }
-
-        articleTagRepository.deleteByArticle(article);
-        articleCommentRepository.deleteByArticle(article);
-        articleRepository.delete(article);
-    }
-
-    /**
-     * Check if the requester has favorited the article.
-     * @param requester user who requested
-     * @param article article
-     * @return Returns true if already favorited
-     */
-    public boolean isFavorited(User requester, Article article) {
-        return articleFavoriteRepository.existsByUserAndArticle(requester, article);
-    }
-
-    /**
-     * Favorite article.
-     * @param requester user who requested
-     * @param article article
-     */
-    public void favoriteArticle(User requester, Article article) {
-        if (this.isFavorited(requester, article)) {
-            throw new IllegalArgumentException("you already favorited this article.");
-        }
-
-        articleFavoriteRepository.save(new ArticleFavorite(requester, article));
-    }
-
-    /**
-     * Unfavorite article.
-     * @param requester user who requested
-     * @param article article
-     */
-    public void unfavoriteArticle(User requester, Article article) {
-        if (!this.isFavorited(requester, article)) {
-            throw new IllegalArgumentException("you already unfavorited this article.");
-        }
-
-        articleFavoriteRepository.deleteByUserAndArticle(requester, article);
-    }
-
-    /**
-     * Get article information for anonymous.
-     * @param article article
-     * @return Returns article information
-     */
-    public ArticleInfo getArticleInfoByAnonymous(Article article) {
-        return articleRepository.findArticleInfoByAnonymous(article);
-    }
-
-    /**
-     * Get article information for user.
-     * @param requester user who requested
-     * @param article article
-     * @return Returns article information
-     */
-    public ArticleInfo getArticleInfoByUser(User requester, Article article) {
-        return articleRepository.findArticleInfoByUser(requester, article);
-    }
+  /**
+   * Get article information for user.
+   *
+   * @param requester user who requested
+   * @param article article
+   * @return Returns article information
+   */
+  public ArticleInfo getArticleInfoByUser(User requester, Article article) {
+    return articleRepository.findArticleInfoByUser(requester, article);
+  }
 }

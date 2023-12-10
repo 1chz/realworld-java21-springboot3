@@ -15,32 +15,32 @@ import sample.shirohoo.realworld.core.model.ArticleCommentRepository;
 @Repository
 @RequiredArgsConstructor
 class ArticleCommentRepositoryAdapter implements ArticleCommentRepository {
-    private final ArticleCommentJpaRepository articleCommentJpaRepository;
+  private final ArticleCommentJpaRepository articleCommentJpaRepository;
 
-    @Override
-    public ArticleComment save(ArticleComment articleComment) {
-        return articleCommentJpaRepository.save(articleComment);
-    }
+  @Override
+  public ArticleComment save(ArticleComment articleComment) {
+    return articleCommentJpaRepository.save(articleComment);
+  }
 
-    @Override
-    public Optional<ArticleComment> findById(int commentId) {
-        return articleCommentJpaRepository.findById(commentId);
-    }
+  @Override
+  public Optional<ArticleComment> findById(int commentId) {
+    return articleCommentJpaRepository.findById(commentId);
+  }
 
-    @Override
-    public List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article) {
-        return articleCommentJpaRepository.findByArticleOrderByCreatedAtDesc(article);
-    }
+  @Override
+  public List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article) {
+    return articleCommentJpaRepository.findByArticleOrderByCreatedAtDesc(article);
+  }
 
-    @Override
-    @Transactional
-    public void delete(ArticleComment articleComment) {
-        articleCommentJpaRepository.delete(articleComment);
-    }
+  @Override
+  @Transactional
+  public void delete(ArticleComment articleComment) {
+    articleCommentJpaRepository.delete(articleComment);
+  }
 
-    @Override
-    @Transactional
-    public void deleteByArticle(Article article) {
-        articleCommentJpaRepository.deleteByArticle(article);
-    }
+  @Override
+  @Transactional
+  public void deleteByArticle(Article article) {
+    articleCommentJpaRepository.deleteByArticle(article);
+  }
 }

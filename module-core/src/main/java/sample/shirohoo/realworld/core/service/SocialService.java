@@ -11,33 +11,30 @@ import sample.shirohoo.realworld.core.model.UserFollow;
 @Service
 @RequiredArgsConstructor
 public class SocialService {
-    private final SocialRepository socialRepository;
+  private final SocialRepository socialRepository;
 
-    /**
-     * Check if the follower is following the following.
-     * @return Returns true if already following
-     */
-    public boolean isFollowing(User follower, User following) {
-        return socialRepository.existsByFollowerAndFollowing(follower, following);
+  /**
+   * Check if the follower is following the following.
+   *
+   * @return Returns true if already following
+   */
+  public boolean isFollowing(User follower, User following) {
+    return socialRepository.existsByFollowerAndFollowing(follower, following);
+  }
+
+  /** Follow user. */
+  public void follow(User follower, User following) {
+    if (this.isFollowing(follower, following)) {
+      return;
     }
 
-    /**
-     * Follow user.
-     */
-    public void follow(User follower, User following) {
-        if (this.isFollowing(follower, following)) {
-            return;
-        }
+    socialRepository.save(new UserFollow(follower, following));
+  }
 
-        socialRepository.save(new UserFollow(follower, following));
+  /** Unfollow user. */
+  public void unfollow(User follower, User following) {
+    if (this.isFollowing(follower, following)) {
+      socialRepository.deleteByFollowerAndFollowing(follower, following);
     }
-
-    /**
-     * Unfollow user.
-     */
-    public void unfollow(User follower, User following) {
-        if (this.isFollowing(follower, following)) {
-            socialRepository.deleteByFollowerAndFollowing(follower, following);
-        }
-    }
+  }
 }

@@ -13,21 +13,21 @@ import sample.shirohoo.realworld.core.model.User;
 @Repository
 @RequiredArgsConstructor
 class ArticleFavoriteRepositoryAdapter implements ArticleFavoriteRepository {
-    private final ArticleFavoriteJpaRepository articleFavoriteJpaRepository;
+  private final ArticleFavoriteJpaRepository articleFavoriteJpaRepository;
 
-    @Override
-    public void save(ArticleFavorite articleFavorite) {
-        articleFavoriteJpaRepository.save(articleFavorite);
-    }
+  @Override
+  public void save(ArticleFavorite articleFavorite) {
+    articleFavoriteJpaRepository.save(articleFavorite);
+  }
 
-    @Override
-    @Transactional
-    public void deleteByUserAndArticle(User user, Article article) {
-        articleFavoriteJpaRepository.deleteByUserAndArticle(user, article);
-    }
+  @Override
+  @Transactional
+  public void deleteByUserAndArticle(User user, Article article) {
+    articleFavoriteJpaRepository.deleteByUserAndArticle(user, article);
+  }
 
-    @Override
-    public boolean existsByUserAndArticle(User user, Article article) {
-        return articleFavoriteJpaRepository.existsByUserAndArticle(user, article);
-    }
+  @Override
+  public boolean existsByUserAndArticle(User user, Article article) {
+    return articleFavoriteJpaRepository.existsByUserAndArticle(user, article);
+  }
 }

@@ -14,26 +14,26 @@ import sample.shirohoo.realworld.core.model.UserFollow;
 @Repository
 @RequiredArgsConstructor
 class SocialRepositoryAdapter implements SocialRepository {
-    private final UserFollowJpaRepository userFollowJpaRepository;
+  private final UserFollowJpaRepository userFollowJpaRepository;
 
-    @Override
-    public void save(UserFollow userFollow) {
-        userFollowJpaRepository.save(userFollow);
-    }
+  @Override
+  public void save(UserFollow userFollow) {
+    userFollowJpaRepository.save(userFollow);
+  }
 
-    @Override
-    public List<UserFollow> findByFollower(User follower) {
-        return userFollowJpaRepository.findByFollower(follower);
-    }
+  @Override
+  public List<UserFollow> findByFollower(User follower) {
+    return userFollowJpaRepository.findByFollower(follower);
+  }
 
-    @Override
-    @Transactional
-    public void deleteByFollowerAndFollowing(User follower, User following) {
-        userFollowJpaRepository.deleteByFollowerAndFollowing(follower, following);
-    }
+  @Override
+  @Transactional
+  public void deleteByFollowerAndFollowing(User follower, User following) {
+    userFollowJpaRepository.deleteByFollowerAndFollowing(follower, following);
+  }
 
-    @Override
-    public boolean existsByFollowerAndFollowing(User follower, User following) {
-        return userFollowJpaRepository.existsByFollowerAndFollowing(follower, following);
-    }
+  @Override
+  public boolean existsByFollowerAndFollowing(User follower, User following) {
+    return userFollowJpaRepository.existsByFollowerAndFollowing(follower, following);
+  }
 }

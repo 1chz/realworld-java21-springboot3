@@ -30,57 +30,58 @@ import sample.shirohoo.realworld.core.service.UserService;
 @RestController
 @RequiredArgsConstructor
 class UserController {
-    private static final String LOGIN_URL = "/api/users/login";
+  private static final String LOGIN_URL = "/api/users/login";
 
-    private final UserService userService;
-    private final RealworldBearerTokenProvider bearerTokenProvider;
+  private final UserService userService;
+  private final RealworldBearerTokenProvider bearerTokenProvider;
 
-    @PostMapping("/api/users")
-    public ModelAndView doPost(HttpServletRequest httpServletRequest, @RequestBody SignupRequest request) {
-        UserRegistry userRegistry = new UserRegistry(
-                request.user().email(),
-                request.user().username(),
-                request.user().password());
+  @PostMapping("/api/users")
+  public ModelAndView doPost(
+      HttpServletRequest httpServletRequest, @RequestBody SignupRequest request) {
+    UserRegistry userRegistry =
+        new UserRegistry(
+            request.user().email(), request.user().username(), request.user().password());
 
-        userService.signup(userRegistry);
+    userService.signup(userRegistry);
 
-        // Redirect to login API to automatically login when signup is complete
-        LoginUserRequest loginUserRequest =
-                new LoginUserRequest(request.user().email(), request.user().password());
-        httpServletRequest.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
+    // Redirect to login API to automatically login when signup is complete
+    LoginUserRequest loginUserRequest =
+        new LoginUserRequest(request.user().email(), request.user().password());
+    httpServletRequest.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
 
-        return new ModelAndView("redirect:" + LOGIN_URL, "user", Map.of("user", loginUserRequest));
-    }
+    return new ModelAndView("redirect:" + LOGIN_URL, "user", Map.of("user", loginUserRequest));
+  }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(LOGIN_URL)
-    public UsersResponse doPost(@RequestBody LoginUserRequest request) {
-        String email = request.user().email();
-        String password = request.user().password();
+  @ResponseStatus(HttpStatus.CREATED)
+  @PostMapping(LOGIN_URL)
+  public UsersResponse doPost(@RequestBody LoginUserRequest request) {
+    String email = request.user().email();
+    String password = request.user().password();
 
-        User user = userService.login(email, password);
-        Jwt jwt = bearerTokenProvider.getToken(user);
+    User user = userService.login(email, password);
+    Jwt jwt = bearerTokenProvider.getToken(user);
 
-        return UsersResponse.from(jwt.getTokenValue(), user);
-    }
+    return UsersResponse.from(jwt.getTokenValue(), user);
+  }
 
-    @GetMapping("/api/user")
-    public UsersResponse doGet(JwtAuthenticationToken authentication) {
-        User user = userService.getUserById(UUID.fromString(authentication.getName()));
+  @GetMapping("/api/user")
+  public UsersResponse doGet(JwtAuthenticationToken authentication) {
+    User user = userService.getUserById(UUID.fromString(authentication.getName()));
 
-        return UsersResponse.from(authentication.getToken().getTokenValue(), user);
-    }
+    return UsersResponse.from(authentication.getToken().getTokenValue(), user);
+  }
 
-    @PutMapping("/api/user")
-    public UsersResponse doPut(JwtAuthenticationToken authentication, @RequestBody UpdateUserRequest request) {
-        User requester = userService.getUserById(UUID.fromString(authentication.getName()));
+  @PutMapping("/api/user")
+  public UsersResponse doPut(
+      JwtAuthenticationToken authentication, @RequestBody UpdateUserRequest request) {
+    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
 
-        requester = userService.updateEmail(requester, request.user().email());
-        requester = userService.updateUsername(requester, request.user().username());
-        requester = userService.updatePassword(requester, request.user().password());
-        requester = userService.updateBio(requester, request.user().bio());
-        requester = userService.updateImageUrl(requester, request.user().image());
+    requester = userService.updateEmail(requester, request.user().email());
+    requester = userService.updateUsername(requester, request.user().username());
+    requester = userService.updatePassword(requester, request.user().password());
+    requester = userService.updateBio(requester, request.user().bio());
+    requester = userService.updateImageUrl(requester, request.user().image());
 
-        return UsersResponse.from(authentication.getToken().getTokenValue(), requester);
-    }
+    return UsersResponse.from(authentication.getToken().getTokenValue(), requester);
+  }
 }

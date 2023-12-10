@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ArticleRepository {
-    Article save(Article article);
+  Article save(Article article);
 
-    List<Article> findAll(ArticleFacets facets);
+  List<Article> findAll(ArticleFacets facets);
 
-    Optional<Article> findBySlug(String slug);
+  Optional<Article> findBySlug(String slug);
 
-    List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets);
+  List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets);
 
-    ArticleInfo findArticleInfoByAnonymous(Article article);
+  ArticleInfo findArticleInfoByAnonymous(Article article);
 
-    ArticleInfo findArticleInfoByUser(User requester, Article article);
+  ArticleInfo findArticleInfoByUser(User requester, Article article);
 
-    void delete(Article article);
+  void delete(Article article);
 
-    boolean existsByTitle(String title);
+  boolean existsByTitle(String title);
 }

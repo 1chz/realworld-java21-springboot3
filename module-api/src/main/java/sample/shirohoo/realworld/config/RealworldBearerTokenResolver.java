@@ -16,59 +16,60 @@ import org.springframework.util.StringUtils;
 /** Change the prefix of the Authorization token from 'Bearer' to 'Token'. */
 @Component
 public class RealworldBearerTokenResolver implements BearerTokenResolver {
-    private static final Pattern AUTHORIZATION_PATTERN =
-            Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern AUTHORIZATION_PATTERN =
+      Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
 
-    @Override
-    public String resolve(HttpServletRequest request) {
-        String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
-        String parameterToken =
-                isParameterTokenSupportedForRequest(request) ? resolveFromRequestParameters(request) : null;
+  @Override
+  public String resolve(HttpServletRequest request) {
+    String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
+    String parameterToken =
+        isParameterTokenSupportedForRequest(request) ? resolveFromRequestParameters(request) : null;
 
-        if (authorizationHeaderToken != null) {
-            if (parameterToken != null) {
-                throw new OAuth2AuthenticationException(
-                        BearerTokenErrors.invalidRequest("Found multiple bearer tokens in the request"));
-            }
-            return authorizationHeaderToken;
-        }
-
-        return null;
-    }
-
-    private String resolveFromAuthorizationHeader(HttpServletRequest request) {
-        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (!StringUtils.startsWithIgnoreCase(authorization, "token")) {
-            return null;
-        }
-
-        Matcher matcher = AUTHORIZATION_PATTERN.matcher(authorization);
-        if (!matcher.matches()) {
-            throw new OAuth2AuthenticationException(BearerTokenErrors.invalidToken("Bearer token is malformed"));
-        }
-
-        return matcher.group("token");
-    }
-
-    private boolean isParameterTokenSupportedForRequest(HttpServletRequest request) {
-        return (("POST".equals(request.getMethod())
-                        && MediaType.APPLICATION_FORM_URLENCODED_VALUE.equals(request.getContentType()))
-                || "GET".equals(request.getMethod()));
-    }
-
-    private String resolveFromRequestParameters(HttpServletRequest request) {
-        String[] values = request.getParameterValues("access_token");
-
-        if (values == null || values.length == 0) {
-            return null;
-        }
-
-        if (values.length == 1) {
-            return values[0];
-        }
-
+    if (authorizationHeaderToken != null) {
+      if (parameterToken != null) {
         throw new OAuth2AuthenticationException(
-                BearerTokenErrors.invalidRequest("Found multiple bearer tokens in the request"));
+            BearerTokenErrors.invalidRequest("Found multiple bearer tokens in the request"));
+      }
+      return authorizationHeaderToken;
     }
+
+    return null;
+  }
+
+  private String resolveFromAuthorizationHeader(HttpServletRequest request) {
+    String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+    if (!StringUtils.startsWithIgnoreCase(authorization, "token")) {
+      return null;
+    }
+
+    Matcher matcher = AUTHORIZATION_PATTERN.matcher(authorization);
+    if (!matcher.matches()) {
+      throw new OAuth2AuthenticationException(
+          BearerTokenErrors.invalidToken("Bearer token is malformed"));
+    }
+
+    return matcher.group("token");
+  }
+
+  private boolean isParameterTokenSupportedForRequest(HttpServletRequest request) {
+    return (("POST".equals(request.getMethod())
+            && MediaType.APPLICATION_FORM_URLENCODED_VALUE.equals(request.getContentType()))
+        || "GET".equals(request.getMethod()));
+  }
+
+  private String resolveFromRequestParameters(HttpServletRequest request) {
+    String[] values = request.getParameterValues("access_token");
+
+    if (values == null || values.length == 0) {
+      return null;
+    }
+
+    if (values.length == 1) {
+      return values[0];
+    }
+
+    throw new OAuth2AuthenticationException(
+        BearerTokenErrors.invalidRequest("Found multiple bearer tokens in the request"));
+  }
 }

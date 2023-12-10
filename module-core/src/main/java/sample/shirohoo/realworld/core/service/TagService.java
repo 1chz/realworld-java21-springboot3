@@ -12,14 +12,15 @@ import sample.shirohoo.realworld.core.model.TagRepository;
 @Service
 @RequiredArgsConstructor
 public class TagService {
-    private final TagRepository tagRepository;
+  private final TagRepository tagRepository;
 
-    /**
-     * Get all tags.
-     * @return Returns all tags
-     */
-    public List<Tag> getTags() {
-        // Note: If there are too many tags, recommend apply cursor based pagination.
-        return tagRepository.findAll();
-    }
+  /**
+   * Get all tags.
+   *
+   * @return Returns all tags
+   */
+  public List<Tag> getTags() {
+    // Note: If there are too many tags, recommend apply cursor based pagination.
+    return tagRepository.findAll();
+  }
 }
