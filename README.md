@@ -27,7 +27,6 @@ For more information on how to this works with other frontends/backends, head ov
    * [Run build](#run-build)
    * [Run E2E test](#run-e2e-test)
      * [Performance](#performance)
-* [Migrate to Java 21](#migrate-to-java-21)
 
 ---
 
