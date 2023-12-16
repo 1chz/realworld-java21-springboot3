@@ -41,6 +41,7 @@ class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.httpBasic(AbstractHttpConfigurer::disable)
+        .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
@@ -70,15 +71,14 @@ class SecurityConfiguration {
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration cors = new CorsConfiguration();
+    var configuration = new CorsConfiguration();
 
-    cors.setAllowedOriginPatterns(List.of("*"));
-    cors.setAllowedMethods(List.of("*"));
-    cors.setAllowedHeaders(List.of("*"));
-    cors.setAllowCredentials(true);
+    configuration.setAllowedOriginPatterns(List.of("*"));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("*"));
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", cors);
+    var source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
 
     return source;
   }
