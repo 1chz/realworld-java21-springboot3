@@ -2,7 +2,6 @@ package sample.shirohoo.realworld.api;
 
 import static java.util.stream.Collectors.*;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -26,109 +25,105 @@ import sample.shirohoo.realworld.api.response.SingleArticleResponse;
 import sample.shirohoo.realworld.core.model.Article;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
 import sample.shirohoo.realworld.core.model.ArticleInfo;
-import sample.shirohoo.realworld.core.model.ArticleTag;
-import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.service.ArticleService;
 import sample.shirohoo.realworld.core.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
 class ArticleController {
-  private final UserService userService;
-  private final ArticleService articleService;
+    private final UserService userService;
+    private final ArticleService articleService;
 
-  @PostMapping("/api/articles")
-  public SingleArticleResponse doPost(
-      Authentication authentication, @RequestBody WriteArticleRequest request) {
-    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
-    Article article =
-        articleService.writeArticle(
-            new Article(
+    @PostMapping("/api/articles")
+    public SingleArticleResponse doPost(Authentication authentication, @RequestBody WriteArticleRequest request) {
+        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
+        var article = articleService.writeArticle(new Article(
                 requester,
                 request.article().title(),
                 request.article().description(),
                 request.article().body()));
-    Set<ArticleTag> articleTags = articleService.addArticleTags(article, request.tags());
+        var articleTags = articleService.addArticleTags(article, request.tags());
 
-    return new SingleArticleResponse(new ArticleInfo(article, articleTags, 0, false));
-  }
-
-  @GetMapping("/api/articles")
-  public MultipleArticlesResponse doGet(
-      Authentication authentication,
-      @RequestParam(value = "tag", required = false) String tag,
-      @RequestParam(value = "author", required = false) String author,
-      @RequestParam(value = "favorited", required = false) String favorited,
-      @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
-      @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
-    ArticleFacets facets = new ArticleFacets(tag, author, favorited, offset, limit);
-
-    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-      return articleService.readArticles(facets).stream()
-          .map(ArticleResponse::new)
-          .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
+        return new SingleArticleResponse(new ArticleInfo(article, articleTags, 0, false));
     }
 
-    User user = userService.getUserById(UUID.fromString(authentication.getName()));
-    return articleService.readArticles(user, facets).stream()
-        .map(ArticleResponse::new)
-        .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
-  }
+    @GetMapping("/api/articles")
+    public MultipleArticlesResponse doGet(
+            Authentication authentication,
+            @RequestParam(value = "tag", required = false) String tag,
+            @RequestParam(value = "author", required = false) String author,
+            @RequestParam(value = "favorited", required = false) String favorited,
+            @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
+        var facets = new ArticleFacets(tag, author, favorited, offset, limit);
 
-  @GetMapping("/api/articles/{slug}")
-  public SingleArticleResponse doGet(Authentication authentication, @PathVariable String slug) {
-    Article article = articleService.readArticleBySlug(slug);
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return articleService.readArticles(facets).stream()
+                    .map(ArticleResponse::new)
+                    .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
+        }
 
-    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-      return new SingleArticleResponse(articleService.getArticleInfoByAnonymous(article));
+        var user = userService.getUserById(UUID.fromString(authentication.getName()));
+        return articleService.readArticles(user, facets).stream()
+                .map(ArticleResponse::new)
+                .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
     }
 
-    User user = userService.getUserById(UUID.fromString(authentication.getName()));
-    return new SingleArticleResponse(articleService.getArticleInfoByUser(user, article));
-  }
+    @GetMapping("/api/articles/{slug}")
+    public SingleArticleResponse doGet(Authentication authentication, @PathVariable String slug) {
+        var article = articleService.readArticleBySlug(slug);
 
-  @PutMapping("/api/articles/{slug}")
-  public SingleArticleResponse doPut(
-      Authentication authentication,
-      @PathVariable String slug,
-      @RequestBody EditArticleRequest request) {
-    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
-    Article article = articleService.readArticleBySlug(slug);
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return new SingleArticleResponse(articleService.getArticleInfoByAnonymous(article));
+        }
 
-    if (request.article().title() != null) {
-      article = articleService.editTitle(requester, article, request.article().title());
+        var user = userService.getUserById(UUID.fromString(authentication.getName()));
+        return new SingleArticleResponse(articleService.getArticleInfoByUser(user, article));
     }
 
-    if (request.article().description() != null) {
-      article = articleService.editDescription(requester, article, request.article().description());
+    @PutMapping("/api/articles/{slug}")
+    public SingleArticleResponse doPut(
+            Authentication authentication, @PathVariable String slug, @RequestBody EditArticleRequest request) {
+        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
+        var article = articleService.readArticleBySlug(slug);
+
+        if (request.article().title() != null) {
+            article = articleService.editTitle(
+                    requester, article, request.article().title());
+        }
+
+        if (request.article().description() != null) {
+            article = articleService.editDescription(
+                    requester, article, request.article().description());
+        }
+
+        if (request.article().body() != null) {
+            article = articleService.editContent(
+                    requester, article, request.article().body());
+        }
+
+        var articleInfo = articleService.getArticleInfoByUser(requester, article);
+        return new SingleArticleResponse(articleInfo);
     }
 
-    if (request.article().body() != null) {
-      article = articleService.editContent(requester, article, request.article().body());
+    @DeleteMapping("/api/articles/{slug}")
+    public void doDelete(Authentication authentication, @PathVariable String slug) {
+        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
+        var article = articleService.readArticleBySlug(slug);
+
+        articleService.deleteArticle(requester, article);
     }
 
-    ArticleInfo articleInfo = articleService.getArticleInfoByUser(requester, article);
-    return new SingleArticleResponse(articleInfo);
-  }
+    @GetMapping("/api/articles/feed")
+    public MultipleArticlesResponse doGet(
+            Authentication authentication, // Must be verified
+            @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
+        var facets = new ArticleFacets(offset, limit);
+        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
 
-  @DeleteMapping("/api/articles/{slug}")
-  public void doDelete(Authentication authentication, @PathVariable String slug) {
-    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
-    Article article = articleService.readArticleBySlug(slug);
-
-    articleService.deleteArticle(requester, article);
-  }
-
-  @GetMapping("/api/articles/feed")
-  public MultipleArticlesResponse doGet(
-      Authentication authentication, // Must be verified
-      @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
-      @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
-    ArticleFacets facets = new ArticleFacets(offset, limit);
-    User requester = userService.getUserById(UUID.fromString(authentication.getName()));
-
-    return articleService.readFeeds(requester, facets).stream()
-        .map(ArticleResponse::new)
-        .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
-  }
+        return articleService.readFeeds(requester, facets).stream()
+                .map(ArticleResponse::new)
+                .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
+    }
 }

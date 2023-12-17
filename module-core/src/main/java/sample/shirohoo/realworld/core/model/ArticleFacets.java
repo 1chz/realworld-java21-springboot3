@@ -14,16 +14,16 @@ package sample.shirohoo.realworld.core.model;
  * @see ArticleFacets#ArticleFacets(int, int)
  */
 public record ArticleFacets(String tag, String author, String favorited, int page, int size) {
-  public ArticleFacets {
-    if (page < 0) {
-      throw new IllegalArgumentException("page must be greater than 0.");
+    public ArticleFacets {
+        if (page < 0) {
+            throw new IllegalArgumentException("page must be greater than 0.");
+        }
+        if (size < 0 || size > 50) {
+            throw new IllegalArgumentException("size must be between 0 and 50.");
+        }
     }
-    if (size < 0 || size > 50) {
-      throw new IllegalArgumentException("size must be between 0 and 50.");
-    }
-  }
 
-  public ArticleFacets(int page, int size) {
-    this(null, null, null, page, size);
-  }
+    public ArticleFacets(int page, int size) {
+        this(null, null, null, page, size);
+    }
 }

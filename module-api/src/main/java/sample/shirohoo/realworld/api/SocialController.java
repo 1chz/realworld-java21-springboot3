@@ -13,50 +13,46 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import sample.shirohoo.realworld.api.response.ProfilesResponse;
-import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.service.SocialService;
 import sample.shirohoo.realworld.core.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
 class SocialController {
-  private final UserService userService;
-  private final SocialService socialService;
+    private final UserService userService;
+    private final SocialService socialService;
 
-  @GetMapping("/api/profiles/{username}")
-  public ProfilesResponse doGet(
-      Authentication authentication, @PathVariable("username") String targetUsername) {
-    User targetUser = userService.getUserByUsername(targetUsername);
+    @GetMapping("/api/profiles/{username}")
+    public ProfilesResponse doGet(Authentication authentication, @PathVariable("username") String targetUsername) {
+        var targetUser = userService.getUserByUsername(targetUsername);
 
-    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-      return ProfilesResponse.from(targetUser);
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return ProfilesResponse.from(targetUser);
+        }
+
+        var me = userService.getUserById(UUID.fromString(authentication.getName()));
+        boolean isFollowing = socialService.isFollowing(me, targetUser);
+
+        return ProfilesResponse.from(targetUser, isFollowing);
     }
 
-    User me = userService.getUserById(UUID.fromString(authentication.getName()));
-    boolean isFollowing = socialService.isFollowing(me, targetUser);
+    @PostMapping("/api/profiles/{username}/follow")
+    public ProfilesResponse doPost(Authentication authentication, @PathVariable("username") String targetUsername) {
+        var follower = userService.getUserById(UUID.fromString(authentication.getName()));
+        var following = userService.getUserByUsername(targetUsername);
 
-    return ProfilesResponse.from(targetUser, isFollowing);
-  }
+        socialService.follow(follower, following);
 
-  @PostMapping("/api/profiles/{username}/follow")
-  public ProfilesResponse doPost(
-      Authentication authentication, @PathVariable("username") String targetUsername) {
-    User follower = userService.getUserById(UUID.fromString(authentication.getName()));
-    User following = userService.getUserByUsername(targetUsername);
+        return ProfilesResponse.from(following, true);
+    }
 
-    socialService.follow(follower, following);
+    @DeleteMapping("/api/profiles/{username}/follow")
+    public ProfilesResponse doDelete(Authentication authentication, @PathVariable("username") String targetUsername) {
+        var follower = userService.getUserById(UUID.fromString(authentication.getName()));
+        var following = userService.getUserByUsername(targetUsername);
 
-    return ProfilesResponse.from(following, true);
-  }
+        socialService.unfollow(follower, following);
 
-  @DeleteMapping("/api/profiles/{username}/follow")
-  public ProfilesResponse doDelete(
-      Authentication authentication, @PathVariable("username") String targetUsername) {
-    User follower = userService.getUserById(UUID.fromString(authentication.getName()));
-    User following = userService.getUserByUsername(targetUsername);
-
-    socialService.unfollow(follower, following);
-
-    return ProfilesResponse.from(following, false);
-  }
+        return ProfilesResponse.from(following, false);
+    }
 }

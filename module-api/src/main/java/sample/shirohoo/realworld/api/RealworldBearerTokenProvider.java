@@ -15,21 +15,19 @@ import sample.shirohoo.realworld.core.model.User;
 @Component
 @RequiredArgsConstructor
 class RealworldBearerTokenProvider {
-  private final JwtEncoder jwtEncoder;
+    private final JwtEncoder jwtEncoder;
 
-  public Jwt getToken(User user) {
-    if (user == null || user.getId() == null) {
-      throw new IllegalArgumentException("user is null or unknown user.");
-    }
+    public Jwt getToken(User user) {
+        if (user == null || user.getId() == null) {
+            throw new IllegalArgumentException("user is null or unknown user.");
+        }
 
-    Instant now = Instant.now();
-    return jwtEncoder.encode(
-        JwtEncoderParameters.from(
-            JwtClaimsSet.builder()
+        var now = Instant.now();
+        return jwtEncoder.encode(JwtEncoderParameters.from(JwtClaimsSet.builder()
                 .issuer("https://realworld.io")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(300))
                 .subject(user.getId().toString())
                 .build()));
-  }
+    }
 }

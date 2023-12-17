@@ -6,15 +6,15 @@ import sample.shirohoo.realworld.core.model.PasswordEncoder;
 
 @RequiredArgsConstructor
 class PasswordEncoderAdapter implements PasswordEncoder {
-  private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-  @Override
-  public boolean matches(String rawPassword, String encodedPassword) {
-    return passwordEncoder.matches(rawPassword, encodedPassword);
-  }
+    @Override
+    public boolean matches(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
 
-  @Override
-  public String encode(String rawPassword) {
-    return passwordEncoder.encode(rawPassword);
-  }
+    @Override
+    public String encode(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
+    }
 }

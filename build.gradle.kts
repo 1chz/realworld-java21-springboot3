@@ -73,7 +73,7 @@ allprojects {
 
     spotless {
         java {
-            googleJavaFormat()
+            palantirJavaFormat("2.38.0")
             indentWithSpaces()
             formatAnnotations()
             removeUnusedImports()

@@ -11,10 +11,10 @@ import sample.shirohoo.realworld.core.service.TagService;
 @RestController
 @RequiredArgsConstructor
 class TagController {
-  private final TagService tagService;
+    private final TagService tagService;
 
-  @GetMapping("/api/tags")
-  public TagsResponse doGet() {
-    return new TagsResponse(tagService.getTags());
-  }
+    @GetMapping("/api/tags")
+    public TagsResponse doGet() {
+        return new TagsResponse(tagService.getTags());
+    }
 }

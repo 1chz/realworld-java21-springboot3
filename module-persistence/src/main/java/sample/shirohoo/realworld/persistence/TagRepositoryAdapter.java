@@ -14,20 +14,20 @@ import sample.shirohoo.realworld.core.model.TagRepository;
 @Repository
 @RequiredArgsConstructor
 class TagRepositoryAdapter implements TagRepository {
-  private final TagJpaRepository tagJpaRepository;
+    private final TagJpaRepository tagJpaRepository;
 
-  @Override
-  public List<Tag> saveAll(Collection<Tag> tags) {
-    return tagJpaRepository.saveAll(tags);
-  }
+    @Override
+    public List<Tag> saveAll(Collection<Tag> tags) {
+        return tagJpaRepository.saveAll(tags);
+    }
 
-  @Override
-  public List<Tag> findAll() {
-    return tagJpaRepository.findAll();
-  }
+    @Override
+    public List<Tag> findAll() {
+        return tagJpaRepository.findAll();
+    }
 
-  @Override
-  public Set<Tag> findByNameIn(Collection<String> names) {
-    return tagJpaRepository.findByNameIn(names);
-  }
+    @Override
+    public Set<Tag> findByNameIn(Collection<String> names) {
+        return tagJpaRepository.findByNameIn(names);
+    }
 }

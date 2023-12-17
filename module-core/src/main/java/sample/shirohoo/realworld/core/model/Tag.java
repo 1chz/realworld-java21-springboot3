@@ -19,37 +19,36 @@ import lombok.NoArgsConstructor;
 @Table(name = "tag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-  @Column(length = 20, unique = true, nullable = false)
-  private String name;
+    @Column(length = 20, unique = true, nullable = false)
+    private String name;
 
-  @Column(nullable = false, updatable = false)
-  private final LocalDateTime createdAt = LocalDateTime.now();
+    @Column(nullable = false, updatable = false)
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
-  public Tag(String name) {
-    if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("name is null or blank.");
+    public Tag(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name is null or blank.");
+        }
+
+        this.name = name;
     }
 
-    this.name = name;
-  }
+    public boolean equalsArticleTag(ArticleTag articleTag) {
+        return this.equals(articleTag.getTag());
+    }
 
-  public boolean equalsArticleTag(ArticleTag articleTag) {
-    return this.equals(articleTag.getTag());
-  }
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Tag other
+                && (Objects.equals(this.getId(), other.getId()) || Objects.equals(this.getName(), other.getName()));
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    return o instanceof Tag other
-        && (Objects.equals(this.getId(), other.getId())
-            || Objects.equals(this.getName(), other.getName()));
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.getName());
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getName());
+    }
 }

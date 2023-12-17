@@ -26,80 +26,72 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
 
 import sample.shirohoo.realworld.core.model.PasswordEncoder;
 
 @Configuration
 @EnableMethodSecurity
 class SecurityConfiguration {
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http.httpBasic(AbstractHttpConfigurer::disable)
-        .cors(Customizer.withDefaults())
-        .csrf(AbstractHttpConfigurer::disable)
-        .formLogin(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(
-            requests ->
-                requests
-                    .requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
-                    .permitAll()
-                    .requestMatchers(
-                        HttpMethod.GET,
-                        "/api/articles/{slug}/comments",
-                        "/api/articles/{slug}",
-                        "/api/articles",
-                        "/api/profiles/{username}",
-                        "/api/tags")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-        .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
-        .exceptionHandling(
-            exceptionHandler ->
-                exceptionHandler
-                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-        .build();
-  }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http.httpBasic(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        requests -> requests.requestMatchers(HttpMethod.POST, "/api/users", "/api/users/login")
+                                .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/articles/{slug}/comments",
+                                        "/api/articles/{slug}",
+                                        "/api/articles",
+                                        "/api/profiles/{username}",
+                                        "/api/tags")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
+                .exceptionHandling(exceptionHandler -> exceptionHandler
+                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                .build();
+    }
 
-  @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
-    var configuration = new CorsConfiguration();
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        var configuration = new CorsConfiguration();
 
-    configuration.setAllowedOriginPatterns(List.of("*"));
-    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-    configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
 
-    var source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
+        var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
 
-    return source;
-  }
+        return source;
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    return new PasswordEncoderAdapter(bCryptPasswordEncoder);
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new PasswordEncoderAdapter(new BCryptPasswordEncoder());
+    }
 
-  @Bean
-  public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
-    return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
-  }
+    @Bean
+    public JwtDecoder jwtDecoder(@Value("${security.key.public}") RSAPublicKey rsaPublicKey) {
+        return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+    }
 
-  @Bean
-  public JwtEncoder jwtEncoder(
-      @Value("${security.key.public}") RSAPublicKey rsaPublicKey,
-      @Value("${security.key.private}") RSAPrivateKey rsaPrivateKey) {
-    JWK jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
-    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-    return new NimbusJwtEncoder(jwks);
-  }
+    @Bean
+    public JwtEncoder jwtEncoder(
+            @Value("${security.key.public}") RSAPublicKey rsaPublicKey,
+            @Value("${security.key.private}") RSAPrivateKey rsaPrivateKey) {
+        var jwk = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
+        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 }

@@ -12,14 +12,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import sample.shirohoo.realworld.core.model.Article;
 import sample.shirohoo.realworld.core.model.User;
 
-interface ArticleJpaRepository
-    extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
-  Optional<Article> findBySlug(String slug);
+interface ArticleJpaRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
+    Optional<Article> findBySlug(String slug);
 
-  @SuppressWarnings("NullableProblems")
-  Page<Article> findAll(Specification<Article> spec, Pageable pageable);
+    @SuppressWarnings("NullableProblems")
+    Page<Article> findAll(Specification<Article> spec, Pageable pageable);
 
-  Page<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, Pageable pageable);
+    Page<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, Pageable pageable);
 
-  boolean existsByTitle(String title);
+    boolean existsByTitle(String title);
 }

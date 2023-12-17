@@ -2,7 +2,7 @@ package sample.shirohoo.realworld.core.model;
 
 /** Can verify that the user's password is correct or encrypt the password. */
 public interface PasswordEncoder {
-  boolean matches(String rawPassword, String encodedPassword);
+    boolean matches(String rawPassword, String encodedPassword);
 
-  String encode(String rawPassword);
+    String encode(String rawPassword);
 }

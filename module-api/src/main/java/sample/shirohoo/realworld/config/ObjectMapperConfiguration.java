@@ -17,24 +17,19 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 class ObjectMapperConfiguration {
-  @Bean
-  public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-    return builder.modules(iso8601SerializeModule()).build();
-  }
+    @Bean
+    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+        return builder.modules(iso8601SerializeModule()).build();
+    }
 
-  private Module iso8601SerializeModule() {
-    return new JavaTimeModule()
-        .addSerializer(
-            LocalDateTime.class,
-            new JsonSerializer<>() {
-              @Override
-              public void serialize(
-                  LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
-                  throws IOException {
-                String formattedDateTime =
-                    value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+    private Module iso8601SerializeModule() {
+        return new JavaTimeModule().addSerializer(LocalDateTime.class, new JsonSerializer<>() {
+            @Override
+            public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
+                    throws IOException {
+                String formattedDateTime = value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
                 gen.writeString(formattedDateTime);
-              }
-            });
-  }
+            }
+        });
+    }
 }

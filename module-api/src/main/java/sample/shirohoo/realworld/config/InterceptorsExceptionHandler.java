@@ -15,41 +15,40 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ProblemDetail handleOn(IllegalArgumentException e) {
-    log.info(e.getMessage(), e);
-    return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
-  }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleOn(IllegalArgumentException e) {
+        log.info(e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 
-  @ExceptionHandler(NoSuchElementException.class)
-  public ProblemDetail handleOn(NoSuchElementException e) {
-    log.info(e.getMessage(), e);
-    return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
-  }
+    @ExceptionHandler(NoSuchElementException.class)
+    public ProblemDetail handleOn(NoSuchElementException e) {
+        log.info(e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
 
-  @ExceptionHandler(AccessDeniedException.class)
-  public ProblemDetail handleOn(AccessDeniedException e) {
-    log.info(e.getMessage(), e);
-    return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
-  }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleOn(AccessDeniedException e) {
+        log.info(e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
+    }
 
-  @ExceptionHandler(AuthenticationException.class)
-  public ProblemDetail handleOn(AuthenticationException e) {
-    log.info(e.getMessage(), e);
-    return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
-  }
+    @ExceptionHandler(AuthenticationException.class)
+    public ProblemDetail handleOn(AuthenticationException e) {
+        log.info(e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
 
-  /**
-   * Errors that the developer did not expect are handled here and the log level is recorded as
-   * error.
-   *
-   * @param e Exception
-   * @return ProblemDetail
-   */
-  @ExceptionHandler(Exception.class)
-  public ProblemDetail handleOn(Exception e) {
-    log.error(e.getMessage(), e);
-    return ProblemDetail.forStatusAndDetail(
-        HttpStatus.INTERNAL_SERVER_ERROR, "Please contact the administrator.");
-  }
+    /**
+     * Errors that the developer did not expect are handled here and the log level is recorded as
+     * error.
+     *
+     * @param e Exception
+     * @return ProblemDetail
+     */
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleOn(Exception e) {
+        log.error(e.getMessage(), e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Please contact the administrator.");
+    }
 }

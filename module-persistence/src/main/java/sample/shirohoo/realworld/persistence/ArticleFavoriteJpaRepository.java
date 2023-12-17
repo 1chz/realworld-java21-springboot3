@@ -7,9 +7,9 @@ import sample.shirohoo.realworld.core.model.ArticleFavorite;
 import sample.shirohoo.realworld.core.model.User;
 
 interface ArticleFavoriteJpaRepository extends JpaRepository<ArticleFavorite, Integer> {
-  void deleteByUserAndArticle(User user, Article article);
+    void deleteByUserAndArticle(User user, Article article);
 
-  boolean existsByUserAndArticle(User user, Article article);
+    boolean existsByUserAndArticle(User user, Article article);
 
-  int countByArticle(Article article);
+    int countByArticle(Article article);
 }

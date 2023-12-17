@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 public interface TagRepository {
-  @SuppressWarnings("UnusedReturnValue")
-  List<Tag> saveAll(Collection<Tag> tags);
+    @SuppressWarnings("UnusedReturnValue")
+    List<Tag> saveAll(Collection<Tag> tags);
 
-  Set<Tag> findByNameIn(Collection<String> names);
+    Set<Tag> findByNameIn(Collection<String> names);
 
-  List<Tag> findAll();
+    List<Tag> findAll();
 }

@@ -11,199 +11,197 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 class UserTest {
-  @ParameterizedTest
-  @CsvSource({"email, true", "unknown email, false"})
-  void equalsEmail(String email, boolean expected) {
-    // given
-    User sut = new User("email", "username", "password");
+    @ParameterizedTest
+    @CsvSource({"email, true", "unknown email, false"})
+    void equalsEmail(String email, boolean expected) {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    boolean actual = sut.equalsEmail(email);
+        // when
+        boolean actual = sut.equalsEmail(email);
 
-    // then
-    assertThat(actual).isEqualTo(expected);
-  }
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
 
-  @ParameterizedTest
-  @CsvSource({"username, true", "unknown username, false"})
-  void equalsUsername(String username, boolean expected) {
-    // given
-    User sut = new User("email", "username", "password");
+    @ParameterizedTest
+    @CsvSource({"username, true", "unknown username, false"})
+    void equalsUsername(String username, boolean expected) {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    boolean actual = sut.equalsUsername(username);
+        // when
+        boolean actual = sut.equalsUsername(username);
 
-    // then
-    assertThat(actual).isEqualTo(expected);
-  }
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
 
-  @Test
-  void setEmail() {
-    // given
-    User sut = new User("email", "username", "password");
+    @Test
+    void setEmail() {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    sut.setEmail("new email");
+        // when
+        sut.setEmail("new email");
 
-    // then
-    assertThat(sut.getEmail()).isEqualTo("new email");
-  }
+        // then
+        assertThat(sut.getEmail()).isEqualTo("new email");
+    }
 
-  @ParameterizedTest
-  @NullAndEmptySource
-  void if_email_is_null_or_blank_then_not_modify_email(String email) {
-    // given
-    User sut = new User("email", "username", "password");
+    @ParameterizedTest
+    @NullAndEmptySource
+    void if_email_is_null_or_blank_then_not_modify_email(String email) {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    sut.setEmail(email);
+        // when
+        sut.setEmail(email);
 
-    // then
-    assertThat(sut.getEmail()).isEqualTo("email");
-  }
+        // then
+        assertThat(sut.getEmail()).isEqualTo("email");
+    }
 
-  @Test
-  void setUsername() {
-    // given
-    User sut = new User("email", "username", "password");
+    @Test
+    void setUsername() {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    sut.setUsername("new username");
+        // when
+        sut.setUsername("new username");
 
-    // then
-    assertThat(sut.getUsername()).isEqualTo("new username");
-  }
+        // then
+        assertThat(sut.getUsername()).isEqualTo("new username");
+    }
 
-  @ParameterizedTest
-  @NullAndEmptySource
-  void if_username_is_null_or_blank_then_not_modify_username(String username) {
-    // given
-    User sut = new User("email", "username", "password");
+    @ParameterizedTest
+    @NullAndEmptySource
+    void if_username_is_null_or_blank_then_not_modify_username(String username) {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    sut.setUsername(username);
+        // when
+        sut.setUsername(username);
 
-    // then
-    assertThat(sut.getUsername()).isEqualTo("username");
-  }
+        // then
+        assertThat(sut.getUsername()).isEqualTo("username");
+    }
 
-  @Test
-  void setPassword() {
-    // given
-    User sut = new User("email", "username", "password");
-    PasswordEncoder stubPasswordEncoder =
-        new PasswordEncoder() {
-          @Override
-          public boolean matches(String rawPassword, String encodedPassword) {
-            return false;
-          }
+    @Test
+    void setPassword() {
+        // given
+        User sut = new User("email", "username", "password");
+        PasswordEncoder stubPasswordEncoder = new PasswordEncoder() {
+            @Override
+            public boolean matches(String rawPassword, String encodedPassword) {
+                return false;
+            }
 
-          @Override
-          public String encode(String rawPassword) {
-            return "encoded password";
-          }
+            @Override
+            public String encode(String rawPassword) {
+                return "encoded password";
+            }
         };
 
-    // when
-    sut.setPassword(stubPasswordEncoder, "new password");
+        // when
+        sut.setPassword(stubPasswordEncoder, "new password");
 
-    // then
-    assertThat(sut.getPassword()).isEqualTo("encoded password");
-  }
+        // then
+        assertThat(sut.getPassword()).isEqualTo("encoded password");
+    }
 
-  @ParameterizedTest
-  @NullAndEmptySource
-  void if_raw_password_is_null_or_blank_then_not_modify_password(String rawPassword) {
-    // given
-    User sut = new User("email", "username", "password");
-    PasswordEncoder stubPasswordEncoder =
-        new PasswordEncoder() {
-          @Override
-          public boolean matches(String rawPassword, String encodedPassword) {
-            return false;
-          }
+    @ParameterizedTest
+    @NullAndEmptySource
+    void if_raw_password_is_null_or_blank_then_not_modify_password(String rawPassword) {
+        // given
+        User sut = new User("email", "username", "password");
+        PasswordEncoder stubPasswordEncoder = new PasswordEncoder() {
+            @Override
+            public boolean matches(String rawPassword, String encodedPassword) {
+                return false;
+            }
 
-          @Override
-          public String encode(String rawPassword) {
-            return "encoded password";
-          }
+            @Override
+            public String encode(String rawPassword) {
+                return "encoded password";
+            }
         };
 
-    // when
-    sut.setPassword(stubPasswordEncoder, rawPassword);
+        // when
+        sut.setPassword(stubPasswordEncoder, rawPassword);
 
-    // then
-    assertThat(sut.getPassword()).isEqualTo("password");
-  }
+        // then
+        assertThat(sut.getPassword()).isEqualTo("password");
+    }
 
-  @Test
-  void if_passwordEncoder_is_null_then_throw_Exception() {
-    User sut = new User("email", "username", "password");
-    assertThatThrownBy(() -> sut.setPassword(null, "new password"))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("passwordEncoder is required.");
-  }
+    @Test
+    void if_passwordEncoder_is_null_then_throw_Exception() {
+        User sut = new User("email", "username", "password");
+        assertThatThrownBy(() -> sut.setPassword(null, "new password"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("passwordEncoder is required.");
+    }
 
-  @Test
-  void setBio() {
-    // given
-    User sut = new User("email", "username", "password");
+    @Test
+    void setBio() {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    sut.setBio("new bio");
+        // when
+        sut.setBio("new bio");
 
-    // then
-    assertThat(sut.getBio()).isEqualTo("new bio");
-  }
+        // then
+        assertThat(sut.getBio()).isEqualTo("new bio");
+    }
 
-  @Test
-  void setImageUrl() {
-    // given
-    User sut = new User("email", "username", "password");
+    @Test
+    void setImageUrl() {
+        // given
+        User sut = new User("email", "username", "password");
 
-    // when
-    sut.setImageUrl("new image url");
+        // when
+        sut.setImageUrl("new image url");
 
-    // then
-    assertThat(sut.getImageUrl()).isEqualTo("new image url");
-  }
+        // then
+        assertThat(sut.getImageUrl()).isEqualTo("new image url");
+    }
 
-  @Test
-  void equals_is_return_true_if_are_ids_same() {
-    // given
-    User user1 = new FixedIdUser();
-    User user2 = new FixedIdUser();
+    @Test
+    void equals_is_return_true_if_are_ids_same() {
+        // given
+        User user1 = new FixedIdUser();
+        User user2 = new FixedIdUser();
 
-    // when
-    boolean isEquals = user1.equals(user2);
+        // when
+        boolean isEquals = user1.equals(user2);
 
-    // then
-    assertTrue(isEquals);
-  }
+        // then
+        assertTrue(isEquals);
+    }
 
-  @Test
-  void equals_is_return_false_if_are_ids_difference() {
-    // given
-    User user1 = new User();
-    User user2 = new FixedIdUser();
+    @Test
+    void equals_is_return_false_if_are_ids_difference() {
+        // given
+        User user1 = new User();
+        User user2 = new FixedIdUser();
 
-    // when
-    boolean isEquals = user1.equals(user2);
+        // when
+        boolean isEquals = user1.equals(user2);
 
-    // then
-    assertFalse(isEquals);
-  }
+        // then
+        assertFalse(isEquals);
+    }
 
-  @Test
-  void hashCode_is_return_true_if_are_ids_same() {
-    // given
-    User user1 = new FixedIdUser();
-    User user2 = new FixedIdUser();
+    @Test
+    void hashCode_is_return_true_if_are_ids_same() {
+        // given
+        User user1 = new FixedIdUser();
+        User user2 = new FixedIdUser();
 
-    // when
-    boolean isEquals = user1.hashCode() == user2.hashCode();
+        // when
+        boolean isEquals = user1.hashCode() == user2.hashCode();
 
-    // then
-    assertTrue(isEquals);
-  }
+        // then
+        assertTrue(isEquals);
+    }
 }
