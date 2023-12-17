@@ -11,6 +11,4 @@ public interface ArticleCommentRepository {
   List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article);
 
   void delete(ArticleComment articleComment);
-
-  void deleteByArticle(Article article);
 }

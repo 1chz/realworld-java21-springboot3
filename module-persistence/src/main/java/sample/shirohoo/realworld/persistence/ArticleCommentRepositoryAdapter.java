@@ -37,10 +37,4 @@ class ArticleCommentRepositoryAdapter implements ArticleCommentRepository {
   public void delete(ArticleComment articleComment) {
     articleCommentJpaRepository.delete(articleComment);
   }
-
-  @Override
-  @Transactional
-  public void deleteByArticle(Article article) {
-    articleCommentJpaRepository.deleteByArticle(article);
-  }
 }

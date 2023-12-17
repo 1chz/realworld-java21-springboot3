@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import sample.shirohoo.realworld.core.model.Article;
-import sample.shirohoo.realworld.core.model.ArticleCommentRepository;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
 import sample.shirohoo.realworld.core.model.ArticleFavorite;
 import sample.shirohoo.realworld.core.model.ArticleFavoriteRepository;
@@ -34,7 +33,6 @@ public class ArticleService {
   private final SocialRepository socialRepository;
   private final ArticleRepository articleRepository;
   private final ArticleTagRepository articleTagRepository;
-  private final ArticleCommentRepository articleCommentRepository;
   private final ArticleFavoriteRepository articleFavoriteRepository;
 
   /**
@@ -208,8 +206,6 @@ public class ArticleService {
       throw new IllegalArgumentException("you can't delete articles written by others.");
     }
 
-    articleTagRepository.deleteByArticle(article);
-    articleCommentRepository.deleteByArticle(article);
     articleRepository.delete(article);
   }
 

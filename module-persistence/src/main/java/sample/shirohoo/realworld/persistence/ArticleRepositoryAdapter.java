@@ -24,6 +24,7 @@ import sample.shirohoo.realworld.core.model.User;
 class ArticleRepositoryAdapter implements ArticleRepository {
   private final ArticleJpaRepository articleJpaRepository;
   private final ArticleTagJpaRepository articleTagJpaRepository;
+  private final ArticleCommentJpaRepository articleCommentJpaRepository;
   private final ArticleFavoriteJpaRepository articleFavoriteJpaRepository;
 
   @Override
@@ -78,6 +79,8 @@ class ArticleRepositoryAdapter implements ArticleRepository {
   @Override
   @Transactional
   public void delete(Article article) {
+    articleTagJpaRepository.deleteByArticle(article);
+    articleCommentJpaRepository.deleteByArticle(article);
     articleJpaRepository.delete(article);
   }
 
