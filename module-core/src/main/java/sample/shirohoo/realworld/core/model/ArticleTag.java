@@ -16,24 +16,28 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@SuppressWarnings("JpaDataSourceORMInspection")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "article_tag",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"article_id", "tag_id"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"article_id", "tag_name"})})
 public class ArticleTag {
     @Id
+    @SuppressWarnings("unused")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "article_id")
     private Article article;
 
     @ManyToOne
-    @JoinColumn(name = "tag_id")
+    @JoinColumn(name = "tag_name")
     private Tag tag;
 
     @Column(nullable = false, updatable = false)
@@ -43,7 +47,7 @@ public class ArticleTag {
         if (article == null || article.getId() == null) {
             throw new IllegalArgumentException("article is null or unknown article.");
         }
-        if (tag == null || tag.getId() == null) {
+        if (tag == null || tag.getName() == null) {
             throw new IllegalArgumentException("tag is null or unknown tag.");
         }
 

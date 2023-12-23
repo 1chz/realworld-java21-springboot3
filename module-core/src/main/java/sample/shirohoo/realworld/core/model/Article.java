@@ -1,15 +1,20 @@
 package sample.shirohoo.realworld.core.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,9 +22,11 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@SuppressWarnings("JpaDataSourceORMInspection")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
     @Id
+    @SuppressWarnings("unused")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -38,6 +45,9 @@ public class Article {
 
     @Column(length = 1_000, nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private final Set<ArticleTag> articleTags = new HashSet<>();
 
     @Column(nullable = false, updatable = false)
     private final LocalDateTime createdAt = LocalDateTime.now();
@@ -99,6 +109,11 @@ public class Article {
 
         this.content = content;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void addTag(ArticleTag tag) {
+        articleTags.add(tag);
+        tag.setArticle(this);
     }
 
     @Override

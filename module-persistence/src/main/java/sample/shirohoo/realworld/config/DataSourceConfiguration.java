@@ -71,9 +71,10 @@ class DataSourceConfiguration {
             Stack<String> callstack = new Stack<>();
             stream(new Throwable().getStackTrace())
                     .map(StackTraceElement::toString)
-                    .filter(trace -> trace.startsWith("io.github.shirohoo"))
+                    .filter(trace -> trace.startsWith("sample.shirohoo.realworld"))
                     .filter(trace -> !trace.contains(getClass().getSimpleName()))
                     .filter(trace -> !trace.contains("CGLIB"))
+                    .filter(trace -> !trace.contains("$Proxy"))
                     .forEach(callstack::push);
 
             StringBuilder traceBuilder = new StringBuilder();

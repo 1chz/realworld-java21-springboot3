@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -17,13 +15,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "tag")
+@SuppressWarnings("JpaDataSourceORMInspection")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(length = 20, unique = true, nullable = false)
+    @Column(length = 20)
     private String name;
 
     @Column(nullable = false, updatable = false)
@@ -37,14 +33,9 @@ public class Tag {
         this.name = name;
     }
 
-    public boolean equalsArticleTag(ArticleTag articleTag) {
-        return this.equals(articleTag.getTag());
-    }
-
     @Override
     public boolean equals(Object o) {
-        return o instanceof Tag other
-                && (Objects.equals(this.getId(), other.getId()) || Objects.equals(this.getName(), other.getName()));
+        return o instanceof Tag other && Objects.equals(this.getName(), other.getName());
     }
 
     @Override

@@ -1,9 +1,13 @@
 package sample.shirohoo.realworld.core.model;
 
-import java.util.Set;
+import java.util.Collection;
 
-public record ArticleInfo(Article article, Set<ArticleTag> articleTags, int favoritesCount, boolean favorited) {
-    public static ArticleInfo unauthenticated(Article article, Set<ArticleTag> articleTags, int favoritesCount) {
-        return new ArticleInfo(article, articleTags, favoritesCount, false);
+public record ArticleInfo(Article article, int favoritesCount, boolean favorited) {
+    public static ArticleInfo unauthenticated(Article article, int favoritesCount) {
+        return new ArticleInfo(article, favoritesCount, false);
+    }
+
+    public Collection<ArticleTag> articleTags() {
+        return article.getArticleTags();
     }
 }

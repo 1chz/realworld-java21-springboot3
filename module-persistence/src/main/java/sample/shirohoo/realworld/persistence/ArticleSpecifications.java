@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 import sample.shirohoo.realworld.core.model.Article;
 import sample.shirohoo.realworld.core.model.ArticleFavorite;
 import sample.shirohoo.realworld.core.model.ArticleTag;
-import sample.shirohoo.realworld.core.model.Tag;
 import sample.shirohoo.realworld.core.model.User;
 
 final class ArticleSpecifications {
@@ -31,8 +30,8 @@ final class ArticleSpecifications {
                 return null;
             }
 
-            Join<ArticleTag, Tag> tag = query.from(ArticleTag.class).join("tag", JoinType.LEFT);
-            return criteriaBuilder.equal(tag.get("name"), tagName);
+            Join<Article, ArticleTag> articleTag = root.join("articleTags", JoinType.LEFT);
+            return criteriaBuilder.equal(articleTag.get("tag").get("name"), tagName);
         };
     }
 

@@ -1,12 +1,9 @@
 package sample.shirohoo.realworld.core.service;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -18,21 +15,16 @@ import sample.shirohoo.realworld.core.model.ArticleFavorite;
 import sample.shirohoo.realworld.core.model.ArticleFavoriteRepository;
 import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.model.ArticleRepository;
-import sample.shirohoo.realworld.core.model.ArticleTag;
-import sample.shirohoo.realworld.core.model.ArticleTagRepository;
 import sample.shirohoo.realworld.core.model.SocialRepository;
 import sample.shirohoo.realworld.core.model.Tag;
-import sample.shirohoo.realworld.core.model.TagRepository;
 import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.model.UserFollow;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
-    private final TagRepository tagRepository;
     private final SocialRepository socialRepository;
     private final ArticleRepository articleRepository;
-    private final ArticleTagRepository articleTagRepository;
     private final ArticleFavoriteRepository articleFavoriteRepository;
 
     /**
@@ -91,51 +83,18 @@ public class ArticleService {
      * Write a new article.
      *
      * @param article article
+     * @param tags tags
      * @return Returns the written article
      */
-    public Article writeArticle(Article article) {
+    public Article writeArticle(Article article, Collection<Tag> tags) {
         if (articleRepository.existsByTitle(article.getTitle())) {
             throw new IllegalArgumentException("title is already exists.");
         }
+        if (tags == null) {
+            tags = new HashSet<>();
+        }
 
-        return articleRepository.save(article);
-    }
-
-    /**
-     * Add tags to article.
-     *
-     * @param article article
-     * @param tags tags
-     * @return Returns article's tags
-     */
-    public Set<ArticleTag> addArticleTags(Article article, Collection<Tag> tags) {
-        // Find existing tags by name.
-        var existingTags =
-                tagRepository.findByNameIn(tags.stream().map(Tag::getName).toList());
-
-        // Save tags that do not exist yet.
-        var newTags = tags.stream().filter(tag -> !existingTags.contains(tag)).collect(toList());
-        tagRepository.saveAll(newTags);
-
-        // Merge existing and new tags.
-        var allTags = new HashSet<>(existingTags);
-        allTags.addAll(newTags);
-
-        // Find existing article tags for the given article and tags.
-        var existingArticleTags = articleTagRepository.findByArticleAndTagIn(article, allTags);
-
-        // Save article tags for tags that do not exist in the article.
-        var newArticleTags = allTags.stream()
-                .filter(tag -> existingArticleTags.stream().noneMatch(tag::equalsArticleTag))
-                .map(tag -> new ArticleTag(article, tag))
-                .collect(toList());
-        articleTagRepository.saveAll(newArticleTags);
-
-        // Combine and return the final set of ArticleTags.
-        var allArticleTags = new HashSet<>(existingArticleTags);
-        allArticleTags.addAll(newArticleTags);
-
-        return allArticleTags;
+        return articleRepository.save(article, tags);
     }
 
     /**

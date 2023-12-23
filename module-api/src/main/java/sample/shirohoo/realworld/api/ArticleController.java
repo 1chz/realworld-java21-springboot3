@@ -37,14 +37,15 @@ class ArticleController {
     @PostMapping("/api/articles")
     public SingleArticleResponse doPost(Authentication authentication, @RequestBody WriteArticleRequest request) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        var article = articleService.writeArticle(new Article(
-                requester,
-                request.article().title(),
-                request.article().description(),
-                request.article().body()));
-        var articleTags = articleService.addArticleTags(article, request.tags());
+        var article = articleService.writeArticle(
+                new Article(
+                        requester,
+                        request.article().title(),
+                        request.article().description(),
+                        request.article().body()),
+                request.tags());
 
-        return new SingleArticleResponse(new ArticleInfo(article, articleTags, 0, false));
+        return new SingleArticleResponse(new ArticleInfo(article, 0, false));
     }
 
     @GetMapping("/api/articles")
