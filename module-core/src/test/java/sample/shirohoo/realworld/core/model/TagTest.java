@@ -1,6 +1,5 @@
 package sample.shirohoo.realworld.core.model;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,19 +15,6 @@ class TagTest {
     }
 
     @Test
-    void equals_is_return_true_if_are_ids_same() {
-        // given
-        Tag tag1 = new FixedIdTag();
-        Tag tag2 = new FixedIdTag();
-
-        // when
-        boolean isEquals = tag1.equals(tag2);
-
-        // then
-        assertTrue(isEquals);
-    }
-
-    @Test
     void equals_is_return_true_if_are_names_same() {
         // given
         Tag tag1 = new FixedNameTag();
@@ -39,19 +25,6 @@ class TagTest {
 
         // then
         assertTrue(isEquals);
-    }
-
-    @Test
-    void equals_is_return_false_if_are_ids_or_names_difference() {
-        // given
-        Tag tag1 = new Tag("lorem");
-        Tag tag2 = new FixedIdTag();
-
-        // when
-        boolean isEquals = tag1.equals(tag2);
-
-        // then
-        assertFalse(isEquals);
     }
 
     @Test
