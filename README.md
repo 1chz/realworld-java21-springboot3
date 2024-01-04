@@ -105,7 +105,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 - [schema.sql](database/schema.sql)
 
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/3603da86-b1bd-49a6-b0d9-cee296f98f33)
+![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2ed3b129-f9ec-4431-8959-374f317b7224)
 
 ---
 
