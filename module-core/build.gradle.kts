@@ -8,10 +8,6 @@ plugins {
     id("io.spring.dependency-management")
 }
 
-springBoot {
-    mainClass.set("sample.shirohoo.realworld.RealworldApplication")
-}
-
 dependencies {
     // annotation processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

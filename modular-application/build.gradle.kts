@@ -1,4 +1,6 @@
-
+springBoot {
+    mainClass.set("sample.shirohoo.realworld.RealworldApplication")
+}
 
 plugins {
     java
