@@ -1,8 +1,10 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
-val springBootVersion: String by project
-val springDependencyManagementVersion: String by project
-val spotlessVersion: String by project
+group = "sample.shirohoo"
+
+springBoot {
+    mainClass.set("sample.shirohoo.realworld.RealworldApplication")
+}
 
 plugins {
     java
@@ -11,8 +13,6 @@ plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
 }
-
-group = "sample.shirohoo"
 
 allprojects {
     apply(plugin = "java")
@@ -43,11 +43,15 @@ allprojects {
 
         // compile only
         compileOnly("org.projectlombok:lombok")
+
+        // implementation
+
+        // test implementation
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 
     tasks.withType<Test> {
         useJUnitPlatform()
-        finalizedBy("jacocoTestReport")
     }
 
     tasks.jacocoTestReport {
@@ -57,10 +61,6 @@ allprojects {
             html.required.set(true)
             html.outputLocation.set(file("$buildDir/jacoco/html"))
         }
-    }
-
-    tasks.compileJava {
-        dependsOn(tasks.clean)
     }
 
     tasks.getByName<BootJar>("bootJar") {

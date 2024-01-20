@@ -1,10 +1,6 @@
 rootProject.name = "realworld"
 
-include("modular-application")
-
-include("module-core")
-
-include("module-api", "module-persistence")
+include("modular-application", "module-core", "module-api", "module-persistence")
 
 pluginManagement {
     val springBootVersion: String by settings

@@ -1,6 +1,4 @@
-springBoot {
-    mainClass.set("sample.shirohoo.realworld.RealworldApplication")
-}
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     java
@@ -20,9 +18,12 @@ dependencies {
 
     // implementation
     implementation("org.springframework.boot:spring-boot-starter")
+}
 
-    // test implementation
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "junit", module = "junit")
-    }
+tasks.getByName<BootJar>("bootJar") {
+    enabled = true
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
