@@ -7,8 +7,9 @@ import sample.shirohoo.realworld.core.model.ArticleComment;
 public record ArticleCommentResponse(
         int id,
         LocalDateTime createdAt,
-        // Note: Comments cannot be updated in the requirements, but for some reason they are in the API
-        // response spec.
+        // Note:
+        //  Comments cannot be updated in the requirements,
+        //  but for some reason they are in the API response spec.
         LocalDateTime updatedAt,
         String body,
         ProfileResponse author) {

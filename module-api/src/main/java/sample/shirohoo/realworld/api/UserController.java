@@ -60,14 +60,14 @@ class UserController {
         var user = userService.login(email, password);
         var accessToken = bearerTokenProvider.getToken(user);
 
-        return UsersResponse.from(accessToken.getTokenValue(), user);
+        return UsersResponse.from(user, accessToken.getTokenValue());
     }
 
     @GetMapping("/api/user")
     public UsersResponse doGet(JwtAuthenticationToken authentication) {
         var user = userService.getUserById(UUID.fromString(authentication.getName()));
 
-        return UsersResponse.from(authentication.getToken().getTokenValue(), user);
+        return UsersResponse.from(user, authentication.getToken().getTokenValue());
     }
 
     @PutMapping("/api/user")
@@ -80,6 +80,6 @@ class UserController {
                 request.user().bio(),
                 request.user().image());
 
-        return UsersResponse.from(authentication.getToken().getTokenValue(), requester);
+        return UsersResponse.from(requester, authentication.getToken().getTokenValue());
     }
 }
