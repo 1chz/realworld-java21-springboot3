@@ -15,9 +15,9 @@ public interface ArticleRepository {
 
     List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets);
 
-    ArticleInfo findArticleInfoByAnonymous(Article article);
+    ArticleDetails findArticleInfoByAnonymous(Article article);
 
-    ArticleInfo findArticleInfoByUser(User requester, Article article);
+    ArticleDetails findArticleInfoByUser(User requester, Article article);
 
     void delete(Article article);
 

@@ -14,7 +14,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
 @Getter
 @Table(name = "users")
@@ -72,6 +74,7 @@ public class User {
 
     public void setEmail(String email) {
         if (email == null || email.isBlank() || this.email.equals(email)) {
+            log.warn("not set because the email is empty or equals. email={}", email);
             return;
         }
 
@@ -81,6 +84,7 @@ public class User {
 
     public void setUsername(String username) {
         if (username == null || username.isBlank() || this.username.equals(username)) {
+            log.warn("not set because the username is empty or equals. username={}", username);
             return;
         }
 
@@ -94,10 +98,12 @@ public class User {
         }
 
         if (rawPassword == null || rawPassword.isBlank()) {
+            log.warn("not set because the rawPassword is empty. rawPassword={}", rawPassword);
             return;
         }
 
         if (passwordEncoder.matches(rawPassword, this.password)) {
+            log.warn("not set because the rawPassword is same as current password. rawPassword={}", rawPassword);
             return;
         }
 
@@ -107,6 +113,7 @@ public class User {
 
     public void setBio(String bio) {
         if (bio != null && bio.isBlank()) {
+            log.warn("not set because the bio is empty. bio={}", bio);
             return;
         }
 
@@ -115,6 +122,7 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         if (imageUrl != null && imageUrl.isBlank()) {
+            log.warn("not set because the imageUrl is empty. imageUrl={}", imageUrl);
             return;
         }
 

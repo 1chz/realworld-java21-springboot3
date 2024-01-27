@@ -85,7 +85,7 @@ public class Article {
 
     public void setTitle(String title) {
         if (title == null || title.isBlank()) {
-            return;
+            throw new IllegalArgumentException("title is null or blank.");
         }
 
         this.title = title;
@@ -95,7 +95,7 @@ public class Article {
 
     public void setDescription(String description) {
         if (description == null || description.isBlank()) {
-            return;
+            throw new IllegalArgumentException("description is null or blank.");
         }
 
         this.description = description;
@@ -104,7 +104,7 @@ public class Article {
 
     public void setContent(String content) {
         if (content == null || content.isBlank()) {
-            return;
+            throw new IllegalArgumentException("content is null or blank.");
         }
 
         this.content = content;

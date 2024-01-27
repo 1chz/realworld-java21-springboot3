@@ -16,25 +16,25 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
-    public ProblemDetail handleOn(IllegalArgumentException e) {
+    public ProblemDetail handle(IllegalArgumentException e) {
         log.info(e.getMessage(), e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ProblemDetail handleOn(NoSuchElementException e) {
+    public ProblemDetail handle(NoSuchElementException e) {
         log.info(e.getMessage(), e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ProblemDetail handleOn(AccessDeniedException e) {
+    public ProblemDetail handle(AccessDeniedException e) {
         log.info(e.getMessage(), e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ProblemDetail handleOn(AuthenticationException e) {
+    public ProblemDetail handle(AuthenticationException e) {
         log.info(e.getMessage(), e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
@@ -47,7 +47,7 @@ class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ProblemDetail
      */
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleOn(Exception e) {
+    public ProblemDetail handle(Exception e) {
         log.error(e.getMessage(), e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Please contact the administrator.");
     }

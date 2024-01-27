@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import sample.shirohoo.realworld.core.model.Article;
+import sample.shirohoo.realworld.core.model.ArticleDetails;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
 import sample.shirohoo.realworld.core.model.ArticleFavorite;
 import sample.shirohoo.realworld.core.model.ArticleFavoriteRepository;
-import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.model.ArticleRepository;
 import sample.shirohoo.realworld.core.model.SocialRepository;
 import sample.shirohoo.realworld.core.model.Tag;
@@ -43,7 +43,7 @@ public class ArticleService {
      * @param facets article facets
      * @return Returns articles with information
      */
-    public List<ArticleInfo> readArticles(ArticleFacets facets) {
+    public List<ArticleDetails> readArticles(ArticleFacets facets) {
         return articleRepository.findAll(facets).stream()
                 .map(articleRepository::findArticleInfoByAnonymous)
                 .toList();
@@ -56,7 +56,7 @@ public class ArticleService {
      * @param facets article facets
      * @return Returns articles with information
      */
-    public List<ArticleInfo> readArticles(User requester, ArticleFacets facets) {
+    public List<ArticleDetails> readArticles(User requester, ArticleFacets facets) {
         return articleRepository.findAll(facets).stream()
                 .map(article -> articleRepository.findArticleInfoByUser(requester, article))
                 .toList();
@@ -69,7 +69,7 @@ public class ArticleService {
      * @param facets article facets
      * @return Returns articles with information
      */
-    public List<ArticleInfo> readFeeds(User user, ArticleFacets facets) {
+    public List<ArticleDetails> readFeeds(User user, ArticleFacets facets) {
         List<User> following = socialRepository.findByFollower(user).stream()
                 .map(UserFollow::getFollowing)
                 .toList();
@@ -211,7 +211,7 @@ public class ArticleService {
      * @param article article
      * @return Returns article information
      */
-    public ArticleInfo getArticleInfoByAnonymous(Article article) {
+    public ArticleDetails getArticleInfoByAnonymous(Article article) {
         return articleRepository.findArticleInfoByAnonymous(article);
     }
 
@@ -222,7 +222,7 @@ public class ArticleService {
      * @param article article
      * @return Returns article information
      */
-    public ArticleInfo getArticleInfoByUser(User requester, Article article) {
+    public ArticleDetails getArticleInfoByUser(User requester, Article article) {
         return articleRepository.findArticleInfoByUser(requester, article);
     }
 }

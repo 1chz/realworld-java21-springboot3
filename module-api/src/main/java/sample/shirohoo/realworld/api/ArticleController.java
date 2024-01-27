@@ -23,8 +23,8 @@ import sample.shirohoo.realworld.api.response.ArticleResponse;
 import sample.shirohoo.realworld.api.response.MultipleArticlesResponse;
 import sample.shirohoo.realworld.api.response.SingleArticleResponse;
 import sample.shirohoo.realworld.core.model.Article;
+import sample.shirohoo.realworld.core.model.ArticleDetails;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
-import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.service.ArticleService;
 import sample.shirohoo.realworld.core.service.UserService;
 
@@ -45,7 +45,7 @@ class ArticleController {
                         request.article().body()),
                 request.tags());
 
-        return new SingleArticleResponse(new ArticleInfo(article, 0, false));
+        return new SingleArticleResponse(new ArticleDetails(article, 0, false));
     }
 
     @GetMapping("/api/articles")

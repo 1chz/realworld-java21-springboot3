@@ -31,7 +31,7 @@ class SocialController {
         }
 
         var me = userService.getUserById(UUID.fromString(authentication.getName()));
-        boolean isFollowing = socialService.isFollowing(me, targetUser);
+        var isFollowing = socialService.isFollowing(me, targetUser);
 
         return ProfilesResponse.from(targetUser, isFollowing);
     }

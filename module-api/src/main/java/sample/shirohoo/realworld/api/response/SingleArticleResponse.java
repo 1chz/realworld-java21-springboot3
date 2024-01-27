@@ -1,13 +1,13 @@
 package sample.shirohoo.realworld.api.response;
 
-import sample.shirohoo.realworld.core.model.ArticleInfo;
+import sample.shirohoo.realworld.core.model.ArticleDetails;
 
 public record SingleArticleResponse(ArticleResponse article) {
-    public SingleArticleResponse(ArticleInfo articleInfo) {
+    public SingleArticleResponse(ArticleDetails articleDetails) {
         this(new ArticleResponse(
-                articleInfo.article(),
-                articleInfo.articleTags(),
-                articleInfo.favorited(),
-                articleInfo.favoritesCount()));
+                articleDetails.article(),
+                articleDetails.articleTags(),
+                articleDetails.favorited(),
+                articleDetails.favoritesCount()));
     }
 }

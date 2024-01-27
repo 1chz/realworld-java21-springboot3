@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import sample.shirohoo.realworld.core.model.Article;
+import sample.shirohoo.realworld.core.model.ArticleDetails;
 import sample.shirohoo.realworld.core.model.ArticleFacets;
-import sample.shirohoo.realworld.core.model.ArticleInfo;
 import sample.shirohoo.realworld.core.model.ArticleRepository;
 import sample.shirohoo.realworld.core.model.ArticleTag;
 import sample.shirohoo.realworld.core.model.Tag;
@@ -66,19 +66,19 @@ class ArticleRepositoryAdapter implements ArticleRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public ArticleInfo findArticleInfoByAnonymous(Article article) {
+    public ArticleDetails findArticleInfoByAnonymous(Article article) {
         int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
 
-        return ArticleInfo.unauthenticated(article, totalFavorites);
+        return ArticleDetails.unauthenticated(article, totalFavorites);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ArticleInfo findArticleInfoByUser(User requester, Article article) {
+    public ArticleDetails findArticleInfoByUser(User requester, Article article) {
         int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
         boolean favorited = articleFavoriteJpaRepository.existsByUserAndArticle(requester, article);
 
-        return new ArticleInfo(article, totalFavorites, favorited);
+        return new ArticleDetails(article, totalFavorites, favorited);
     }
 
     @Override
