@@ -4,9 +4,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
+import sample.shirohoo.realworld.core.model.PasswordEncoder;
 import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.model.UserRepository;
 
@@ -48,5 +50,35 @@ class UserRepositoryAdapter implements UserRepository {
     @Override
     public boolean existsByEmailOrUsername(String email, String username) {
         return userJpaRepository.existsByEmailOrUsername(email, username);
+    }
+
+    @Override
+    @Transactional
+    public User updateUserDetails(
+            UUID userId,
+            PasswordEncoder passwordEncoder,
+            String email,
+            String username,
+            String password,
+            String bio,
+            String imageUrl) {
+        return this.findById(userId)
+                .map(user -> {
+                    if (!user.equalsEmail(email) && this.existsByEmail(email)) {
+                        throw new IllegalArgumentException("email is already exists.");
+                    }
+
+                    if (!user.equalsUsername(username) && this.existsByUsername(username)) {
+                        throw new IllegalArgumentException("username is already exists.");
+                    }
+
+                    user.setEmail(email);
+                    user.setUsername(username);
+                    user.setPassword(passwordEncoder, password);
+                    user.setBio(bio);
+                    user.setImageUrl(imageUrl);
+                    return userJpaRepository.save(user);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("user not found."));
     }
 }

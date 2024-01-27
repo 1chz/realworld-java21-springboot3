@@ -22,6 +22,7 @@ import sample.shirohoo.realworld.api.request.LoginUserRequest;
 import sample.shirohoo.realworld.api.request.SignupRequest;
 import sample.shirohoo.realworld.api.request.UpdateUserRequest;
 import sample.shirohoo.realworld.api.response.UsersResponse;
+import sample.shirohoo.realworld.core.model.User;
 import sample.shirohoo.realworld.core.model.UserRegistry;
 import sample.shirohoo.realworld.core.service.UserService;
 
@@ -71,12 +72,13 @@ class UserController {
 
     @PutMapping("/api/user")
     public UsersResponse doPut(JwtAuthenticationToken authentication, @RequestBody UpdateUserRequest request) {
-        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        requester = userService.updateEmail(requester, request.user().email());
-        requester = userService.updateUsername(requester, request.user().username());
-        requester = userService.updatePassword(requester, request.user().password());
-        requester = userService.updateBio(requester, request.user().bio());
-        requester = userService.updateImageUrl(requester, request.user().image());
+        User requester = userService.updateUserDetails(
+                UUID.fromString(authentication.getName()),
+                request.user().email(),
+                request.user().username(),
+                request.user().password(),
+                request.user().bio(),
+                request.user().image());
 
         return UsersResponse.from(authentication.getToken().getTokenValue(), requester);
     }
