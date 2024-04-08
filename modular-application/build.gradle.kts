@@ -2,7 +2,6 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     java
-    jacoco
     id("com.diffplug.spotless")
     id("org.springframework.boot")
     id("io.spring.dependency-management")

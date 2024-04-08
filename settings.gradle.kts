@@ -9,7 +9,6 @@ pluginManagement {
 
     plugins {
         java
-        jacoco
         id("org.springframework.boot") version springBootVersion
         id("io.spring.dependency-management") version springDependencyManagementVersion
         id("com.diffplug.spotless") version spotlessVersion
