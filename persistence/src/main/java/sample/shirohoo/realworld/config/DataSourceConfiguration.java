@@ -16,11 +16,11 @@ import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 @Configuration
 class DataSourceConfiguration {
     @PostConstruct
-    public void setQueryLogMessageFormat() {
+    void setQueryLogMessageFormat() {
         P6SpyOptions.getActiveInstance().setLogMessageFormat(PrettyQueryFormatStrategy.class.getName());
     }
 
-    public static class PrettyQueryFormatStrategy implements MessageFormattingStrategy {
+    private static class PrettyQueryFormatStrategy implements MessageFormattingStrategy {
         @Override
         public String formatMessage(
                 int connectionId,
