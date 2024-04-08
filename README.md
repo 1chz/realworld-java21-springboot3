@@ -21,9 +21,8 @@ For more information on how to this works with other frontends/backends, head ov
 * [Database architecture](#database-architecture)
 * [Getting started](#getting-started)
    * [Run application](#run-application)
-   * [Run test](#run-test)
-   * [Check code style](#check-code-style)
    * [Apply code style](#apply-code-style)
+   * [Run test](#run-test)
    * [Run build](#run-build)
    * [Run E2E test](#run-e2e-test)
      * [Performance](#performance)
@@ -66,7 +65,7 @@ This application provides the following key features:
 ### Project structures
 The project is implemented based on Java 21 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database. and JUnit5 for writing test codes.
 
-To run the project, JDK(or JRE) 21 must be installed first. Then, execute the `./gradlew bootRun` command in the project root directory to run the application. After that, you can use the application by accessing http://localhost:8080 in your browser.
+To run the project, JDK(or JRE) 21 must be installed first. Then, execute the `./gradlew :bootstrap:bootRun` command in the project root directory to run the application. After that, you can use the application by accessing http://localhost:8080 in your browser.
 
 Taking a closer look at the project structure, the main code of the application is located in the src/main/java directory, while the test code is located in the src/test/java directory. Additionally, configuration files and such can be found in the
 src/main/resources directory.
@@ -76,12 +75,12 @@ The application's package dependencies and core logic are implemented as follows
 #### Modules
 ![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2b6310ce-215d-46e4-8f00-77cc62a383da)
 
-`core`, `persistence`, `api` and `modular-application` modules exist, and each module performs the following roles.
+`core`, `persistence`, `api` and `bootstrap` modules exist, and each module performs the following roles.
 
+- bootstrap: All existing modules are put together to form an executable application.
 - core: Contains the core logic of the application, including the domain model, service, and exception handling.
 - persistence: Contains the persistence layer logic of the application, including the repository and entity.
 - api: Contains the API layer logic of the application, including the controller and DTO.
-- modular-application: All existing modules are put together to form an executable application.
 
 #### Classes
 - ~Controller: Processes HTTP requests, calls business logic, and generates responses.
@@ -118,27 +117,15 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ### Run application
 
 ```shell
-./gradlew :modular-application:bootRun
-```
-
-### Check code style
-
-> **Note:** When you run the `build` task, this task runs automatically. If the code style doesn't match, the build will fail.
-
-```shell
-./gradlew spotlessCheck
+./gradlew :bootstrap:bootRun
 ```
 
 ### Apply code style
 
+> **Note:** When you run the `build` task, this task runs automatically. If the code style doesn't match, the build will fail.
+
 ```shell
 ./gradlew spotlessApply
-```
-
-### Run build
-
-```shell
-./gradlew build
 ```
 
 ### Run test
@@ -147,10 +134,16 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ./gradlew test
 ```
 
+### Run build
+
+```shell
+./gradlew build
+```
+
 ### Run E2E test
 
 1. Run application (**important**)
-2. [Run E2E test](api/README.md#running-api-tests-locally)
+2. [Run E2E test](e2e/README.md#running-api-tests-locally)
 
 #### Performance
 

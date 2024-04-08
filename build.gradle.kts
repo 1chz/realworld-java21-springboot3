@@ -37,15 +37,10 @@ allprojects {
     }
 
     dependencies {
-        // annotation processor
         annotationProcessor("org.projectlombok:lombok")
 
-        // compile only
         compileOnly("org.projectlombok:lombok")
 
-        // implementation
-
-        // test implementation
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 

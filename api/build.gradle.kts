@@ -6,13 +6,8 @@ plugins {
 }
 
 dependencies {
-    // modules
-    compileOnly(project(":module-core"))
+    compileOnly(project(":core"))
 
-    // implementation
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
-    // test implementation
-    testImplementation("org.springframework.security:spring-security-test")
 }

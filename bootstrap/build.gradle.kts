@@ -8,14 +8,11 @@ plugins {
 }
 
 dependencies {
-    // modules
-    implementation(project(":module-api"))
-    implementation(project(":module-persistence"))
+    implementation(project(":api"))
+    implementation(project(":persistence"))
 
-    // annotation processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-    // implementation
     implementation("org.springframework.boot:spring-boot-starter")
 }
 

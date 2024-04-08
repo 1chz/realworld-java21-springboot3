@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    // implementation
-    implementation("jakarta.persistence:jakarta.persistence-api") // for JPA annotations
+    implementation("jakarta.persistence:jakarta.persistence-api")
     implementation("org.springframework.boot:spring-boot-starter")
 }
