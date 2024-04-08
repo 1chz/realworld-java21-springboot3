@@ -23,7 +23,7 @@ class SocialController {
     private final SocialService socialService;
 
     @GetMapping("/api/profiles/{username}")
-    public ProfilesResponse doGet(Authentication authentication, @PathVariable("username") String targetUsername) {
+    ProfilesResponse doGet(Authentication authentication, @PathVariable("username") String targetUsername) {
         var targetUser = userService.getUserByUsername(targetUsername);
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
@@ -37,7 +37,7 @@ class SocialController {
     }
 
     @PostMapping("/api/profiles/{username}/follow")
-    public ProfilesResponse doPost(Authentication authentication, @PathVariable("username") String targetUsername) {
+    ProfilesResponse doPost(Authentication authentication, @PathVariable("username") String targetUsername) {
         var follower = userService.getUserById(UUID.fromString(authentication.getName()));
         var following = userService.getUserByUsername(targetUsername);
 
@@ -47,7 +47,7 @@ class SocialController {
     }
 
     @DeleteMapping("/api/profiles/{username}/follow")
-    public ProfilesResponse doDelete(Authentication authentication, @PathVariable("username") String targetUsername) {
+    ProfilesResponse doDelete(Authentication authentication, @PathVariable("username") String targetUsername) {
         var follower = userService.getUserById(UUID.fromString(authentication.getName()));
         var following = userService.getUserByUsername(targetUsername);
 

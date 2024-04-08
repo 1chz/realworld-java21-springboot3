@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 
 /** Change the prefix of the Authorization token from 'Bearer' to 'Token'. */
 @Component
-public class RealworldBearerTokenResolver implements BearerTokenResolver {
+class RealWorldBearerTokenResolver implements BearerTokenResolver {
     private static final Pattern AUTHORIZATION_PATTERN =
             Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
 

@@ -14,10 +14,10 @@ import sample.shirohoo.realworld.core.model.User;
 
 @Component
 @RequiredArgsConstructor
-class RealworldBearerTokenProvider {
+class RealWorldBearerTokenProvider {
     private final JwtEncoder jwtEncoder;
 
-    public Jwt getToken(User user) {
+    Jwt getToken(User user) {
         if (user == null || user.getId() == null) {
             throw new IllegalArgumentException("user is null or unknown user.");
         }

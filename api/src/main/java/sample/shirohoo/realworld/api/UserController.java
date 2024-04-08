@@ -32,7 +32,7 @@ class UserController {
     private static final String LOGIN_URL = "/api/users/login";
 
     private final UserService userService;
-    private final RealworldBearerTokenProvider bearerTokenProvider;
+    private final RealWorldBearerTokenProvider bearerTokenProvider;
 
     @PostMapping("/api/users")
     public ModelAndView doPost(HttpServletRequest httpServletRequest, @RequestBody SignupRequest request) {

@@ -35,7 +35,7 @@ class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles")
-    public SingleArticleResponse doPost(Authentication authentication, @RequestBody WriteArticleRequest request) {
+    SingleArticleResponse doPost(Authentication authentication, @RequestBody WriteArticleRequest request) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
         var article = articleService.writeArticle(
                 new Article(
@@ -49,7 +49,7 @@ class ArticleController {
     }
 
     @GetMapping("/api/articles")
-    public MultipleArticlesResponse doGet(
+    MultipleArticlesResponse doGet(
             Authentication authentication,
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "author", required = false) String author,
@@ -71,7 +71,7 @@ class ArticleController {
     }
 
     @GetMapping("/api/articles/{slug}")
-    public SingleArticleResponse doGet(Authentication authentication, @PathVariable String slug) {
+    SingleArticleResponse doGet(Authentication authentication, @PathVariable String slug) {
         var article = articleService.readArticleBySlug(slug);
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
@@ -83,7 +83,7 @@ class ArticleController {
     }
 
     @PutMapping("/api/articles/{slug}")
-    public SingleArticleResponse doPut(
+    SingleArticleResponse doPut(
             Authentication authentication, @PathVariable String slug, @RequestBody EditArticleRequest request) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
         var article = articleService.readArticleBySlug(slug);
@@ -108,7 +108,7 @@ class ArticleController {
     }
 
     @DeleteMapping("/api/articles/{slug}")
-    public void doDelete(Authentication authentication, @PathVariable String slug) {
+    void doDelete(Authentication authentication, @PathVariable String slug) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
         var article = articleService.readArticleBySlug(slug);
 
@@ -116,7 +116,7 @@ class ArticleController {
     }
 
     @GetMapping("/api/articles/feed")
-    public MultipleArticlesResponse doGet(
+    MultipleArticlesResponse doGet(
             Authentication authentication, // Must be verified
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {

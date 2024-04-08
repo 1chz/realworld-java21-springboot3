@@ -21,7 +21,7 @@ class ArticleFavoriteController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles/{slug}/favorite")
-    public SingleArticleResponse doPost(Authentication authentication, @PathVariable String slug) {
+    SingleArticleResponse doPost(Authentication authentication, @PathVariable String slug) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
         var article = articleService.readArticleBySlug(slug);
 
@@ -31,7 +31,7 @@ class ArticleFavoriteController {
     }
 
     @DeleteMapping("/api/articles/{slug}/favorite")
-    public SingleArticleResponse doDelete(Authentication authentication, @PathVariable String slug) {
+    SingleArticleResponse doDelete(Authentication authentication, @PathVariable String slug) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
         var article = articleService.readArticleBySlug(slug);
 

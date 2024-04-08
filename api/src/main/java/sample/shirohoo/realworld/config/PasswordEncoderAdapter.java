@@ -1,12 +1,17 @@
 package sample.shirohoo.realworld.config;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import sample.shirohoo.realworld.core.model.PasswordEncoder;
 
-@RequiredArgsConstructor
+@Component
 class PasswordEncoderAdapter implements PasswordEncoder {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+    PasswordEncoderAdapter() {
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
 
     @Override
     public boolean matches(String rawPassword, String encodedPassword) {

@@ -32,7 +32,7 @@ class ArticleCommentController {
     private final ArticleCommentService articleCommentService;
 
     @PostMapping("/api/articles/{slug}/comments")
-    public SingleCommentResponse doPost(
+    SingleCommentResponse doPost(
             Authentication authentication, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
         var article = articleService.readArticleBySlug(slug);
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
@@ -43,7 +43,7 @@ class ArticleCommentController {
     }
 
     @GetMapping("/api/articles/{slug}/comments")
-    public MultipleCommentsResponse doGet(Authentication authentication, @PathVariable String slug) {
+    MultipleCommentsResponse doGet(Authentication authentication, @PathVariable String slug) {
         var article = articleService.readArticleBySlug(slug);
         var articleComments = articleCommentService.readComments(article);
 
@@ -61,7 +61,7 @@ class ArticleCommentController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
-    public void doDelete(Authentication authentication, @PathVariable("id") int commentId) {
+    void doDelete(Authentication authentication, @PathVariable("id") int commentId) {
         var requester = userService.getUserById(UUID.fromString(authentication.getName()));
         var articleComment = articleCommentService.readComment(commentId);
 

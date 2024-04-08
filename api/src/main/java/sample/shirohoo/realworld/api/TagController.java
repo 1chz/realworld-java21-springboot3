@@ -14,7 +14,7 @@ class TagController {
     private final TagService tagService;
 
     @GetMapping("/api/tags")
-    public TagsResponse doGet() {
+    TagsResponse doGet() {
         return new TagsResponse(tagService.getTags());
     }
 }
