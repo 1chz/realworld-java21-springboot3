@@ -33,7 +33,7 @@ public class ArticleService {
      * @param slug article slug
      * @return Returns article
      */
-    public Article readArticleBySlug(String slug) {
+    public Article getArticle(String slug) {
         return articleRepository.findBySlug(slug).orElseThrow(() -> new NoSuchElementException("article not found."));
     }
 
@@ -43,9 +43,9 @@ public class ArticleService {
      * @param facets article facets
      * @return Returns articles with information
      */
-    public List<ArticleDetails> readArticles(ArticleFacets facets) {
+    public List<ArticleDetails> getArticles(ArticleFacets facets) {
         return articleRepository.findAll(facets).stream()
-                .map(articleRepository::findArticleInfoByAnonymous)
+                .map(articleRepository::findArticleDetails)
                 .toList();
     }
 
@@ -56,9 +56,9 @@ public class ArticleService {
      * @param facets article facets
      * @return Returns articles with information
      */
-    public List<ArticleDetails> readArticles(User requester, ArticleFacets facets) {
+    public List<ArticleDetails> getArticles(User requester, ArticleFacets facets) {
         return articleRepository.findAll(facets).stream()
-                .map(article -> articleRepository.findArticleInfoByUser(requester, article))
+                .map(article -> articleRepository.findArticleDetails(requester, article))
                 .toList();
     }
 
@@ -69,13 +69,13 @@ public class ArticleService {
      * @param facets article facets
      * @return Returns articles with information
      */
-    public List<ArticleDetails> readFeeds(User user, ArticleFacets facets) {
+    public List<ArticleDetails> getFeeds(User user, ArticleFacets facets) {
         List<User> following = socialRepository.findByFollower(user).stream()
                 .map(UserFollow::getFollowing)
                 .toList();
 
-        return articleRepository.findByAuthorInOrderByCreatedAtDesc(following, facets).stream()
-                .map(article -> articleRepository.findArticleInfoByUser(user, article))
+        return articleRepository.findByAuthors(following, facets).stream()
+                .map(article -> articleRepository.findArticleDetails(user, article))
                 .toList();
     }
 
@@ -86,8 +86,8 @@ public class ArticleService {
      * @param tags tags
      * @return Returns the written article
      */
-    public Article writeArticle(Article article, Collection<Tag> tags) {
-        if (articleRepository.existsByTitle(article.getTitle())) {
+    public Article write(Article article, Collection<Tag> tags) {
+        if (articleRepository.existsBy(article.getTitle())) {
             throw new IllegalArgumentException("title is already exists.");
         }
         if (tags == null) {
@@ -110,7 +110,7 @@ public class ArticleService {
             throw new IllegalArgumentException("you can't edit articles written by others.");
         }
 
-        if (articleRepository.existsByTitle(title)) {
+        if (articleRepository.existsBy(title)) {
             throw new IllegalArgumentException("title is already exists.");
         }
 
@@ -158,7 +158,7 @@ public class ArticleService {
      * @param requester user who requested
      * @param article article
      */
-    public void deleteArticle(User requester, Article article) {
+    public void delete(User requester, Article article) {
         if (article.isNotAuthor(requester)) {
             throw new IllegalArgumentException("you can't delete articles written by others.");
         }
@@ -173,8 +173,8 @@ public class ArticleService {
      * @param article article
      * @return Returns true if already favorited
      */
-    public boolean isFavorited(User requester, Article article) {
-        return articleFavoriteRepository.existsByUserAndArticle(requester, article);
+    public boolean isFavorite(User requester, Article article) {
+        return articleFavoriteRepository.existsBy(requester, article);
     }
 
     /**
@@ -183,8 +183,8 @@ public class ArticleService {
      * @param requester user who requested
      * @param article article
      */
-    public void favoriteArticle(User requester, Article article) {
-        if (this.isFavorited(requester, article)) {
+    public void favorite(User requester, Article article) {
+        if (this.isFavorite(requester, article)) {
             throw new IllegalArgumentException("you already favorited this article.");
         }
 
@@ -197,32 +197,32 @@ public class ArticleService {
      * @param requester user who requested
      * @param article article
      */
-    public void unfavoriteArticle(User requester, Article article) {
-        if (!this.isFavorited(requester, article)) {
+    public void unfavorite(User requester, Article article) {
+        if (!this.isFavorite(requester, article)) {
             throw new IllegalArgumentException("you already unfavorited this article.");
         }
 
-        articleFavoriteRepository.deleteByUserAndArticle(requester, article);
+        articleFavoriteRepository.deleteBy(requester, article);
     }
 
     /**
-     * Get article information for anonymous.
+     * Get article details for anonymous users
      *
      * @param article article
-     * @return Returns article information
+     * @return Returns article details
      */
-    public ArticleDetails getArticleInfoByAnonymous(Article article) {
-        return articleRepository.findArticleInfoByAnonymous(article);
+    public ArticleDetails getArticleDetails(Article article) {
+        return articleRepository.findArticleDetails(article);
     }
 
     /**
-     * Get article information for user.
+     * Get article details for user.
      *
      * @param requester user who requested
      * @param article article
-     * @return Returns article information
+     * @return Returns article details
      */
-    public ArticleDetails getArticleInfoByUser(User requester, Article article) {
-        return articleRepository.findArticleInfoByUser(requester, article);
+    public ArticleDetails getArticleDetails(User requester, Article article) {
+        return articleRepository.findArticleDetails(requester, article);
     }
 }

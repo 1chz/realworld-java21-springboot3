@@ -28,7 +28,7 @@ class ArticleCommentRepositoryAdapter implements ArticleCommentRepository {
     }
 
     @Override
-    public List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article) {
+    public List<ArticleComment> findByArticle(Article article) {
         return articleCommentJpaRepository.findByArticleOrderByCreatedAtDesc(article);
     }
 

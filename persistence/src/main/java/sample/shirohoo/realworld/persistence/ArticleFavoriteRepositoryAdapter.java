@@ -22,12 +22,12 @@ class ArticleFavoriteRepositoryAdapter implements ArticleFavoriteRepository {
 
     @Override
     @Transactional
-    public void deleteByUserAndArticle(User user, Article article) {
+    public void deleteBy(User user, Article article) {
         articleFavoriteJpaRepository.deleteByUserAndArticle(user, article);
     }
 
     @Override
-    public boolean existsByUserAndArticle(User user, Article article) {
+    public boolean existsBy(User user, Article article) {
         return articleFavoriteJpaRepository.existsByUserAndArticle(user, article);
     }
 }

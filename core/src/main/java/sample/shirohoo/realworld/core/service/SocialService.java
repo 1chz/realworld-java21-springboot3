@@ -19,7 +19,7 @@ public class SocialService {
      * @return Returns true if already following
      */
     public boolean isFollowing(User follower, User following) {
-        return socialRepository.existsByFollowerAndFollowing(follower, following);
+        return socialRepository.existsBy(follower, following);
     }
 
     /** Follow user. */
@@ -34,7 +34,7 @@ public class SocialService {
     /** Unfollow user. */
     public void unfollow(User follower, User following) {
         if (this.isFollowing(follower, following)) {
-            socialRepository.deleteByFollowerAndFollowing(follower, following);
+            socialRepository.deleteBy(follower, following);
         }
     }
 }

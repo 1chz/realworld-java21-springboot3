@@ -13,13 +13,13 @@ public interface ArticleRepository {
 
     Optional<Article> findBySlug(String slug);
 
-    List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets);
+    List<Article> findByAuthors(Collection<User> authors, ArticleFacets facets);
 
-    ArticleDetails findArticleInfoByAnonymous(Article article);
+    ArticleDetails findArticleDetails(Article article);
 
-    ArticleDetails findArticleInfoByUser(User requester, Article article);
+    ArticleDetails findArticleDetails(User requester, Article article);
 
     void delete(Article article);
 
-    boolean existsByTitle(String title);
+    boolean existsBy(String title);
 }

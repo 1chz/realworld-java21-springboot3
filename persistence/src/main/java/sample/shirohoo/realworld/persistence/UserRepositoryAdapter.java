@@ -48,7 +48,7 @@ class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public boolean existsByEmailOrUsername(String email, String username) {
+    public boolean existsBy(String email, String username) {
         return userJpaRepository.existsByEmailOrUsername(email, username);
     }
 

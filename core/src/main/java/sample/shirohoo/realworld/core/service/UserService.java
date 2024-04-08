@@ -1,5 +1,6 @@
 package sample.shirohoo.realworld.core.service;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class UserService {
      *
      * @return Returns user
      */
-    public User getUserById(UUID userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found."));
+    public User getUser(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("user not found."));
     }
 
     /**
@@ -31,10 +32,8 @@ public class UserService {
      *
      * @return Returns user
      */
-    public User getUserByUsername(String username) {
-        return userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("user not found."));
+    public User getUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("user not found."));
     }
 
     /**
@@ -45,7 +44,7 @@ public class UserService {
      */
     @SuppressWarnings("UnusedReturnValue")
     public User signup(UserRegistry registry) {
-        if (userRepository.existsByEmailOrUsername(registry.email(), registry.username())) {
+        if (userRepository.existsBy(registry.email(), registry.username())) {
             throw new IllegalArgumentException("email or username is already exists.");
         }
 
@@ -89,7 +88,7 @@ public class UserService {
     public User updateUserDetails(
             UUID userId, String email, String username, String password, String bio, String imageUrl) {
         if (userId == null) {
-            throw new IllegalArgumentException("userId is required.");
+            throw new IllegalArgumentException("user id is required.");
         }
 
         return userRepository.updateUserDetails(userId, passwordEncoder, email, username, password, bio, imageUrl);

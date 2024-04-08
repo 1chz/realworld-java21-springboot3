@@ -1,6 +1,7 @@
 package sample.shirohoo.realworld.core.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
@@ -22,10 +23,10 @@ public class ArticleCommentService {
      * @param commentId comment id
      * @return Returns comment
      */
-    public ArticleComment readComment(int commentId) {
+    public ArticleComment getComment(int commentId) {
         return articleCommentRepository
                 .findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("invalid comment id."));
+                .orElseThrow(() -> new NoSuchElementException("invalid comment id."));
     }
 
     /**
@@ -34,8 +35,8 @@ public class ArticleCommentService {
      * @param article article
      * @return Returns all comments
      */
-    public List<ArticleComment> readComments(Article article) {
-        return articleCommentRepository.findByArticleOrderByCreatedAtDesc(article);
+    public List<ArticleComment> getComments(Article article) {
+        return articleCommentRepository.findByArticle(article);
     }
 
     /**
@@ -44,7 +45,7 @@ public class ArticleCommentService {
      * @param articleComment comment
      * @return Returns the written comment
      */
-    public ArticleComment writeComment(ArticleComment articleComment) {
+    public ArticleComment write(ArticleComment articleComment) {
         return articleCommentRepository.save(articleComment);
     }
 
@@ -54,7 +55,7 @@ public class ArticleCommentService {
      * @param requester user who requested
      * @param articleComment comment
      */
-    public void deleteComment(User requester, ArticleComment articleComment) {
+    public void delete(User requester, ArticleComment articleComment) {
         if (articleComment.isNotAuthor(requester)) {
             throw new IllegalArgumentException("you can't delete comments written by others.");
         }

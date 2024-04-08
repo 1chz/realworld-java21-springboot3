@@ -58,7 +58,7 @@ class ArticleRepositoryAdapter implements ArticleRepository {
     }
 
     @Override
-    public List<Article> findByAuthorInOrderByCreatedAtDesc(Collection<User> authors, ArticleFacets facets) {
+    public List<Article> findByAuthors(Collection<User> authors, ArticleFacets facets) {
         return articleJpaRepository
                 .findByAuthorInOrderByCreatedAtDesc(authors, PageRequest.of(facets.page(), facets.size()))
                 .getContent();
@@ -66,7 +66,7 @@ class ArticleRepositoryAdapter implements ArticleRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public ArticleDetails findArticleInfoByAnonymous(Article article) {
+    public ArticleDetails findArticleDetails(Article article) {
         int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
 
         return ArticleDetails.unauthenticated(article, totalFavorites);
@@ -74,7 +74,7 @@ class ArticleRepositoryAdapter implements ArticleRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public ArticleDetails findArticleInfoByUser(User requester, Article article) {
+    public ArticleDetails findArticleDetails(User requester, Article article) {
         int totalFavorites = articleFavoriteJpaRepository.countByArticle(article);
         boolean favorited = articleFavoriteJpaRepository.existsByUserAndArticle(requester, article);
 
@@ -89,7 +89,7 @@ class ArticleRepositoryAdapter implements ArticleRepository {
     }
 
     @Override
-    public boolean existsByTitle(String title) {
+    public boolean existsBy(String title) {
         return articleJpaRepository.existsByTitle(title);
     }
 }

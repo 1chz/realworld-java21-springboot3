@@ -15,6 +15,6 @@ class TagController {
 
     @GetMapping("/api/tags")
     TagsResponse doGet() {
-        return new TagsResponse(tagService.getTags());
+        return new TagsResponse(tagService.getAllTags());
     }
 }

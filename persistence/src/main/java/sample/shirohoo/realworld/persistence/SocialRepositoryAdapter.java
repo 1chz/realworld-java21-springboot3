@@ -28,12 +28,12 @@ class SocialRepositoryAdapter implements SocialRepository {
 
     @Override
     @Transactional
-    public void deleteByFollowerAndFollowing(User follower, User following) {
+    public void deleteBy(User follower, User following) {
         userFollowJpaRepository.deleteByFollowerAndFollowing(follower, following);
     }
 
     @Override
-    public boolean existsByFollowerAndFollowing(User follower, User following) {
+    public boolean existsBy(User follower, User following) {
         return userFollowJpaRepository.existsByFollowerAndFollowing(follower, following);
     }
 }

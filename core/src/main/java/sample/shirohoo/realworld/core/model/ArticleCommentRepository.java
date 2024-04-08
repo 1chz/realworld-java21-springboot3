@@ -8,7 +8,7 @@ public interface ArticleCommentRepository {
 
     Optional<ArticleComment> findById(int commentId);
 
-    List<ArticleComment> findByArticleOrderByCreatedAtDesc(Article article);
+    List<ArticleComment> findByArticle(Article article);
 
     void delete(ArticleComment articleComment);
 }

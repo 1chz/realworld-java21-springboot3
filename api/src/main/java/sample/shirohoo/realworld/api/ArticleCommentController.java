@@ -34,9 +34,9 @@ class ArticleCommentController {
     @PostMapping("/api/articles/{slug}/comments")
     SingleCommentResponse doPost(
             Authentication authentication, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
-        var article = articleService.readArticleBySlug(slug);
-        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        var articleComment = articleCommentService.writeComment(
+        var article = articleService.getArticle(slug);
+        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+        var articleComment = articleCommentService.write(
                 new ArticleComment(article, requester, request.comment().body()));
 
         return new SingleCommentResponse(articleComment);
@@ -44,15 +44,15 @@ class ArticleCommentController {
 
     @GetMapping("/api/articles/{slug}/comments")
     MultipleCommentsResponse doGet(Authentication authentication, @PathVariable String slug) {
-        var article = articleService.readArticleBySlug(slug);
-        var articleComments = articleCommentService.readComments(article);
+        var article = articleService.getArticle(slug);
+        var articleComments = articleCommentService.getComments(article);
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return new MultipleCommentsResponse(
                     articleComments.stream().map(ArticleCommentResponse::new).toList());
         }
 
-        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
+        var requester = userService.getUser(UUID.fromString(authentication.getName()));
         return new MultipleCommentsResponse(articleComments.stream()
                 .map(comment ->
                         new ArticleCommentResponse(comment, socialService.isFollowing(requester, comment.getAuthor())))
@@ -62,9 +62,9 @@ class ArticleCommentController {
     @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
     void doDelete(Authentication authentication, @PathVariable("id") int commentId) {
-        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        var articleComment = articleCommentService.readComment(commentId);
+        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+        var articleComment = articleCommentService.getComment(commentId);
 
-        articleCommentService.deleteComment(requester, articleComment);
+        articleCommentService.delete(requester, articleComment);
     }
 }

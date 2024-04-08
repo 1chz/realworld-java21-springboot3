@@ -7,7 +7,7 @@ public interface SocialRepository {
 
     List<UserFollow> findByFollower(User follower);
 
-    void deleteByFollowerAndFollowing(User follower, User following);
+    void deleteBy(User follower, User following);
 
-    boolean existsByFollowerAndFollowing(User follower, User following);
+    boolean existsBy(User follower, User following);
 }

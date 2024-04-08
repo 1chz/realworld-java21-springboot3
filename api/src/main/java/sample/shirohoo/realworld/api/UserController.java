@@ -65,7 +65,7 @@ class UserController {
 
     @GetMapping("/api/user")
     public UsersResponse doGet(JwtAuthenticationToken authentication) {
-        var user = userService.getUserById(UUID.fromString(authentication.getName()));
+        var user = userService.getUser(UUID.fromString(authentication.getName()));
 
         return UsersResponse.from(user, authentication.getToken().getTokenValue());
     }

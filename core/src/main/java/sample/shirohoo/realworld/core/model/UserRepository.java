@@ -16,7 +16,7 @@ public interface UserRepository {
 
     boolean existsByUsername(String username);
 
-    boolean existsByEmailOrUsername(String email, String username);
+    boolean existsBy(String email, String username);
 
     User updateUserDetails(
             UUID userId,

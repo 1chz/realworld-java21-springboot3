@@ -24,13 +24,13 @@ class SocialController {
 
     @GetMapping("/api/profiles/{username}")
     ProfilesResponse doGet(Authentication authentication, @PathVariable("username") String targetUsername) {
-        var targetUser = userService.getUserByUsername(targetUsername);
+        var targetUser = userService.getUser(targetUsername);
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return ProfilesResponse.from(targetUser);
         }
 
-        var me = userService.getUserById(UUID.fromString(authentication.getName()));
+        var me = userService.getUser(UUID.fromString(authentication.getName()));
         var isFollowing = socialService.isFollowing(me, targetUser);
 
         return ProfilesResponse.from(targetUser, isFollowing);
@@ -38,8 +38,8 @@ class SocialController {
 
     @PostMapping("/api/profiles/{username}/follow")
     ProfilesResponse doPost(Authentication authentication, @PathVariable("username") String targetUsername) {
-        var follower = userService.getUserById(UUID.fromString(authentication.getName()));
-        var following = userService.getUserByUsername(targetUsername);
+        var follower = userService.getUser(UUID.fromString(authentication.getName()));
+        var following = userService.getUser(targetUsername);
 
         socialService.follow(follower, following);
 
@@ -48,8 +48,8 @@ class SocialController {
 
     @DeleteMapping("/api/profiles/{username}/follow")
     ProfilesResponse doDelete(Authentication authentication, @PathVariable("username") String targetUsername) {
-        var follower = userService.getUserById(UUID.fromString(authentication.getName()));
-        var following = userService.getUserByUsername(targetUsername);
+        var follower = userService.getUser(UUID.fromString(authentication.getName()));
+        var following = userService.getUser(targetUsername);
 
         socialService.unfollow(follower, following);
 

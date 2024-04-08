@@ -22,21 +22,21 @@ class ArticleFavoriteController {
 
     @PostMapping("/api/articles/{slug}/favorite")
     SingleArticleResponse doPost(Authentication authentication, @PathVariable String slug) {
-        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        var article = articleService.readArticleBySlug(slug);
+        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+        var article = articleService.getArticle(slug);
 
-        articleService.favoriteArticle(requester, article);
+        articleService.favorite(requester, article);
 
-        return new SingleArticleResponse(articleService.getArticleInfoByUser(requester, article));
+        return new SingleArticleResponse(articleService.getArticleDetails(requester, article));
     }
 
     @DeleteMapping("/api/articles/{slug}/favorite")
     SingleArticleResponse doDelete(Authentication authentication, @PathVariable String slug) {
-        var requester = userService.getUserById(UUID.fromString(authentication.getName()));
-        var article = articleService.readArticleBySlug(slug);
+        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+        var article = articleService.getArticle(slug);
 
-        articleService.unfavoriteArticle(requester, article);
+        articleService.unfavorite(requester, article);
 
-        return new SingleArticleResponse(articleService.getArticleInfoByUser(requester, article));
+        return new SingleArticleResponse(articleService.getArticleDetails(requester, article));
     }
 }
