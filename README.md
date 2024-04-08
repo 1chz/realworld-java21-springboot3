@@ -73,7 +73,7 @@ src/main/resources directory.
 The application's package dependencies and core logic are implemented as follows:
 
 #### Modules
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2b6310ce-215d-46e4-8f00-77cc62a383da)
+![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/3e81ab10-8dfc-482d-8aca-6788e6ab4659)
 
 `core`, `persistence`, `api` and `bootstrap` modules exist, and each module performs the following roles.
 
