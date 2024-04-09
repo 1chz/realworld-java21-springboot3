@@ -3,7 +3,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 group = "sample.shirohoo"
 
 springBoot {
-    mainClass.set("sample.shirohoo.realworld.RealworldApplication")
+    mainClass.set("sample.shirohoo.realworld.RealWorldApplication")
 }
 
 plugins {
@@ -37,10 +37,10 @@ allprojects {
     }
 
     dependencies {
+        compileOnly("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
 
-        compileOnly("org.projectlombok:lombok")
-
+        implementation("org.springframework.boot:spring-boot-starter")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 

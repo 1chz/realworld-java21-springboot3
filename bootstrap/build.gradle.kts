@@ -10,10 +10,6 @@ plugins {
 dependencies {
     implementation(project(":api"))
     implementation(project(":persistence"))
-
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-
-    implementation("org.springframework.boot:spring-boot-starter")
 }
 
 tasks.getByName<BootJar>("bootJar") {

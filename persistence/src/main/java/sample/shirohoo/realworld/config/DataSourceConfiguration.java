@@ -20,7 +20,7 @@ class DataSourceConfiguration {
         P6SpyOptions.getActiveInstance().setLogMessageFormat(PrettyQueryFormatStrategy.class.getName());
     }
 
-    private static class PrettyQueryFormatStrategy implements MessageFormattingStrategy {
+    public static class PrettyQueryFormatStrategy implements MessageFormattingStrategy {
         @Override
         public String formatMessage(
                 int connectionId,

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":core"))
+    implementation(project(":core"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
