@@ -5,12 +5,18 @@ import static org.mockito.Mockito.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
 class RealWorldBearerTokenResolverTest {
-    RealWorldBearerTokenResolver resolver = new RealWorldBearerTokenResolver();
+    RealWorldBearerTokenResolver sut;
+
+    @BeforeEach
+    void setUp() {
+        sut = new RealWorldBearerTokenResolver();
+    }
 
     @Test
     void resolveFromAuthorizationHeaderTest() {
@@ -20,7 +26,7 @@ class RealWorldBearerTokenResolverTest {
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Token testToken1234");
 
         // when
-        String token = resolver.resolve(request);
+        String token = sut.resolve(request);
 
         // then
         assertEquals("testToken1234", token);
@@ -34,7 +40,7 @@ class RealWorldBearerTokenResolverTest {
         when(request.getParameterValues("access_token")).thenReturn(new String[] {"testToken1234"});
 
         // when
-        String token = resolver.resolve(request);
+        String token = sut.resolve(request);
 
         // then
         assertEquals("testToken1234", token);
@@ -48,6 +54,6 @@ class RealWorldBearerTokenResolverTest {
         when(request.getParameterValues("access_token")).thenReturn(new String[] {"token1", "token2"});
 
         // when & then
-        assertThrows(OAuth2AuthenticationException.class, () -> resolver.resolve(request));
+        assertThrows(OAuth2AuthenticationException.class, () -> sut.resolve(request));
     }
 }
