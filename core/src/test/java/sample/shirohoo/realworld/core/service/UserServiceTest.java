@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -124,6 +126,12 @@ class UserServiceTest {
         assertEquals(testUser, result);
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    void loginUserNullOrEmptyEmail(String email) {
+        assertThrows(IllegalArgumentException.class, () -> sut.login(email, "testPassword"));
+    }
+
     @Test
     void loginUserInvalidEmail() {
         // given
@@ -133,6 +141,12 @@ class UserServiceTest {
 
         // when & then
         assertThrows(IllegalArgumentException.class, () -> sut.login(testEmail, testPassword));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void loginUserNullOrEmptyPassword(String password) {
+        assertThrows(IllegalArgumentException.class, () -> sut.login("testEmail", password));
     }
 
     @Test

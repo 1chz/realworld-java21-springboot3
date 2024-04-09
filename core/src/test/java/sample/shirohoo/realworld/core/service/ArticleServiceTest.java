@@ -204,6 +204,21 @@ class ArticleServiceTest {
     }
 
     @Test
+    void testWriteArticle_nullTags_success() {
+        // given
+        Article article = new Article(testUser1, "title1", "desc1", "content1");
+        when(articleRepository.existsBy(article.getTitle())).thenReturn(false);
+        when(articleRepository.save(eq(article), any(Collection.class))).thenReturn(article);
+
+        // when
+        Article returnedArticle = sut.write(article, null);
+
+        // then
+        assertEquals(article, returnedArticle);
+        verify(articleRepository).save(eq(article), any(Collection.class));
+    }
+
+    @Test
     void testWriteArticle_titleExists_throwsException() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
@@ -220,13 +235,12 @@ class ArticleServiceTest {
     @Test
     void testEditDescription_success() {
         // given
-        User requester = testUser1;
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         String newDescription = "new_description";
         when(articleRepository.save(article)).thenReturn(article);
 
         // when
-        Article updatedArticle = sut.editDescription(requester, article, newDescription);
+        Article updatedArticle = sut.editDescription(testUser1, article, newDescription);
 
         // then
         assertEquals(newDescription, updatedArticle.getDescription());
@@ -249,13 +263,12 @@ class ArticleServiceTest {
     @Test
     void testEditContent_success() {
         // given
-        User requester = testUser1;
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         String newContent = "new_content";
         when(articleRepository.save(article)).thenReturn(article);
 
         // when
-        Article updatedArticle = sut.editContent(requester, article, newContent);
+        Article updatedArticle = sut.editContent(testUser1, article, newContent);
 
         // then
         assertEquals(newContent, updatedArticle.getContent());
@@ -296,31 +309,29 @@ class ArticleServiceTest {
     @Test
     void testIsFavorite_favoriteExists_returnTrue() {
         // given
-        User requester = testUser1;
         Article article = new Article(testUser1, "title1", "desc1", "content1");
-        when(articleFavoriteRepository.existsBy(requester, article)).thenReturn(true);
+        when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(true);
 
         // when
-        boolean isFavorite = sut.isFavorite(requester, article);
+        boolean isFavorite = sut.isFavorite(testUser1, article);
 
         // then
         assertTrue(isFavorite);
-        verify(articleFavoriteRepository).existsBy(requester, article);
+        verify(articleFavoriteRepository).existsBy(testUser1, article);
     }
 
     @Test
     void testIsFavorite_favoriteDoesNotExist_returnFalse() {
         // given
-        User requester = testUser1;
         Article article = new Article(testUser1, "title1", "desc1", "content1");
-        when(articleFavoriteRepository.existsBy(requester, article)).thenReturn(false);
+        when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(false);
 
         // when
-        boolean isFavorite = sut.isFavorite(requester, article);
+        boolean isFavorite = sut.isFavorite(testUser1, article);
 
         // then
         assertFalse(isFavorite);
-        verify(articleFavoriteRepository).existsBy(requester, article);
+        verify(articleFavoriteRepository).existsBy(testUser1, article);
     }
 
     @Test
@@ -402,5 +413,48 @@ class ArticleServiceTest {
         // then
         assertEquals(expectedDetails, actualArticleDetails);
         verify(articleRepository).findArticleDetails(article);
+    }
+
+    @Test
+    void testEditTitle_success() {
+        // given
+        Article article = new Article(testUser1, "title", "description", "content");
+        String newTitle = "new_title";
+        when(articleRepository.existsBy(newTitle)).thenReturn(false);
+        when(articleRepository.save(article)).thenReturn(article);
+
+        // when
+        Article updatedArticle = sut.editTitle(testUser1, article, newTitle);
+
+        // then
+        assertEquals(newTitle, updatedArticle.getTitle());
+        verify(articleRepository).save(article);
+    }
+
+    @Test
+    void testEditTitle_UserNotAuthor_throwsException() {
+        // given
+        Article article = new Article(testUser1, "title", "description", "content");
+        String newTitle = "new_title";
+
+        // when
+        assertThrows(IllegalArgumentException.class, () -> sut.editTitle(testUser2, article, newTitle));
+
+        // then
+        verify(articleRepository, never()).save(article);
+    }
+
+    @Test
+    void testEditTitle_ExistingTitle_throwsException() {
+        // given
+        String newTitle = "new_title";
+        Article article = new Article(testUser1, "title", "description", "content");
+        when(articleRepository.existsBy(newTitle)).thenReturn(true);
+
+        // when
+        assertThrows(IllegalArgumentException.class, () -> sut.editTitle(testUser1, article, newTitle));
+
+        // then
+        verify(articleRepository, never()).save(article);
     }
 }

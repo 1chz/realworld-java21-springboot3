@@ -1,10 +1,12 @@
 package sample.shirohoo.realworld.core.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -95,5 +97,21 @@ class ArticleCommentServiceTest {
 
         // when & then
         assertThrows(IllegalArgumentException.class, () -> sut.delete(commenter, comment));
+    }
+
+    @Test
+    void whenGetComments_thenShouldReturnComments() {
+        // given
+        ArticleComment comment1 = new ArticleComment(article, commenter, "comment1");
+        ArticleComment comment2 = new ArticleComment(article, commenter, "comment2");
+        List<ArticleComment> comments = Arrays.asList(comment1, comment2);
+        when(articleCommentRepository.findByArticle(article)).thenReturn(comments);
+
+        // when
+        List<ArticleComment> result = sut.getComments(article);
+
+        // then
+        assertThat(result.size()).isEqualTo(comments.size());
+        assertThat(result).containsExactlyInAnyOrder(comment1, comment2);
     }
 }

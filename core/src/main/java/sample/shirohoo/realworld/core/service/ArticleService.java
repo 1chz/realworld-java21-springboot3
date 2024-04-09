@@ -1,9 +1,10 @@
 package sample.shirohoo.realworld.core.service;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -90,11 +91,8 @@ public class ArticleService {
         if (articleRepository.existsBy(article.getTitle())) {
             throw new IllegalArgumentException("title is already exists.");
         }
-        if (tags == null) {
-            tags = new HashSet<>();
-        }
 
-        return articleRepository.save(article, tags);
+        return articleRepository.save(article, Objects.requireNonNullElseGet(tags, Set::of));
     }
 
     /**
