@@ -22,7 +22,7 @@ class ObjectMapperConfiguration {
         return builder.modules(iso8601SerializeModule()).build();
     }
 
-    private Module iso8601SerializeModule() {
+    Module iso8601SerializeModule() {
         return new JavaTimeModule().addSerializer(LocalDateTime.class, new JsonSerializer<>() {
             @Override
             public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)
