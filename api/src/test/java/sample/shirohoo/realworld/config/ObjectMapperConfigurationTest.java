@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class ObjectMapperConfigurationTest {
-    private ObjectMapper sut;
+    ObjectMapper sut;
 
     @BeforeEach
     void setUp() {

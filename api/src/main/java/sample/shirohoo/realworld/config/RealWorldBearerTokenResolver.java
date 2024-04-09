@@ -33,7 +33,7 @@ class RealWorldBearerTokenResolver implements BearerTokenResolver {
             return authorizationHeaderToken;
         }
 
-        return null;
+        return parameterToken;
     }
 
     private String resolveFromAuthorizationHeader(HttpServletRequest request) {
