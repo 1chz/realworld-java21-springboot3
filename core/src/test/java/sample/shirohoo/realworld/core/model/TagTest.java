@@ -17,8 +17,8 @@ class TagTest {
     @Test
     void equals_is_return_true_if_are_names_same() {
         // given
-        Tag tag1 = new FixedNameTag();
-        Tag tag2 = new FixedNameTag();
+        Tag tag1 = new TestTag();
+        Tag tag2 = new TestTag();
 
         // when
         boolean isEquals = tag1.equals(tag2);
@@ -30,8 +30,8 @@ class TagTest {
     @Test
     void hashCode_is_return_true_if_are_names_same() {
         // given
-        Tag tag1 = new FixedNameTag();
-        Tag tag2 = new FixedNameTag();
+        Tag tag1 = new TestTag();
+        Tag tag2 = new TestTag();
 
         // when
         boolean isEquals = tag1.hashCode() == tag2.hashCode();

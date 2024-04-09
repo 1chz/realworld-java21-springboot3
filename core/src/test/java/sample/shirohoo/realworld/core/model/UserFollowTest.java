@@ -24,28 +24,28 @@ class UserFollowTest {
 
     @Test
     void if_following_is_null_an_exception_is_thrown() {
-        assertThatThrownBy(() -> new UserFollow(new FixedIdUser(), null))
+        assertThatThrownBy(() -> new UserFollow(new TestUser(), null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("following is null or unknown user.");
     }
 
     @Test
     void if_following_id_is_null_an_exception_is_thrown() {
-        assertThatThrownBy(() -> new UserFollow(new FixedIdUser(), new User()))
+        assertThatThrownBy(() -> new UserFollow(new TestUser(), new User()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("following is null or unknown user.");
     }
 
     @Test
     void equals_is_return_true_if_are_ids_same() {
-        assertThat(new FixedIdUserFollow()).isEqualTo(new FixedIdUserFollow());
+        assertThat(new TestUserFollow()).isEqualTo(new TestUserFollow());
     }
 
     @Test
     void equals_is_return_false_if_are_ids_difference() {
         // given
-        UserFollow userFollow = new UserFollow(new FixedIdUser(), new FixedIdUser());
-        UserFollow fixedIdUserFollow = new FixedIdUserFollow();
+        UserFollow userFollow = new UserFollow(new TestUser(), new TestUser());
+        UserFollow fixedIdUserFollow = new TestUserFollow();
 
         // when
         boolean isEquals = userFollow.equals(fixedIdUserFollow);
@@ -56,6 +56,6 @@ class UserFollowTest {
 
     @Test
     void hashCode_is_return_true_if_are_ids_same() {
-        assertThat(new FixedIdUserFollow().hashCode()).isEqualTo(new FixedIdUserFollow().hashCode());
+        assertThat(new TestUserFollow().hashCode()).isEqualTo(new TestUserFollow().hashCode());
     }
 }

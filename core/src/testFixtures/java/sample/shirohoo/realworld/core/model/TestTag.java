@@ -1,6 +1,6 @@
 package sample.shirohoo.realworld.core.model;
 
-final class FixedNameTag extends Tag {
+public final class TestTag extends Tag {
     @Override
     public String getName() {
         return "fixed tag name";

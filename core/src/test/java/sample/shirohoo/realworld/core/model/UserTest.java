@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -169,8 +171,9 @@ class UserTest {
     @Test
     void equals_is_return_true_if_are_ids_same() {
         // given
-        User user1 = new FixedIdUser();
-        User user2 = new FixedIdUser();
+        UUID id = UUID.randomUUID();
+        User user1 = new TestUser(id);
+        User user2 = new TestUser(id);
 
         // when
         boolean isEquals = user1.equals(user2);
@@ -182,8 +185,8 @@ class UserTest {
     @Test
     void equals_is_return_false_if_are_ids_difference() {
         // given
-        User user1 = new User();
-        User user2 = new FixedIdUser();
+        User user1 = new TestUser();
+        User user2 = new TestUser();
 
         // when
         boolean isEquals = user1.equals(user2);
@@ -195,8 +198,9 @@ class UserTest {
     @Test
     void hashCode_is_return_true_if_are_ids_same() {
         // given
-        User user1 = new FixedIdUser();
-        User user2 = new FixedIdUser();
+        UUID id = UUID.randomUUID();
+        User user1 = new TestUser(id);
+        User user2 = new TestUser(id);
 
         // when
         boolean isEquals = user1.hashCode() == user2.hashCode();
