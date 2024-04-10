@@ -19,6 +19,8 @@ class RealWorldBearerTokenResolver implements BearerTokenResolver {
     private static final Pattern AUTHORIZATION_PATTERN =
             Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
 
+    private static final String ACCESS_TOKEN_PARAM = "access_token";
+
     @Override
     public String resolve(HttpServletRequest request) {
         String authorizationHeaderToken = resolveFromAuthorizationHeader(request);
@@ -58,7 +60,7 @@ class RealWorldBearerTokenResolver implements BearerTokenResolver {
     }
 
     private String resolveFromRequestParameters(HttpServletRequest request) {
-        String[] values = request.getParameterValues("access_token");
+        String[] values = request.getParameterValues(ACCESS_TOKEN_PARAM);
 
         if (values == null || values.length == 0) {
             return null;
