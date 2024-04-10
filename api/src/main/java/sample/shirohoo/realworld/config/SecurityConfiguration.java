@@ -54,6 +54,7 @@ class SecurityConfiguration {
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
                 .exceptionHandling(exceptionHandler -> exceptionHandler
+                        /* Note: If you want, you can change the prefix of the Authorization token from 'Bearer' to 'Token'. */
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .build();
@@ -61,6 +62,8 @@ class SecurityConfiguration {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        /* Note: Allowing everything like this is not the correct way, so never do this in a practical environment. */
+
         var configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(List.of("*"));
