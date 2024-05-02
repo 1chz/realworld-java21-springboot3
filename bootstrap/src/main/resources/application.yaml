@@ -8,6 +8,10 @@ security:
     public: classpath:app.pub
 
 spring:
+  threads:
+    virtual:
+      enabled: true
+
   datasource:
     url: jdbc:h2:mem:testdb?MODE=MYSQL;
 
