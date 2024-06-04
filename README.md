@@ -73,7 +73,7 @@ src/main/resources directory.
 The application's package dependencies and core logic are implemented as follows:
 
 #### Modules
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/3e81ab10-8dfc-482d-8aca-6788e6ab4659)
+![image](https://github.com/zhc1/realworld-java21-springboot3/assets/71188307/3e81ab10-8dfc-482d-8aca-6788e6ab4659)
 
 `core`, `persistence`, `api` and `bootstrap` modules exist, and each module performs the following roles.
 
@@ -104,7 +104,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 - [schema.sql](database/schema.sql)
 
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2ed3b129-f9ec-4431-8959-374f317b7224)
+![image](https://github.com/zhc1/realworld-java21-springboot3/assets/71188307/2ed3b129-f9ec-4431-8959-374f317b7224)
 
 ---
 
@@ -147,4 +147,4 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 
 #### Performance
 
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)
+![image](https://github.com/zhc1/realworld-java21-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)

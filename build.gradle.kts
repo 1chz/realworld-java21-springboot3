@@ -1,16 +1,12 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
-group = "sample.shirohoo"
-
-springBoot {
-    mainClass.set("sample.shirohoo.realworld.RealWorldApplication")
-}
+group = "io.zhc1"
 
 plugins {
     java
-    id("com.diffplug.spotless")
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
+    id("com.diffplug.spotless") version "6.22.0"
+    id("org.springframework.boot") version "3.3.0"
+    id("io.spring.dependency-management") version "1.1.5"
 }
 
 allprojects {
@@ -63,7 +59,7 @@ allprojects {
             formatAnnotations()
             removeUnusedImports()
             trimTrailingWhitespace()
-            importOrder("java", "jakarta", "org", "com", "net", "io", "lombok", "sample.shirohoo")
+            importOrder("java", "jakarta", "org", "com", "net", "io", "lombok", "io.zhc1")
         }
 
         kotlin {

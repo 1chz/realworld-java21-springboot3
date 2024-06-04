@@ -8,4 +8,5 @@ plugins {
 
 dependencies {
     implementation("jakarta.persistence:jakarta.persistence-api")
+    testFixturesImplementation("jakarta.persistence:jakarta.persistence-api")
 }
