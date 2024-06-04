@@ -1,10 +1,3 @@
-plugins {
-    java
-    id("com.diffplug.spotless")
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
-}
-
 dependencies {
     implementation(project(":core"))
 
