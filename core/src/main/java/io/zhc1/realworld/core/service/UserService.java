@@ -49,7 +49,7 @@ public class UserService {
         }
 
         var requester = new User(registry);
-        requester.setPassword(passwordEncoder, registry.password());
+        requester.encryptPassword(registry.password(), passwordEncoder);
 
         return userRepository.save(requester);
     }

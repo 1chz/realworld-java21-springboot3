@@ -90,10 +90,10 @@ class UserTest {
     }
 
     @Test
-    void setPassword() {
+    void encryptPassword() {
         // given
         User sut = new User("email", "username", "password");
-        PasswordEncoder stubPasswordEncoder = new PasswordEncoder() {
+        PasswordEncoder passwordEncoder = new PasswordEncoder() {
             @Override
             public boolean matches(String rawPassword, String encodedPassword) {
                 return false;
@@ -106,7 +106,7 @@ class UserTest {
         };
 
         // when
-        sut.setPassword(stubPasswordEncoder, "new password");
+        sut.encryptPassword("new password", passwordEncoder);
 
         // then
         assertThat(sut.getPassword()).isEqualTo("encoded password");
@@ -117,7 +117,7 @@ class UserTest {
     void if_raw_password_is_null_or_blank_then_not_modify_password(String rawPassword) {
         // given
         User sut = new User("email", "username", "password");
-        PasswordEncoder stubPasswordEncoder = new PasswordEncoder() {
+        PasswordEncoder passwordEncoder = new PasswordEncoder() {
             @Override
             public boolean matches(String rawPassword, String encodedPassword) {
                 return false;
@@ -130,7 +130,7 @@ class UserTest {
         };
 
         // when
-        sut.setPassword(stubPasswordEncoder, rawPassword);
+        sut.encryptPassword(rawPassword, passwordEncoder);
 
         // then
         assertThat(sut.getPassword()).isEqualTo("password");
@@ -139,7 +139,7 @@ class UserTest {
     @Test
     void if_passwordEncoder_is_null_then_throw_Exception() {
         User sut = new User("email", "username", "password");
-        assertThatThrownBy(() -> sut.setPassword(null, "new password"))
+        assertThatThrownBy(() -> sut.encryptPassword("new password", null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("passwordEncoder is required.");
     }

@@ -92,23 +92,23 @@ public class User {
         this.username = username;
     }
 
-    public void setPassword(PasswordEncoder passwordEncoder, String rawPassword) {
+    public void encryptPassword(String plainPassword, PasswordEncoder passwordEncoder) {
         if (passwordEncoder == null) {
             throw new IllegalArgumentException("passwordEncoder is required.");
         }
 
-        if (rawPassword == null || rawPassword.isBlank()) {
-            log.warn("not set because the rawPassword is empty. rawPassword={}", rawPassword);
+        if (plainPassword == null || plainPassword.isBlank()) {
+            log.warn("not set because the rawPassword is empty.");
             return;
         }
 
-        if (passwordEncoder.matches(rawPassword, this.password)) {
-            log.warn("not set because the rawPassword is same as current password. rawPassword={}", rawPassword);
+        if (passwordEncoder.matches(plainPassword, this.password)) {
+            log.warn("not set because the rawPassword is same as current password.");
             return;
         }
 
         // Note: You can add some more validations here if you want. (ex. regex)
-        this.password = passwordEncoder.encode(rawPassword);
+        this.password = passwordEncoder.encode(plainPassword);
     }
 
     public void setBio(String bio) {
