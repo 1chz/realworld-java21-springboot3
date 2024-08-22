@@ -100,7 +100,7 @@ class UserServiceTest {
                 .thenReturn(false);
 
         User testUser = new User(testRegistry);
-        testUser.encryptPassword(testRegistry.password(), passwordEncoder);
+        testUser.encryptPassword(passwordEncoder, testRegistry.password());
         when(userRepository.save(testUser)).thenReturn(testUser);
 
         // when

@@ -106,7 +106,7 @@ class UserTest {
         };
 
         // when
-        sut.encryptPassword("new password", passwordEncoder);
+        sut.encryptPassword(passwordEncoder, "new password");
 
         // then
         assertThat(sut.getPassword()).isEqualTo("encoded password");
@@ -130,7 +130,7 @@ class UserTest {
         };
 
         // when
-        sut.encryptPassword(rawPassword, passwordEncoder);
+        sut.encryptPassword(passwordEncoder, rawPassword);
 
         // then
         assertThat(sut.getPassword()).isEqualTo("password");
@@ -139,7 +139,7 @@ class UserTest {
     @Test
     void if_passwordEncoder_is_null_then_throw_Exception() {
         User sut = new User("email", "username", "password");
-        assertThatThrownBy(() -> sut.encryptPassword("new password", null))
+        assertThatThrownBy(() -> sut.encryptPassword(null, "new password"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("passwordEncoder is required.");
     }

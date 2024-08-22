@@ -74,7 +74,7 @@ class UserRepositoryAdapter implements UserRepository {
 
                     user.setEmail(email);
                     user.setUsername(username);
-                    user.encryptPassword(password, passwordEncoder);
+                    user.encryptPassword(passwordEncoder, password);
                     user.setBio(bio);
                     user.setImageUrl(imageUrl);
                     return userJpaRepository.save(user);
