@@ -1,9 +1,5 @@
 package io.zhc1.realworld.api;
 
-import java.util.UUID;
-
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +13,7 @@ import io.zhc1.realworld.api.request.WriteCommentRequest;
 import io.zhc1.realworld.api.response.ArticleCommentResponse;
 import io.zhc1.realworld.api.response.MultipleCommentsResponse;
 import io.zhc1.realworld.api.response.SingleCommentResponse;
+import io.zhc1.realworld.config.RealworldJwt;
 import io.zhc1.realworld.core.model.ArticleComment;
 import io.zhc1.realworld.core.service.ArticleCommentService;
 import io.zhc1.realworld.core.service.ArticleService;
@@ -33,9 +30,9 @@ class ArticleCommentController {
 
     @PostMapping("/api/articles/{slug}/comments")
     SingleCommentResponse doPost(
-            Authentication authentication, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
+            RealworldJwt jwt, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
         var article = articleService.getArticle(slug);
-        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+        var requester = userService.getUser(jwt.userId());
         var articleComment = articleCommentService.write(
                 new ArticleComment(article, requester, request.comment().body()));
 
@@ -43,16 +40,16 @@ class ArticleCommentController {
     }
 
     @GetMapping("/api/articles/{slug}/comments")
-    MultipleCommentsResponse doGet(Authentication authentication, @PathVariable String slug) {
+    MultipleCommentsResponse doGet(RealworldJwt jwt, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
         var articleComments = articleCommentService.getComments(article);
 
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+        if (jwt == null || !jwt.isAuthenticated()) {
             return new MultipleCommentsResponse(
                     articleComments.stream().map(ArticleCommentResponse::new).toList());
         }
 
-        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+        var requester = userService.getUser(jwt.userId());
         return new MultipleCommentsResponse(articleComments.stream()
                 .map(comment ->
                         new ArticleCommentResponse(comment, socialService.isFollowing(requester, comment.getAuthor())))
@@ -61,8 +58,8 @@ class ArticleCommentController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
-    void doDelete(Authentication authentication, @PathVariable("id") int commentId) {
-        var requester = userService.getUser(UUID.fromString(authentication.getName()));
+    void doDelete(RealworldJwt jwt, @PathVariable("id") int commentId) {
+        var requester = userService.getUser(jwt.userId());
         var articleComment = articleCommentService.getComment(commentId);
 
         articleCommentService.delete(requester, articleComment);

@@ -1,12 +1,10 @@
 package io.zhc1.realworld.api;
 
 import java.util.Map;
-import java.util.UUID;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +20,7 @@ import io.zhc1.realworld.api.request.LoginUserRequest;
 import io.zhc1.realworld.api.request.SignupRequest;
 import io.zhc1.realworld.api.request.UpdateUserRequest;
 import io.zhc1.realworld.api.response.UsersResponse;
+import io.zhc1.realworld.config.RealworldJwt;
 import io.zhc1.realworld.core.model.User;
 import io.zhc1.realworld.core.model.UserRegistry;
 import io.zhc1.realworld.core.service.UserService;
@@ -64,22 +63,22 @@ class UserController {
     }
 
     @GetMapping("/api/user")
-    public UsersResponse doGet(JwtAuthenticationToken authentication) {
-        var user = userService.getUser(UUID.fromString(authentication.getName()));
+    public UsersResponse doGet(RealworldJwt jwt) {
+        var user = userService.getUser(jwt.userId());
 
-        return UsersResponse.from(user, authentication.getToken().getTokenValue());
+        return UsersResponse.from(user, jwt.tokenValue());
     }
 
     @PutMapping("/api/user")
-    public UsersResponse doPut(JwtAuthenticationToken authentication, @RequestBody UpdateUserRequest request) {
+    public UsersResponse doPut(RealworldJwt jwt, @RequestBody UpdateUserRequest request) {
         User requester = userService.updateUserDetails(
-                UUID.fromString(authentication.getName()),
+                jwt.userId(),
                 request.user().email(),
                 request.user().username(),
                 request.user().password(),
                 request.user().bio(),
                 request.user().image());
 
-        return UsersResponse.from(requester, authentication.getToken().getTokenValue());
+        return UsersResponse.from(requester, jwt.getToken().getTokenValue());
     }
 }
