@@ -10,11 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /** Change the prefix of the Authorization token from 'Bearer' to 'Token'. */
-@Component
 class RealWorldBearerTokenResolver implements BearerTokenResolver {
     private static final Pattern AUTHORIZATION_PATTERN =
             Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);

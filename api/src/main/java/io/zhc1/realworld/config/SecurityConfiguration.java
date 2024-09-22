@@ -51,7 +51,13 @@ class SecurityConfiguration {
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        /* Note: Customization to make the code more expressive and to meet real-world requirements.
+                         *       In the case of 'RealWorldBearerTokenResolver', it is possible to register it as a Spring Bean using @Component, etc., but here it was registered explicitly.
+                         */
+                        .bearerTokenResolver(new RealWorldBearerTokenResolver())
+                        .jwt(jwtConfigurer ->
+                                jwtConfigurer.jwtAuthenticationConverter(new RealWorldJwtAuthenticationConverter())))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
                 .exceptionHandling(exceptionHandler -> exceptionHandler
                         /* Note: If you want, you can change the prefix of the Authorization token from 'Bearer' to 'Token'. */
