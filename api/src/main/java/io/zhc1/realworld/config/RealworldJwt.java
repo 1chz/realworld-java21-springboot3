@@ -69,10 +69,20 @@ public final class RealworldJwt extends AbstractOAuth2TokenAuthenticationToken<J
         return this.delegate.getTokenAttributes();
     }
 
+    /**
+     * Returns a JWT. It usually refers to a token string expressing with 'eyXXX.eyXXX.eyXXX' format.
+     *
+     * @return the token value as a String
+     */
     public String tokenValue() {
         return delegate.getToken().getTokenValue();
     }
 
+    /**
+     * Extract Subject from JWT. Here, Subject is the user ID in UUID format.
+     *
+     * @return the user ID as a UUID
+     */
     public UUID userId() {
         return UUID.fromString(delegate.getName());
     }
