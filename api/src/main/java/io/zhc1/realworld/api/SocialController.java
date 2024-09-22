@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import io.zhc1.realworld.api.response.ProfilesResponse;
-import io.zhc1.realworld.config.RealworldJwt;
+import io.zhc1.realworld.config.RealWorldJwt;
 import io.zhc1.realworld.core.service.SocialService;
 import io.zhc1.realworld.core.service.UserService;
 
@@ -20,7 +20,7 @@ class SocialController {
     private final SocialService socialService;
 
     @GetMapping("/api/profiles/{username}")
-    ProfilesResponse doGet(RealworldJwt jwt, @PathVariable("username") String targetUsername) {
+    ProfilesResponse doGet(RealWorldJwt jwt, @PathVariable("username") String targetUsername) {
         var targetUser = userService.getUser(targetUsername);
 
         if (jwt == null || !jwt.isAuthenticated()) {
@@ -34,7 +34,7 @@ class SocialController {
     }
 
     @PostMapping("/api/profiles/{username}/follow")
-    ProfilesResponse doPost(RealworldJwt jwt, @PathVariable("username") String targetUsername) {
+    ProfilesResponse doPost(RealWorldJwt jwt, @PathVariable("username") String targetUsername) {
         var follower = userService.getUser(jwt.userId());
         var following = userService.getUser(targetUsername);
 
@@ -44,7 +44,7 @@ class SocialController {
     }
 
     @DeleteMapping("/api/profiles/{username}/follow")
-    ProfilesResponse doDelete(RealworldJwt jwt, @PathVariable("username") String targetUsername) {
+    ProfilesResponse doDelete(RealWorldJwt jwt, @PathVariable("username") String targetUsername) {
         var follower = userService.getUser(jwt.userId());
         var following = userService.getUser(targetUsername);
 

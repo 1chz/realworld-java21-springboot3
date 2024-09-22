@@ -20,7 +20,7 @@ import io.zhc1.realworld.api.request.LoginUserRequest;
 import io.zhc1.realworld.api.request.SignupRequest;
 import io.zhc1.realworld.api.request.UpdateUserRequest;
 import io.zhc1.realworld.api.response.UsersResponse;
-import io.zhc1.realworld.config.RealworldJwt;
+import io.zhc1.realworld.config.RealWorldJwt;
 import io.zhc1.realworld.core.model.User;
 import io.zhc1.realworld.core.model.UserRegistry;
 import io.zhc1.realworld.core.service.UserService;
@@ -63,14 +63,14 @@ class UserController {
     }
 
     @GetMapping("/api/user")
-    public UsersResponse doGet(RealworldJwt jwt) {
+    public UsersResponse doGet(RealWorldJwt jwt) {
         var user = userService.getUser(jwt.userId());
 
         return UsersResponse.from(user, jwt.tokenValue());
     }
 
     @PutMapping("/api/user")
-    public UsersResponse doPut(RealworldJwt jwt, @RequestBody UpdateUserRequest request) {
+    public UsersResponse doPut(RealWorldJwt jwt, @RequestBody UpdateUserRequest request) {
         User requester = userService.updateUserDetails(
                 jwt.userId(),
                 request.user().email(),

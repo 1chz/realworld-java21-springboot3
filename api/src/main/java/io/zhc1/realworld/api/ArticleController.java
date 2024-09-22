@@ -18,7 +18,7 @@ import io.zhc1.realworld.api.request.WriteArticleRequest;
 import io.zhc1.realworld.api.response.ArticleResponse;
 import io.zhc1.realworld.api.response.MultipleArticlesResponse;
 import io.zhc1.realworld.api.response.SingleArticleResponse;
-import io.zhc1.realworld.config.RealworldJwt;
+import io.zhc1.realworld.config.RealWorldJwt;
 import io.zhc1.realworld.core.model.Article;
 import io.zhc1.realworld.core.model.ArticleDetails;
 import io.zhc1.realworld.core.model.ArticleFacets;
@@ -32,7 +32,7 @@ class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles")
-    SingleArticleResponse doPost(RealworldJwt jwt, @RequestBody WriteArticleRequest request) {
+    SingleArticleResponse doPost(RealWorldJwt jwt, @RequestBody WriteArticleRequest request) {
         var requester = userService.getUser(jwt.userId());
         var article = articleService.write(
                 new Article(
@@ -47,7 +47,7 @@ class ArticleController {
 
     @GetMapping("/api/articles")
     MultipleArticlesResponse doGet(
-            RealworldJwt jwt,
+            RealWorldJwt jwt,
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "favorited", required = false) String favorited,
@@ -68,7 +68,7 @@ class ArticleController {
     }
 
     @GetMapping("/api/articles/{slug}")
-    SingleArticleResponse doGet(RealworldJwt jwt, @PathVariable String slug) {
+    SingleArticleResponse doGet(RealWorldJwt jwt, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
 
         if (jwt == null || !jwt.isAuthenticated()) {
@@ -80,7 +80,7 @@ class ArticleController {
     }
 
     @PutMapping("/api/articles/{slug}")
-    SingleArticleResponse doPut(RealworldJwt jwt, @PathVariable String slug, @RequestBody EditArticleRequest request) {
+    SingleArticleResponse doPut(RealWorldJwt jwt, @PathVariable String slug, @RequestBody EditArticleRequest request) {
         var requester = userService.getUser(jwt.userId());
         var article = articleService.getArticle(slug);
 
@@ -104,7 +104,7 @@ class ArticleController {
     }
 
     @DeleteMapping("/api/articles/{slug}")
-    void doDelete(RealworldJwt jwt, @PathVariable String slug) {
+    void doDelete(RealWorldJwt jwt, @PathVariable String slug) {
         var requester = userService.getUser(jwt.userId());
         var article = articleService.getArticle(slug);
 
@@ -113,7 +113,7 @@ class ArticleController {
 
     @GetMapping("/api/articles/feed")
     MultipleArticlesResponse doGet(
-            RealworldJwt jwt, // Must be verified
+            RealWorldJwt jwt, // Must be verified
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         var facets = new ArticleFacets(offset, limit);
