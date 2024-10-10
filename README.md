@@ -102,7 +102,7 @@ deciding which technology stack to choose through comparisons with various other
 
 Many developers who use JPA tend to use Long as the id type. However, it's worth considering whether your table with an id of Long will ever need to store 2^63 records.
 
-- [schema.sql](database/schema.sql)
+- [schema.sql](bootstrap/src/main/resources/schema.sql)
 
 ![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2ed3b129-f9ec-4431-8959-374f317b7224)
 
