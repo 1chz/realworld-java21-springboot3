@@ -15,8 +15,7 @@ class ObjectMapperConfigurationTest {
 
     @BeforeEach
     void setUp() {
-        ObjectMapperConfiguration configuration = new ObjectMapperConfiguration();
-        sut = new ObjectMapper().registerModule(configuration.iso8601SerializeModule());
+        sut = new ObjectMapper().registerModule(new ObjectMapperConfiguration().iso8601SerializeModule());
     }
 
     @Test

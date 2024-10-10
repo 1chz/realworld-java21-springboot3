@@ -9,9 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 
 class RealWorldBearerTokenResolverTest {
-    RealWorldBearerTokenResolver sut;
+    BearerTokenResolver sut;
 
     @BeforeEach
     void setUp() {

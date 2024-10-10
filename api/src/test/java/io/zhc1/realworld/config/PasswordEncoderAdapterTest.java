@@ -32,12 +32,10 @@ class PasswordEncoderAdapterTest {
     @Test
     void testMatchesMethodWithIncorrectCredentials() {
         // given
-        String rawPassword = "TestPassword";
-        String wrongRawPassword = "WrongPassword";
-        String encodedPassword = sut.encode(rawPassword);
+        String encodedPassword = sut.encode("CorrectPassword");
 
         // when
-        boolean result = sut.matches(wrongRawPassword, encodedPassword);
+        boolean result = sut.matches("WrongPassword", encodedPassword);
 
         // then
         assertFalse(result);

@@ -47,7 +47,7 @@ class InterceptorsExceptionHandlerTest {
     }
 
     @Test
-    void handle_Exception() {
+    void handle_UnexpectedExceptions() {
         ProblemDetail problem = sut.handle(new Exception("unexpected"));
         assertThat(problem.getStatus()).isEqualTo(500);
         assertThat(problem.getDetail()).isEqualTo("Please contact the administrator.");
