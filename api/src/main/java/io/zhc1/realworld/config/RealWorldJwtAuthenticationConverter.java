@@ -18,7 +18,6 @@ class RealWorldJwtAuthenticationConverter implements Converter<Jwt, AbstractAuth
     @Override
     public final AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         Collection<GrantedAuthority> authorities = this.jwtGrantedAuthoritiesConverter.convert(jwt);
-
         String principalClaimValue = jwt.getClaimAsString(JwtClaimNames.SUB);
         return new RealWorldJwt(jwt, new JwtAuthenticationToken(jwt, authorities, principalClaimValue));
     }
