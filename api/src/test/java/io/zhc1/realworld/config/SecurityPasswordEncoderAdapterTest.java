@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import io.zhc1.realworld.core.model.PasswordEncoder;
 
-class PasswordEncoderAdapterTest {
+class SecurityPasswordEncoderAdapterTest {
     PasswordEncoder sut;
 
     @BeforeEach
     void setUp() {
-        sut = new PasswordEncoderAdapter();
+        sut = new SecurityPasswordEncoderAdapter();
     }
 
     @Test

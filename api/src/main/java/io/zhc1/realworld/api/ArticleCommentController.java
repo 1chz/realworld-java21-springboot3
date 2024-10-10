@@ -13,7 +13,7 @@ import io.zhc1.realworld.api.request.WriteCommentRequest;
 import io.zhc1.realworld.api.response.ArticleCommentResponse;
 import io.zhc1.realworld.api.response.MultipleCommentsResponse;
 import io.zhc1.realworld.api.response.SingleCommentResponse;
-import io.zhc1.realworld.config.RealWorldJwt;
+import io.zhc1.realworld.config.RealWorldAuthenticationToken;
 import io.zhc1.realworld.core.model.ArticleComment;
 import io.zhc1.realworld.core.service.ArticleCommentService;
 import io.zhc1.realworld.core.service.ArticleService;
@@ -30,7 +30,7 @@ class ArticleCommentController {
 
     @PostMapping("/api/articles/{slug}/comments")
     SingleCommentResponse doPost(
-            RealWorldJwt jwt, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
+            RealWorldAuthenticationToken jwt, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
         var article = articleService.getArticle(slug);
         var requester = userService.getUser(jwt.userId());
         var articleComment = articleCommentService.write(
@@ -40,7 +40,7 @@ class ArticleCommentController {
     }
 
     @GetMapping("/api/articles/{slug}/comments")
-    MultipleCommentsResponse doGet(RealWorldJwt jwt, @PathVariable String slug) {
+    MultipleCommentsResponse doGet(RealWorldAuthenticationToken jwt, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
         var articleComments = articleCommentService.getComments(article);
 
@@ -58,7 +58,7 @@ class ArticleCommentController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
-    void doDelete(RealWorldJwt jwt, @PathVariable("id") int commentId) {
+    void doDelete(RealWorldAuthenticationToken jwt, @PathVariable("id") int commentId) {
         var requester = userService.getUser(jwt.userId());
         var articleComment = articleCommentService.getComment(commentId);
 

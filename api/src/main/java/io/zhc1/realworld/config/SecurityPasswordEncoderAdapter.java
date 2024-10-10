@@ -5,11 +5,12 @@ import org.springframework.stereotype.Component;
 
 import io.zhc1.realworld.core.model.PasswordEncoder;
 
+/* Note: Connects the PasswordEncoder of 'core' module and 'Spring Security'  */
 @Component
-class PasswordEncoderAdapter implements PasswordEncoder {
+class SecurityPasswordEncoderAdapter implements PasswordEncoder {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    PasswordEncoderAdapter() {
+    SecurityPasswordEncoderAdapter() {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
