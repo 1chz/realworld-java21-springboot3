@@ -8,6 +8,6 @@ public record ProfileResponse(String username, String bio, String image, boolean
     }
 
     public static ProfileResponse from(User user, boolean following) {
-        return new ProfileResponse(user.getEmail(), user.getBio(), user.getImageUrl(), following);
+        return new ProfileResponse(user.getUsername(), user.getBio(), user.getImageUrl(), following);
     }
 }
