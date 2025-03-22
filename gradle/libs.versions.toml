@@ -1,0 +1,15 @@
+[versions]
+java = "21"
+spotless = "6.22.0"
+
+spring-boot = "3.3.0"
+spring-dependency-management = "1.1.5"
+spring-boot-p6spy = "1.9.0"
+
+[libraries]
+spring-boot-starter-p6spy = { group = "com.github.gavlyukovskiy", name = "p6spy-spring-boot-starter", version.ref = "spring-boot-p6spy" }
+
+[plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
