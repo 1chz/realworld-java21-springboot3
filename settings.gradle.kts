@@ -1,6 +1,6 @@
 rootProject.name = "realworld"
 
-// Include all modules
+// Include the library modules
 include(":module:core", ":module:persistence")
 
 // Include the server module
