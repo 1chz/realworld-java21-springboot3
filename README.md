@@ -79,8 +79,6 @@ The dependencies are configured so that all modules depend on the core module, f
 - ~Service: Implements business logic and interacts with the database through Repositories.
 - ~Repository: An interface for interacting with the database, implemented using Spring Data JPA.
 
-Authentication and authorization are implemented using Spring Security with JWT-based authentication.
-
 ---
 
 ## Database architecture
@@ -103,7 +101,7 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ### Run application
 
 ```shell
-./gradlew server:bootRun
+./gradlew realworld:bootRun
 ```
 
 ### Apply code style
