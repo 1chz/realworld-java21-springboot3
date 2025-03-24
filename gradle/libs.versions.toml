@@ -1,15 +1,31 @@
 [versions]
 java = "21"
 spotless = "6.22.0"
+formatter-palantir = "2.38.0"
 
 spring-boot = "3.3.0"
 spring-dependency-management = "1.1.5"
 spring-boot-p6spy = "1.9.0"
 
 [libraries]
+lombok = { group = "org.projectlombok", name = "lombok" }
+jakarta-persistence-api = { group = "jakarta.persistence", name = "jakarta.persistence-api" }
+
+db-h2 = { group = "com.h2database", name = "h2" }
+
+spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-cache = { group = "org.springframework.boot", name = "spring-boot-starter-cache" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-oauth2-resource-server = { group = "org.springframework.boot", name = "spring-boot-starter-oauth2-resource-server" }
 spring-boot-starter-p6spy = { group = "com.github.gavlyukovskiy", name = "p6spy-spring-boot-starter", version.ref = "spring-boot-p6spy" }
 
+cache-caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine" }
+
 [plugins]
+java = { id = "java" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }

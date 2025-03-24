@@ -1,7 +1,5 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
-val javaVersion = libs.versions.java.get()
-
 plugins {
     java
     alias(libs.plugins.spotless)
@@ -9,11 +7,14 @@ plugins {
     alias(libs.plugins.spring.dependency.management) apply false
 }
 
+// Resolving the issue of not being able to reference the version catalog in allprojects and subprojects scopes
+val versionCatalog = libs
+
 allprojects {
     group = "io.zhc1"
 
-    apply(plugin = "java")
-    apply(plugin = "com.diffplug.spotless")
+    plugins.apply(versionCatalog.plugins.java.get().pluginId)
+    plugins.apply(versionCatalog.plugins.spotless.get().pluginId)
 
     repositories {
         mavenCentral()
@@ -21,13 +22,13 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(javaVersion))
+            languageVersion.set(JavaLanguageVersion.of(versionCatalog.versions.java.get()))
         }
     }
 
     spotless {
         java {
-            palantirJavaFormat("2.38.0")
+            palantirJavaFormat(versionCatalog.versions.formatter.palantir.get())
             indentWithSpaces()
             formatAnnotations()
             removeUnusedImports()
@@ -50,8 +51,8 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "org.springframework.boot")
-    apply(plugin = "io.spring.dependency-management")
+    plugins.apply(versionCatalog.plugins.spring.boot.get().pluginId)
+    plugins.apply(versionCatalog.plugins.spring.dependency.management.get().pluginId)
 
     configurations {
         all { exclude(group = "junit", module = "junit") }
@@ -61,11 +62,13 @@ subprojects {
     }
 
     dependencies {
-        compileOnly("org.projectlombok:lombok")
-        annotationProcessor("org.projectlombok:lombok")
+        implementation(platform(versionCatalog.spring.boot.bom))
 
-        implementation("org.springframework.boot:spring-boot-starter")
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        compileOnly(versionCatalog.lombok)
+        annotationProcessor(versionCatalog.lombok)
+
+        implementation(versionCatalog.spring.boot.starter)
+        testImplementation(versionCatalog.spring.boot.starter.test)
     }
 
     tasks.withType<Test> {

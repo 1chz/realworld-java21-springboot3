@@ -4,11 +4,11 @@ dependencies {
     implementation(project(":module:core"))
     implementation(project(":module:persistence"))
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.oauth2.resource.server)
 
     // Remove Jakarta Persistence API related warnings
-    implementation("jakarta.persistence:jakarta.persistence-api")
+    implementation(libs.jakarta.persistence.api)
 }
 
 tasks.getByName<BootJar>("bootJar") {
