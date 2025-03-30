@@ -124,10 +124,15 @@ Many developers who use JPA tend to use Long as the id type. However, it's worth
 ./gradlew build
 ```
 
+### API Docs
+You can find the API documentation in the [api-docs/redoc.html](api-docs/redoc.html) directory. The API documentation is generated using ReDoc and is available in HTML format.
+
+And, you can import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
+
 ### Run E2E test
 
 1. Run application (**important**)
-2. [Run E2E test](e2e/README.md#running-api-tests-locally)
+2. [Run E2E test](api-docs/README.md#running-api-tests-locally)
 
 #### Performance
 
