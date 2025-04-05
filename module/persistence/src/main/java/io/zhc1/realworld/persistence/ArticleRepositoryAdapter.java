@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.ArticleDetails;
-import io.zhc1.realworld.core.model.ArticleFacets;
-import io.zhc1.realworld.core.model.ArticleRepository;
-import io.zhc1.realworld.core.model.ArticleTag;
-import io.zhc1.realworld.core.model.Tag;
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.ArticleDetails;
+import io.zhc1.realworld.model.ArticleFacets;
+import io.zhc1.realworld.model.ArticleRepository;
+import io.zhc1.realworld.model.ArticleTag;
+import io.zhc1.realworld.model.Tag;
+import io.zhc1.realworld.model.User;
 
 @Repository
 @RequiredArgsConstructor

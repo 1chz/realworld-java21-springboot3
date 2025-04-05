@@ -9,8 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.User;
 
 interface ArticleJpaRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
     Optional<Article> findBySlug(String slug);

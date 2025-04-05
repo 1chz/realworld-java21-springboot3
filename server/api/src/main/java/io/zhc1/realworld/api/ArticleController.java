@@ -19,11 +19,11 @@ import io.zhc1.realworld.api.response.ArticleResponse;
 import io.zhc1.realworld.api.response.MultipleArticlesResponse;
 import io.zhc1.realworld.api.response.SingleArticleResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.ArticleDetails;
-import io.zhc1.realworld.core.model.ArticleFacets;
-import io.zhc1.realworld.core.service.ArticleService;
-import io.zhc1.realworld.core.service.UserService;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.ArticleDetails;
+import io.zhc1.realworld.model.ArticleFacets;
+import io.zhc1.realworld.service.ArticleService;
+import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor

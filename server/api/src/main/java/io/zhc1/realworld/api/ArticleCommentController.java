@@ -14,11 +14,11 @@ import io.zhc1.realworld.api.response.ArticleCommentResponse;
 import io.zhc1.realworld.api.response.MultipleCommentsResponse;
 import io.zhc1.realworld.api.response.SingleCommentResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
-import io.zhc1.realworld.core.model.ArticleComment;
-import io.zhc1.realworld.core.service.ArticleCommentService;
-import io.zhc1.realworld.core.service.ArticleService;
-import io.zhc1.realworld.core.service.SocialService;
-import io.zhc1.realworld.core.service.UserService;
+import io.zhc1.realworld.model.ArticleComment;
+import io.zhc1.realworld.service.ArticleCommentService;
+import io.zhc1.realworld.service.ArticleService;
+import io.zhc1.realworld.service.SocialService;
+import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor

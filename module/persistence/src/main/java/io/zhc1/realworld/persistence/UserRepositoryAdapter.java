@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.core.model.PasswordEncoder;
-import io.zhc1.realworld.core.model.User;
-import io.zhc1.realworld.core.model.UserRepository;
+import io.zhc1.realworld.model.PasswordEncoder;
+import io.zhc1.realworld.model.User;
+import io.zhc1.realworld.model.UserRepository;
 
 @Repository
 @RequiredArgsConstructor

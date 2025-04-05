@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.User;
 
 interface UserJpaRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);

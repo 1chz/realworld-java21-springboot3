@@ -3,10 +3,10 @@ package io.zhc1.realworld.api.response;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.ArticleDetails;
-import io.zhc1.realworld.core.model.ArticleTag;
-import io.zhc1.realworld.core.model.Tag;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.ArticleDetails;
+import io.zhc1.realworld.model.ArticleTag;
+import io.zhc1.realworld.model.Tag;
 
 public record ArticleResponse(
         String slug,

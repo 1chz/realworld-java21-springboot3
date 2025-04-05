@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.zhc1.realworld.core.model.PasswordEncoder;
+import io.zhc1.realworld.model.PasswordEncoder;
 
 class SecurityPasswordEncoderAdapterTest {
     PasswordEncoder sut;

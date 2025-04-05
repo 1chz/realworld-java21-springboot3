@@ -5,10 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.ArticleFavorite;
-import io.zhc1.realworld.core.model.ArticleFavoriteRepository;
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.ArticleFavorite;
+import io.zhc1.realworld.model.ArticleFavoriteRepository;
+import io.zhc1.realworld.model.User;
 
 @Repository
 @RequiredArgsConstructor

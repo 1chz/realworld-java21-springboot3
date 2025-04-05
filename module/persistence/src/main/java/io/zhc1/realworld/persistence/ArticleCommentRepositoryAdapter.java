@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.ArticleComment;
-import io.zhc1.realworld.core.model.ArticleCommentRepository;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.ArticleComment;
+import io.zhc1.realworld.model.ArticleCommentRepository;
 
 @Repository
 @RequiredArgsConstructor

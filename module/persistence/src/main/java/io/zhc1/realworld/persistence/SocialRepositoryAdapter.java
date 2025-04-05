@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.core.model.SocialRepository;
-import io.zhc1.realworld.core.model.User;
-import io.zhc1.realworld.core.model.UserFollow;
+import io.zhc1.realworld.model.SocialRepository;
+import io.zhc1.realworld.model.User;
+import io.zhc1.realworld.model.UserFollow;
 
 @Repository
 @RequiredArgsConstructor

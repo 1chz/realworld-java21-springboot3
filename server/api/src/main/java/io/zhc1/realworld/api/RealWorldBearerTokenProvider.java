@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.User;
 
 @Component
 @RequiredArgsConstructor

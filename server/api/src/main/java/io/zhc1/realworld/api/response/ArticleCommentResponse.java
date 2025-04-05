@@ -2,7 +2,7 @@ package io.zhc1.realworld.api.response;
 
 import java.time.LocalDateTime;
 
-import io.zhc1.realworld.core.model.ArticleComment;
+import io.zhc1.realworld.model.ArticleComment;
 
 public record ArticleCommentResponse(
         int id,

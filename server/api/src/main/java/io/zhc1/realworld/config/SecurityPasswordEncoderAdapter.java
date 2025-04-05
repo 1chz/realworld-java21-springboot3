@@ -3,7 +3,7 @@ package io.zhc1.realworld.config;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import io.zhc1.realworld.core.model.PasswordEncoder;
+import io.zhc1.realworld.model.PasswordEncoder;
 
 /* Note: Connects the PasswordEncoder of 'core' module and 'Spring Security'  */
 @Component

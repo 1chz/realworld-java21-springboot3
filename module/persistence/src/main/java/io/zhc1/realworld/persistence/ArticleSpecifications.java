@@ -5,10 +5,10 @@ import jakarta.persistence.criteria.JoinType;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import io.zhc1.realworld.core.model.Article;
-import io.zhc1.realworld.core.model.ArticleFavorite;
-import io.zhc1.realworld.core.model.ArticleTag;
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.Article;
+import io.zhc1.realworld.model.ArticleFavorite;
+import io.zhc1.realworld.model.ArticleTag;
+import io.zhc1.realworld.model.User;
 
 final class ArticleSpecifications {
     private ArticleSpecifications() {}

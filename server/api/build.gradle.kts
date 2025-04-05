@@ -1,8 +1,11 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 dependencies {
-    implementation(project(":module:core"))
-    implementation(project(":module:persistence"))
+    compileOnly(project(":module:core"))
+    testCompileOnly(project(":module:core"))
+
+    // Inject spring beans on runtime
+    runtimeOnly(project(":module:persistence"))
 
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.oauth2.resource.server)

@@ -21,9 +21,9 @@ import io.zhc1.realworld.api.request.SignupRequest;
 import io.zhc1.realworld.api.request.UpdateUserRequest;
 import io.zhc1.realworld.api.response.UsersResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
-import io.zhc1.realworld.core.model.User;
-import io.zhc1.realworld.core.model.UserRegistry;
-import io.zhc1.realworld.core.service.UserService;
+import io.zhc1.realworld.model.User;
+import io.zhc1.realworld.model.UserRegistry;
+import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor

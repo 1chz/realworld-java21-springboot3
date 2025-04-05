@@ -1,6 +1,6 @@
 package io.zhc1.realworld.api.response;
 
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.User;
 
 public record ProfilesResponse(ProfileResponse profile) {
     public static ProfilesResponse from(User user) {

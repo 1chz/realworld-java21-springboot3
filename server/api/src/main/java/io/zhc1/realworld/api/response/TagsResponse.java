@@ -2,7 +2,7 @@ package io.zhc1.realworld.api.response;
 
 import java.util.Collection;
 
-import io.zhc1.realworld.core.model.Tag;
+import io.zhc1.realworld.model.Tag;
 
 public record TagsResponse(String[] tags) {
     public TagsResponse(Collection<Tag> tags) {

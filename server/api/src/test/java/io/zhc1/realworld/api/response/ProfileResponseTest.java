@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import io.zhc1.realworld.core.model.User;
+import io.zhc1.realworld.model.User;
 
 class ProfileResponseTest {
 

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import io.zhc1.realworld.core.model.User;
-import io.zhc1.realworld.core.model.UserFollow;
+import io.zhc1.realworld.model.User;
+import io.zhc1.realworld.model.UserFollow;
 
 interface UserFollowJpaRepository extends JpaRepository<UserFollow, Integer> {
     List<UserFollow> findByFollower(User follower);

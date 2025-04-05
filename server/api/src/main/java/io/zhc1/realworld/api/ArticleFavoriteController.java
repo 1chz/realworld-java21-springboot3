@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import io.zhc1.realworld.api.response.SingleArticleResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
-import io.zhc1.realworld.core.service.ArticleService;
-import io.zhc1.realworld.core.service.UserService;
+import io.zhc1.realworld.service.ArticleService;
+import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor

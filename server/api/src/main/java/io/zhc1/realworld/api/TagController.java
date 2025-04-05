@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import io.zhc1.realworld.api.response.TagsResponse;
-import io.zhc1.realworld.core.service.TagService;
+import io.zhc1.realworld.service.TagService;
 
 @RestController
 @RequiredArgsConstructor
