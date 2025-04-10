@@ -13,8 +13,16 @@ val versionCatalog = libs
 allprojects {
     group = "io.zhc1"
 
-    plugins.apply(versionCatalog.plugins.java.get().pluginId)
-    plugins.apply(versionCatalog.plugins.spotless.get().pluginId)
+    plugins.apply(
+        versionCatalog.plugins.java
+            .get()
+            .pluginId,
+    )
+    plugins.apply(
+        versionCatalog.plugins.spotless
+            .get()
+            .pluginId,
+    )
 
     repositories {
         mavenCentral()
@@ -28,8 +36,8 @@ allprojects {
 
     spotless {
         java {
-            palantirJavaFormat(versionCatalog.versions.formatter.palantir.get())
-            indentWithSpaces()
+            palantirJavaFormat().formatJavadoc(true)
+
             formatAnnotations()
             removeUnusedImports()
             trimTrailingWhitespace()
@@ -38,21 +46,27 @@ allprojects {
 
         kotlin {
             ktlint()
-            indentWithSpaces()
             trimTrailingWhitespace()
         }
 
         kotlinGradle {
             ktlint()
-            indentWithSpaces()
             trimTrailingWhitespace()
         }
     }
 }
 
 subprojects {
-    plugins.apply(versionCatalog.plugins.spring.boot.get().pluginId)
-    plugins.apply(versionCatalog.plugins.spring.dependency.management.get().pluginId)
+    plugins.apply(
+        versionCatalog.plugins.spring.boot
+            .get()
+            .pluginId,
+    )
+    plugins.apply(
+        versionCatalog.plugins.spring.dependency.management
+            .get()
+            .pluginId,
+    )
 
     configurations {
         all { exclude(group = "junit", module = "junit") }

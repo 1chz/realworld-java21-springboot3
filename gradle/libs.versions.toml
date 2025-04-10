@@ -1,7 +1,6 @@
 [versions]
 java = "21"
-spotless = "6.22.0"
-formatter-palantir = "2.38.0"
+spotless = "7.0.3"
 
 spring-boot = "3.3.0"
 spring-dependency-management = "1.1.5"
