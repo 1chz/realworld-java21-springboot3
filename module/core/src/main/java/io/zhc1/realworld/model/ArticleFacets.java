@@ -1,8 +1,8 @@
 package io.zhc1.realworld.model;
 
 /**
- * The {@code ArticleFacets} class represents a set of facets for querying articles, including tag,
- * author, favorited status, page, and size.
+ * The {@code ArticleFacets} class represents a set of facets for querying articles, including tag, author, favorited
+ * status, page, and size.
  *
  * <p>Note: The {@code page} parameter is 0-based, i.e., it starts from 0.
  *

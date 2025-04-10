@@ -40,8 +40,7 @@ class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Errors that the developer did not expect are handled here and the log level is recorded as
-     * error.
+     * Errors that the developer did not expect are handled here and the log level is recorded as error.
      *
      * @param e Exception
      * @return ProblemDetail

@@ -77,6 +77,7 @@ public class UserService {
 
     /**
      * Update user information.
+     *
      * @param userId The user who requested the update
      * @param email users email
      * @param username users username
