@@ -20,22 +20,25 @@ class SocialController {
     private final SocialService socialService;
 
     @GetMapping("/api/profiles/{username}")
-    ProfilesResponse getUserProfile(RealWorldAuthenticationToken jwt, @PathVariable("username") String targetUsername) {
+    ProfilesResponse getUserProfile(
+            RealWorldAuthenticationToken profileViewersToken, @PathVariable("username") String targetUsername) {
         var targetUser = userService.getUser(targetUsername);
 
-        if (jwt == null || !jwt.isAuthenticated()) {
+        boolean isAnonymousViewer = profileViewersToken == null || !profileViewersToken.isAuthenticated();
+        if (isAnonymousViewer) {
             return ProfilesResponse.from(targetUser);
         }
 
-        var me = userService.getUser(jwt.userId());
-        var isFollowing = socialService.isFollowing(me, targetUser);
+        var viewer = userService.getUser(profileViewersToken.userId());
+        var isFollowing = socialService.isFollowing(viewer, targetUser);
 
         return ProfilesResponse.from(targetUser, isFollowing);
     }
 
     @PostMapping("/api/profiles/{username}/follow")
-    ProfilesResponse follow(RealWorldAuthenticationToken jwt, @PathVariable("username") String targetUsername) {
-        var follower = userService.getUser(jwt.userId());
+    ProfilesResponse follow(
+            RealWorldAuthenticationToken followersToken, @PathVariable("username") String targetUsername) {
+        var follower = userService.getUser(followersToken.userId());
         var following = userService.getUser(targetUsername);
 
         socialService.follow(follower, following);
@@ -44,8 +47,9 @@ class SocialController {
     }
 
     @DeleteMapping("/api/profiles/{username}/follow")
-    ProfilesResponse unfollow(RealWorldAuthenticationToken jwt, @PathVariable("username") String targetUsername) {
-        var follower = userService.getUser(jwt.userId());
+    ProfilesResponse unfollow(
+            RealWorldAuthenticationToken followersToken, @PathVariable("username") String targetUsername) {
+        var follower = userService.getUser(followersToken.userId());
         var following = userService.getUser(targetUsername);
 
         socialService.unfollow(follower, following);

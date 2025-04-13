@@ -33,11 +33,12 @@ class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles")
-    SingleArticleResponse postArticle(RealWorldAuthenticationToken jwt, @RequestBody WriteArticleRequest request) {
-        var requester = userService.getUser(jwt.userId());
+    SingleArticleResponse postArticle(
+            RealWorldAuthenticationToken authorsToken, @RequestBody WriteArticleRequest request) {
+        var author = userService.getUser(authorsToken.userId());
         var article = articleService.write(
                 new Article(
-                        requester,
+                        author,
                         request.article().title(),
                         request.article().description(),
                         request.article().body()),
@@ -48,7 +49,7 @@ class ArticleController {
 
     @GetMapping("/api/articles")
     MultipleArticlesResponse getArticles(
-            RealWorldAuthenticationToken jwt,
+            RealWorldAuthenticationToken readersToken,
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "favorited", required = false) String favorited,
@@ -56,72 +57,76 @@ class ArticleController {
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         var facets = new ArticleFacets(tag, author, favorited, offset, limit);
 
-        if (jwt == null || !jwt.isAuthenticated()) {
+        boolean isAnonymousReader = readersToken == null || !readersToken.isAuthenticated();
+        if (isAnonymousReader) {
             return articleService.getArticles(facets).stream()
                     .map(ArticleResponse::new)
                     .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
         }
 
-        var user = userService.getUser(jwt.userId());
-        return articleService.getArticles(user, facets).stream()
+        var reader = userService.getUser(readersToken.userId());
+        return articleService.getArticles(reader, facets).stream()
                 .map(ArticleResponse::new)
                 .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
     }
 
     @GetMapping("/api/articles/{slug}")
-    SingleArticleResponse getArticle(RealWorldAuthenticationToken jwt, @PathVariable String slug) {
+    SingleArticleResponse getArticle(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
 
-        if (jwt == null || !jwt.isAuthenticated()) {
+        boolean isAnonymousReader = readersToken == null || !readersToken.isAuthenticated();
+        if (isAnonymousReader) {
             return new SingleArticleResponse(articleService.getArticleDetails(article));
         }
 
-        var user = userService.getUser(jwt.userId());
-        return new SingleArticleResponse(articleService.getArticleDetails(user, article));
+        var reader = userService.getUser(readersToken.userId());
+        return new SingleArticleResponse(articleService.getArticleDetails(reader, article));
     }
 
     @PutMapping("/api/articles/{slug}")
     SingleArticleResponse updateArticle(
-            RealWorldAuthenticationToken jwt, @PathVariable String slug, @RequestBody EditArticleRequest request) {
-        var requester = userService.getUser(jwt.userId());
+            RealWorldAuthenticationToken authorsToken,
+            @PathVariable String slug,
+            @RequestBody EditArticleRequest request) {
+        var author = userService.getUser(authorsToken.userId());
         var article = articleService.getArticle(slug);
 
         if (request.article().title() != null) {
-            article = articleService.editTitle(
-                    requester, article, request.article().title());
+            article =
+                    articleService.editTitle(author, article, request.article().title());
         }
 
         if (request.article().description() != null) {
             article = articleService.editDescription(
-                    requester, article, request.article().description());
+                    author, article, request.article().description());
         }
 
         if (request.article().body() != null) {
             article = articleService.editContent(
-                    requester, article, request.article().body());
+                    author, article, request.article().body());
         }
 
-        var articleInfo = articleService.getArticleDetails(requester, article);
-        return new SingleArticleResponse(articleInfo);
+        var articleDetail = articleService.getArticleDetails(author, article);
+        return new SingleArticleResponse(articleDetail);
     }
 
     @DeleteMapping("/api/articles/{slug}")
-    void deleteArticle(RealWorldAuthenticationToken jwt, @PathVariable String slug) {
-        var requester = userService.getUser(jwt.userId());
+    void deleteArticle(RealWorldAuthenticationToken authorsToken, @PathVariable String slug) {
+        var author = userService.getUser(authorsToken.userId());
         var article = articleService.getArticle(slug);
 
-        articleService.delete(requester, article);
+        articleService.delete(author, article);
     }
 
     @GetMapping("/api/articles/feed")
     MultipleArticlesResponse getArticleFeeds(
-            RealWorldAuthenticationToken jwt, // Must be verified
+            RealWorldAuthenticationToken readersToken, // Must be verified
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
+        var reader = userService.getUser(readersToken.userId());
         var facets = new ArticleFacets(offset, limit);
-        var requester = userService.getUser(jwt.userId());
 
-        return articleService.getFeeds(requester, facets).stream()
+        return articleService.getFeeds(reader, facets).stream()
                 .map(ArticleResponse::new)
                 .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
     }

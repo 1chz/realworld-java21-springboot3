@@ -63,22 +63,22 @@ class UserController {
     }
 
     @GetMapping("/api/user")
-    public UsersResponse getUser(RealWorldAuthenticationToken jwt) {
-        var user = userService.getUser(jwt.userId());
+    public UsersResponse getUser(RealWorldAuthenticationToken actorsToken) {
+        var actor = userService.getUser(actorsToken.userId());
 
-        return UsersResponse.from(user, jwt.tokenValue());
+        return UsersResponse.from(actor, actorsToken.tokenValue());
     }
 
     @PutMapping("/api/user")
-    public UsersResponse updateUser(RealWorldAuthenticationToken jwt, @RequestBody UpdateUserRequest request) {
-        User requester = userService.updateUserDetails(
-                jwt.userId(),
+    public UsersResponse updateUser(RealWorldAuthenticationToken actorsToken, @RequestBody UpdateUserRequest request) {
+        User actor = userService.updateUserDetails(
+                actorsToken.userId(),
                 request.user().email(),
                 request.user().username(),
                 request.user().password(),
                 request.user().bio(),
                 request.user().image());
 
-        return UsersResponse.from(requester, jwt.getToken().getTokenValue());
+        return UsersResponse.from(actor, actorsToken.tokenValue());
     }
 }

@@ -24,44 +24,47 @@ import io.zhc1.realworld.service.UserService;
 @RequiredArgsConstructor
 class ArticleCommentController {
     private final UserService userService;
-    private final ArticleService articleService;
     private final SocialService socialService;
+    private final ArticleService articleService;
     private final ArticleCommentService articleCommentService;
 
     @PostMapping("/api/articles/{slug}/comments")
     SingleCommentResponse postComment(
-            RealWorldAuthenticationToken jwt, @PathVariable String slug, @RequestBody WriteCommentRequest request) {
+            RealWorldAuthenticationToken commenterToken,
+            @PathVariable String slug,
+            @RequestBody WriteCommentRequest request) {
         var article = articleService.getArticle(slug);
-        var requester = userService.getUser(jwt.userId());
-        var articleComment = articleCommentService.write(
-                new ArticleComment(article, requester, request.comment().body()));
+        var commenter = userService.getUser(commenterToken.userId());
+        var comment = articleCommentService.write(
+                new ArticleComment(article, commenter, request.comment().body()));
 
-        return new SingleCommentResponse(articleComment);
+        return new SingleCommentResponse(comment);
     }
 
     @GetMapping("/api/articles/{slug}/comments")
-    MultipleCommentsResponse getComment(RealWorldAuthenticationToken jwt, @PathVariable String slug) {
+    MultipleCommentsResponse getComment(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
-        var articleComments = articleCommentService.getComments(article);
+        var comments = articleCommentService.getComments(article);
 
-        if (jwt == null || !jwt.isAuthenticated()) {
+        boolean isAnonymousReader = readersToken == null || !readersToken.isAuthenticated();
+        if (isAnonymousReader) {
             return new MultipleCommentsResponse(
-                    articleComments.stream().map(ArticleCommentResponse::new).toList());
+                    comments.stream().map(ArticleCommentResponse::new).toList());
         }
 
-        var requester = userService.getUser(jwt.userId());
-        return new MultipleCommentsResponse(articleComments.stream()
+        var reader = userService.getUser(readersToken.userId());
+        return new MultipleCommentsResponse(comments.stream()
                 .map(comment ->
-                        new ArticleCommentResponse(comment, socialService.isFollowing(requester, comment.getAuthor())))
+                        new ArticleCommentResponse(comment, socialService.isFollowing(reader, comment.getAuthor())))
                 .toList());
     }
 
     @SuppressWarnings("MVCPathVariableInspection")
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
-    void deleteComment(RealWorldAuthenticationToken jwt, @PathVariable("id") int commentId) {
-        var requester = userService.getUser(jwt.userId());
-        var articleComment = articleCommentService.getComment(commentId);
+    void deleteComment(RealWorldAuthenticationToken commenterToken, @PathVariable("id") int commentId) {
+        var commenter = userService.getUser(commenterToken.userId());
+        var comment = articleCommentService.getComment(commentId);
 
-        articleCommentService.delete(requester, articleComment);
+        articleCommentService.delete(commenter, comment);
     }
 }

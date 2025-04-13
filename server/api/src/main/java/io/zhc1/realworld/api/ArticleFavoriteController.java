@@ -19,22 +19,22 @@ class ArticleFavoriteController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles/{slug}/favorite")
-    SingleArticleResponse like(RealWorldAuthenticationToken jwt, @PathVariable String slug) {
-        var requester = userService.getUser(jwt.userId());
+    SingleArticleResponse like(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
+        var reader = userService.getUser(readersToken.userId());
         var article = articleService.getArticle(slug);
 
-        articleService.favorite(requester, article);
+        articleService.favorite(reader, article);
 
-        return new SingleArticleResponse(articleService.getArticleDetails(requester, article));
+        return new SingleArticleResponse(articleService.getArticleDetails(reader, article));
     }
 
     @DeleteMapping("/api/articles/{slug}/favorite")
-    SingleArticleResponse unlike(RealWorldAuthenticationToken jwt, @PathVariable String slug) {
-        var requester = userService.getUser(jwt.userId());
+    SingleArticleResponse unlike(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
+        var reader = userService.getUser(readersToken.userId());
         var article = articleService.getArticle(slug);
 
-        articleService.unfavorite(requester, article);
+        articleService.unfavorite(reader, article);
 
-        return new SingleArticleResponse(articleService.getArticleDetails(requester, article));
+        return new SingleArticleResponse(articleService.getArticleDetails(reader, article));
     }
 }
