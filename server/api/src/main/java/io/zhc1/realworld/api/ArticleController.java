@@ -3,6 +3,8 @@ package io.zhc1.realworld.api;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import io.zhc1.realworld.api.response.ArticleResponse;
 import io.zhc1.realworld.api.response.MultipleArticlesResponse;
 import io.zhc1.realworld.api.response.SingleArticleResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.mixin.AuthenticationAwareMixin;
 import io.zhc1.realworld.model.Article;
 import io.zhc1.realworld.model.ArticleDetails;
 import io.zhc1.realworld.model.ArticleFacets;
@@ -28,7 +31,7 @@ import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-class ArticleController {
+class ArticleController implements AuthenticationAwareMixin {
     private final UserService userService;
     private final ArticleService articleService;
 
@@ -44,7 +47,9 @@ class ArticleController {
                         request.article().body()),
                 request.tags());
 
-        return new SingleArticleResponse(new ArticleDetails(article, 0, false));
+        var favoritesCount = 0;
+        var favorited = false;
+        return new SingleArticleResponse(new ArticleDetails(article, favoritesCount, favorited));
     }
 
     @GetMapping("/api/articles")
@@ -57,25 +62,19 @@ class ArticleController {
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         var facets = new ArticleFacets(tag, author, favorited, offset, limit);
 
-        boolean isAnonymousReader = readersToken == null || !readersToken.isAuthenticated();
-        if (isAnonymousReader) {
-            return articleService.getArticles(facets).stream()
-                    .map(ArticleResponse::new)
-                    .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
+        if (this.isAnonymousUser(readersToken)) {
+            return getArticlesResponse(articleService.getArticles(facets));
         }
 
         var reader = userService.getUser(readersToken.userId());
-        return articleService.getArticles(reader, facets).stream()
-                .map(ArticleResponse::new)
-                .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
+        return this.getArticlesResponse(articleService.getArticles(reader, facets));
     }
 
     @GetMapping("/api/articles/{slug}")
     SingleArticleResponse getArticle(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
 
-        boolean isAnonymousReader = readersToken == null || !readersToken.isAuthenticated();
-        if (isAnonymousReader) {
+        if (this.isAnonymousUser(readersToken)) {
             return new SingleArticleResponse(articleService.getArticleDetails(article));
         }
 
@@ -106,8 +105,7 @@ class ArticleController {
                     author, article, request.article().body());
         }
 
-        var articleDetail = articleService.getArticleDetails(author, article);
-        return new SingleArticleResponse(articleDetail);
+        return new SingleArticleResponse(articleService.getArticleDetails(author, article));
     }
 
     @DeleteMapping("/api/articles/{slug}")
@@ -125,8 +123,13 @@ class ArticleController {
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         var reader = userService.getUser(readersToken.userId());
         var facets = new ArticleFacets(offset, limit);
+        var articleDetails = articleService.getFeeds(reader, facets);
 
-        return articleService.getFeeds(reader, facets).stream()
+        return this.getArticlesResponse(articleDetails);
+    }
+
+    private MultipleArticlesResponse getArticlesResponse(List<ArticleDetails> articles) {
+        return articles.stream()
                 .map(ArticleResponse::new)
                 .collect(collectingAndThen(toList(), MultipleArticlesResponse::new));
     }

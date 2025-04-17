@@ -10,12 +10,13 @@ import lombok.RequiredArgsConstructor;
 
 import io.zhc1.realworld.api.response.ProfilesResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.mixin.AuthenticationAwareMixin;
 import io.zhc1.realworld.service.SocialService;
 import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-class SocialController {
+class SocialController implements AuthenticationAwareMixin {
     private final UserService userService;
     private final SocialService socialService;
 
@@ -24,8 +25,7 @@ class SocialController {
             RealWorldAuthenticationToken profileViewersToken, @PathVariable("username") String targetUsername) {
         var targetUser = userService.getUser(targetUsername);
 
-        boolean isAnonymousViewer = profileViewersToken == null || !profileViewersToken.isAuthenticated();
-        if (isAnonymousViewer) {
+        if (this.isAnonymousUser(profileViewersToken)) {
             return ProfilesResponse.from(targetUser);
         }
 

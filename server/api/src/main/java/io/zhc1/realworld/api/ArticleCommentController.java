@@ -14,6 +14,7 @@ import io.zhc1.realworld.api.response.ArticleCommentResponse;
 import io.zhc1.realworld.api.response.MultipleCommentsResponse;
 import io.zhc1.realworld.api.response.SingleCommentResponse;
 import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.mixin.AuthenticationAwareMixin;
 import io.zhc1.realworld.model.ArticleComment;
 import io.zhc1.realworld.service.ArticleCommentService;
 import io.zhc1.realworld.service.ArticleService;
@@ -22,7 +23,7 @@ import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-class ArticleCommentController {
+class ArticleCommentController implements AuthenticationAwareMixin {
     private final UserService userService;
     private final SocialService socialService;
     private final ArticleService articleService;
@@ -46,8 +47,7 @@ class ArticleCommentController {
         var article = articleService.getArticle(slug);
         var comments = articleCommentService.getComments(article);
 
-        boolean isAnonymousReader = readersToken == null || !readersToken.isAuthenticated();
-        if (isAnonymousReader) {
+        if (this.isAnonymousUser(readersToken)) {
             return new MultipleCommentsResponse(
                     comments.stream().map(ArticleCommentResponse::new).toList());
         }
