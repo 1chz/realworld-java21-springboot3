@@ -21,11 +21,11 @@ For more information on how this works with other frontend/backends, visit the [
         * [Classes](#classes)
 * [Database Architecture](#database-architecture)
 * [Getting Started](#getting-started)
+    * [API Documentation](#api-documentation)
     * [Run Application](#run-application)
     * [Apply Code Style](#apply-code-style)
     * [Run Tests](#run-tests)
     * [Run Build](#run-build)
-    * [API Documentation](#api-documentation)
     * [Run E2E Tests](#run-e2e-tests)
         * [Performance](#performance)
 
@@ -114,6 +114,12 @@ Many developers using JPA tend to use `Long` as the ID type. However, consider w
 >
 > **Note:** If you encounter a permission denied error when running Gradle tasks, run `chmod +x gradlew` to grant execution permission.
 
+### API Documentation
+
+API documentation is available at https://1chz.github.io/realworld-java21-springboot3, generated using ReDoc in HTML format.
+
+You can also import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
+
 ### Run Application
 
 ```shell
@@ -139,12 +145,6 @@ Many developers using JPA tend to use `Long` as the ID type. However, consider w
 ```shell
 ./gradlew build
 ```
-
-### API Documentation
-
-API documentation is available at https://1chz.github.io/realworld-java21-springboot3, generated using ReDoc in HTML format.
-
-You can also import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
 
 ### Run E2E Tests
 
