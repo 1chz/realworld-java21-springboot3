@@ -1,139 +1,154 @@
 # ![RealWorld Example App](logo.png)
 
-> ### **Java 21 + Spring Boot 3** codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
+> ### **Java 21 + Spring Boot 3** codebase containing real-world examples (CRUD, authentication, advanced patterns, etc.) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) specification and API.
 
-### [Demo](https://demo.realworld.io/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
+### [Demo](https://demo.realworld.io/) &nbsp;&nbsp;&nbsp;&nbsp; [RealWorld](https://github.com/gothinkster/realworld)
 
-This codebase was created to demonstrate a fully fledged fullstack application built with **Java 21 + Spring Boot 3** including CRUD operations, authentication, routing, pagination, and more.
+This codebase demonstrates a fully-fledged fullstack application built with **Java 21 + Spring Boot 3**, including CRUD operations, authentication, routing, pagination, and more.
 
-For more information on how this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
+For more information on how this works with other frontend/backends, visit the [RealWorld](https://github.com/gothinkster/realworld) repository.
 
 ---
 
 ## Table of Contents
+
 * [Considerations](#considerations)
-* [How it works](#how-it-works)
-    * [Project structures](#project-structures)
+* [How it Works](#how-it-works)
+    * [Project Structure](#project-structure)
         * [Modules](#modules)
         * [Classes](#classes)
-* [Database architecture](#database-architecture)
-* [Getting started](#getting-started)
-    * [Run application](#run-application)
-    * [Apply code style](#apply-code-style)
-    * [Run test](#run-test)
-    * [Run build](#run-build)
-    * [Run E2E test](#run-e2e-test)
+* [Database Architecture](#database-architecture)
+* [Getting Started](#getting-started)
+    * [Run Application](#run-application)
+    * [Apply Code Style](#apply-code-style)
+    * [Run Tests](#run-tests)
+    * [Run Build](#run-build)
+    * [API Documentation](#api-documentation)
+    * [Run E2E Tests](#run-e2e-tests)
         * [Performance](#performance)
 
 ---
 
 ## Considerations
-While implementing this application, I had the following considerations:
 
-1. Error handling: Ensure that the application handles errors gracefully and logs them appropriately.
-2. Scalability: Consider the scalability of the application, especially for large volumes of data.
-3. Security: Protect against common attacks and implement proper authentication and authorization.
-4. Code quality: Write clean, maintainable code that follows best practices.
-5. Performance: Optimize for frequently used operations through database indexing, query optimization, and caching.
-6. OAuth 2.0 Resource Server: Used for simpler JWT implementation compared to manual implementation.
-7. Spring Framework: Tightly coupled with Spring due to its robustness and Java ecosystem's backward compatibility.
-8. Database abstraction: Implemented with JPA to make database changes easier.
-9. H2 Database: Used in MySQL mode to provide similar functionality to MySQL.
-10. Input validation: Excluded but can be easily implemented using JSR-303(380).
-11. Slug and title uniqueness: Made unique in accordance with API specifications.
-12. Dependencies: Configured to converge to the domain package for better organization.
+While implementing this application, the following considerations were made:
+
+1. **Error Handling:** The application handles errors gracefully and logs them appropriately.
+2. **Scalability:** Designed to scale for large volumes of data.
+3. **Security:** Protects against common attacks and implements robust authentication and authorization.
+4. **Code Quality:** Clean, maintainable code that follows best practices.
+5. **Performance:** Optimized for frequently used operations through database indexing, query optimization, and caching.
+6. **OAuth 2.0 Resource Server:** Used for simpler JWT implementation compared to manual implementations.
+7. **Spring Framework:** Tightly coupled with Spring due to its robustness and backward compatibility within the Java ecosystem.
+8. **Database Abstraction:** Implemented with JPA to simplify database changes.
+9. **H2 Database:** Used in MySQL mode to provide similar functionality to MySQL.
+10. **Input Validation:** Not included but can easily be implemented using JSR-303 (Bean Validation 2.0).
+11. **Slug and Title Uniqueness:** Ensured uniqueness according to API specifications.
+12. **Dependencies:** Structured to converge on the domain package for better organization.
 
 ---
 
-## How it works
-The RealWorld project aims to create mini-blog applications with the same specifications using various technology stacks, allowing for a comparison between them.
+## How it Works
+
+The RealWorld project aims to create mini-blog applications with identical specifications using various technology stacks, allowing for easy comparison.
 
 This application provides the following key features:
 
-1. Authenticate users via JWT (login/signup pages + logout button on settings page)
-2. CRU- users (sign up & settings page - no deleting required)
-3. CRUD Articles (offset based pagination, filtering by facets, sorting)
-4. CR-D Comments on articles (no updating required)
+1. User authentication via JWT (login/signup pages, logout button on settings page)
+2. Create, read, and update users (sign up & settings page; deleting users is not required)
+3. CRUD operations for articles (offset-based pagination, filtering by facets, sorting)
+4. Create, read, and delete comments on articles (updating comments is not required)
 5. Favorite articles
 6. Follow other users
 
-### Project structures
-The project is implemented based on Java 21 and Spring Boot 3, utilizing various Spring technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database and JUnit5 for writing test codes.
+### Project Structure
 
-To run the project, JDK(or JRE) 21 must be installed first. Then, execute the `./gradlew realworld:bootRun` command in the project root directory to run the application. After that, you can use the application by accessing http://localhost:8080 in your browser.
+The project is implemented using Java 21 and Spring Boot 3, leveraging technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database and JUnit 5 for testing.
 
-#### Modules
-The project is organized into library modules and server modules:
-
-- **Library Modules** (located in the `module` directory):
-    - `core`: Contains the core logic, domain model, service interfaces, and exception handling.
-    - `persistence`: Contains the persistence layer logic, repositories, and entities.
-
-- **Server Modules** (located in the `server` directory):
-    - `api`: Contains the API layer logic, controllers, DTOs, and exception handling.
-
-The dependencies are configured so that all modules depend on the core module, following the Dependency Inversion Principle (DIP).
-
-#### Classes
-- ~Controller: Processes HTTP requests, calls business logic, and generates responses.
-- ~Service: Implements business logic and interacts with the database through Repositories.
-- ~Repository: An interface for interacting with the database, implemented using Spring Data JPA.
-
----
-
-## Database architecture
-> **Note:** I paid attention to data types, but did not pay much attention to size.
-
-Many developers who use JPA tend to use Long as the id type. However, it's worth considering whether your table with an id of Long will ever need to store 2^63 records.
-
-- [schema.sql](module/persistence/src/main/resources/schema.sql)
-
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2ed3b129-f9ec-4431-8959-374f317b7224)
-
----
-
-## Getting started
-
-> **Note:** You just need to have JDK 21 installed.
->
-> **Note:** If permission denied occurs when running the gradle task, enter `chmod +x gradlew` to grant the permission.
-
-### Run application
+To run the project, ensure that JDK (or JRE) 21 is installed. Then, execute the following command in the project root directory:
 
 ```shell
 ./gradlew realworld:bootRun
 ```
 
-### Apply code style
+Access the application at [http://localhost:8080](http://localhost:8080) in your browser.
 
-> **Note:** When you run the `build` task, this task runs automatically. If the code style doesn't match, the build will fail.
+#### Modules
+
+The project is organized into library and server modules:
+
+-  **Library Modules** (located in the `module` directory):
+    - `core`: Contains core logic, domain models, service interfaces, and exception handling.
+    - `persistence`: Contains persistence layer logic, repositories, and entities.
+
+-  **Server Modules** (located in the `server` directory):
+    - `api`: Contains the API layer logic, controllers, DTOs, and exception handling.
+
+All modules depend on the core module, following the Dependency Inversion Principle (DIP).
+
+#### Classes
+
+-  **Controller:** Handles HTTP requests, invokes business logic, and generates responses.
+-  **Service:** Implements business logic and interacts with the database via repositories.
+-  **Repository:** Interfaces for database operations, implemented using Spring Data JPA.
+
+---
+
+## Database Architecture
+
+> **Note:** Data types were carefully considered, but column sizes were not a primary focus.
+
+Many developers using JPA tend to use `Long` as the ID type. However, consider whether your table will ever require storing \(2^{63}\) records.
+
+-  [schema.sql](module/persistence/src/main/resources/schema.sql)
+
+![ERD Image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/2ed3b129-f9ec-4431-8959-374f317b7224)
+
+---
+
+## Getting Started
+
+> **Note:** Ensure JDK 21 is installed.
+>
+> **Note:** If you encounter a permission denied error when running Gradle tasks, run `chmod +x gradlew` to grant execution permission.
+
+### Run Application
+
+```shell
+./gradlew realworld:bootRun
+```
+
+### Apply Code Style
+
+> **Note:** The code style task runs automatically during the build. If the code style does not match, the build will fail.
 
 ```shell
 ./gradlew spotlessApply
 ```
 
-### Run test
+### Run Tests
 
 ```shell
 ./gradlew test
 ```
 
-### Run build
+### Run Build
 
 ```shell
 ./gradlew build
 ```
 
-### API Docs
-You can find the API documentation in the [api-docs/redoc.html](api-docs/redoc.html) directory. The API documentation is generated using ReDoc and is available in HTML format.
+### API Documentation
 
-And, you can import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
+API documentation is available at [api-docs/redoc.html](api-docs/redoc.html), generated using ReDoc in HTML format.
 
-### Run E2E test
+You can also import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
 
-1. Run application (**important**)
-2. [Run E2E test](api-docs/README.md#running-api-tests-locally)
+### Run E2E Tests
+
+1. Start the application (**important**)
+2. [Run E2E tests](api-docs/README.md#running-api-tests-locally)
 
 #### Performance
 
-![image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)
+![Performance Image](https://github.com/shirohoo/realworld-java21-springboot3/assets/71188307/f74ebb9b-327d-4f31-8299-63dda175c972)
