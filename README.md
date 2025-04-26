@@ -138,6 +138,12 @@ Many developers using JPA tend to use `Long` as the ID type. However, consider w
 ./gradlew build
 ```
 
+### API Documentation
+
+API documentation is available at [api-docs/redoc.html](https://1chz.github.io/realworld-java21-springboot3/), generated using ReDoc in HTML format.
+
+You can also import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
+
 ### Run E2E Tests
 
 1. Start the application (**important**)
