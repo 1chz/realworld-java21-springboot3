@@ -6,6 +6,8 @@
 
 This codebase demonstrates a fully-fledged fullstack application built with **Java 21 + Spring Boot 3**, including CRUD operations, authentication, routing, pagination, and more.
 
+If you want to see the API documentation related to this, please refer to https://1chz.github.io/realworld-java21-springboot3
+
 For more information on how this works with other frontend/backends, visit the [RealWorld](https://github.com/gothinkster/realworld) repository.
 
 ---
@@ -140,7 +142,7 @@ Many developers using JPA tend to use `Long` as the ID type. However, consider w
 
 ### API Documentation
 
-API documentation is available at [api-docs/redoc.html](https://1chz.github.io/realworld-java21-springboot3/), generated using ReDoc in HTML format.
+API documentation is available at https://1chz.github.io/realworld-java21-springboot3, generated using ReDoc in HTML format.
 
 You can also import the [api-docs/openapi.yaml](api-docs/openapi.yaml) file into Postman or Swagger UI to test the API.
 
