@@ -2,7 +2,7 @@ package io.zhc1.realworld.model;
 
 import java.util.List;
 
-public interface SocialRepository {
+public interface UserRelationshipRepository {
     void save(UserFollow userFollow);
 
     List<UserFollow> findByFollower(User follower);

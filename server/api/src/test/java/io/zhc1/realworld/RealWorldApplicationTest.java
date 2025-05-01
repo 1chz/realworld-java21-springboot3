@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@DisplayName("RealWorld Application Test")
+@DisplayName("RealWorld Application - Spring Context Initialization")
 public class RealWorldApplicationTest {
     @Test
-    @DisplayName("spring context of RealWorld Application is loaded.")
-    void contextLoads() {}
+    @DisplayName("When application starts, then Spring context should load successfully")
+    void whenApplicationStarts_thenSpringContextShouldLoadSuccessfully() {}
 }

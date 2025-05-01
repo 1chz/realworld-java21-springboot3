@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ import io.zhc1.realworld.model.TestUser;
 import io.zhc1.realworld.model.User;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Article Comment - Comment Creation, Retrieval, and Management Operations")
 class ArticleCommentServiceTest {
     @InjectMocks
     ArticleCommentService sut;
@@ -45,7 +47,8 @@ class ArticleCommentServiceTest {
     }
 
     @Test
-    void whenGetCommentWithInvalidId_thenShouldReturnComment() {
+    @DisplayName("Get comment with valid ID should return the comment")
+    void whenGetCommentWithValidId_thenShouldReturnComment() {
         // given
         int commentId = 1;
         ArticleComment comment = new ArticleComment(article, commenter, "comment");
@@ -59,6 +62,7 @@ class ArticleCommentServiceTest {
     }
 
     @Test
+    @DisplayName("Get comment with invalid ID should throw exception")
     void whenGetCommentWithInvalidId_thenShouldThrowException() {
         // given
         int commentId = 1;
@@ -69,6 +73,7 @@ class ArticleCommentServiceTest {
     }
 
     @Test
+    @DisplayName("Write comment should save to repository")
     void whenWriteComment_thenShouldSaveToRepository() {
         // given
         ArticleComment comment = new ArticleComment(article, commenter, "comment");
@@ -82,6 +87,7 @@ class ArticleCommentServiceTest {
     }
 
     @Test
+    @DisplayName("Delete own comment should not throw exception")
     void whenDeleteOwnComment_thenShouldNotThrowException() {
         // given
         ArticleComment comment = new ArticleComment(article, commenter, "comment");
@@ -91,6 +97,7 @@ class ArticleCommentServiceTest {
     }
 
     @Test
+    @DisplayName("Delete others' comment should throw exception")
     void whenDeleteOthersComment_thenShouldThrowException() {
         // given
         ArticleComment comment = new ArticleComment(article, author, "comment");
@@ -100,6 +107,7 @@ class ArticleCommentServiceTest {
     }
 
     @Test
+    @DisplayName("Get comments should return all comments for an article")
     void whenGetComments_thenShouldReturnComments() {
         // given
         ArticleComment comment1 = new ArticleComment(article, commenter, "comment1");

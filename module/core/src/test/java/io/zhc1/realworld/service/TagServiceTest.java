@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import io.zhc1.realworld.model.Tag;
 import io.zhc1.realworld.model.TagRepository;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Tag - Tag Management and Retrieval Operations")
 class TagServiceTest {
     @InjectMocks
     TagService sut;
@@ -26,7 +28,8 @@ class TagServiceTest {
     TagRepository tagRepository;
 
     @Test
-    void getAllTags_ShouldReturnAllTags() {
+    @DisplayName("Get all tags should return all available tags")
+    void whenGetAllTags_thenShouldReturnAllAvailableTags() {
         // given
         Tag tag1 = new Tag("tag1");
         Tag tag2 = new Tag("tag2");

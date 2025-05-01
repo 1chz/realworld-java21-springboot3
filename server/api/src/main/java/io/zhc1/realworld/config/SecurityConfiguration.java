@@ -55,9 +55,8 @@ class SecurityConfiguration {
                         /* Note: Customization to make the code more expressive and to meet real-world requirements.
                          *       In the case of 'RealWorldBearerTokenResolver', it is possible to register it as a Spring Bean using @Component, etc., but here it was registered explicitly.
                          */
-                        .bearerTokenResolver(new RealWorldBearerTokenResolver())
-                        .jwt(jwtConfigurer ->
-                                jwtConfigurer.jwtAuthenticationConverter(new RealWorldJwtAuthenticationConverter())))
+                        .bearerTokenResolver(new AuthTokenResolver())
+                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(new AuthTokenConverter())))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(STATELESS))
                 .exceptionHandling(exceptionHandler -> exceptionHandler
                         /* Note: If you want, you can change the prefix of the Authorization token from 'Bearer' to 'Token'. */

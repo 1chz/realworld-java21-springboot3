@@ -20,7 +20,8 @@ import io.zhc1.realworld.api.request.LoginUserRequest;
 import io.zhc1.realworld.api.request.SignupRequest;
 import io.zhc1.realworld.api.request.UpdateUserRequest;
 import io.zhc1.realworld.api.response.UsersResponse;
-import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.config.AuthToken;
+import io.zhc1.realworld.config.AuthTokenProvider;
 import io.zhc1.realworld.model.User;
 import io.zhc1.realworld.model.UserRegistry;
 import io.zhc1.realworld.service.UserService;
@@ -31,7 +32,7 @@ class UserController {
     private static final String LOGIN_URL = "/api/users/login";
 
     private final UserService userService;
-    private final RealWorldBearerTokenProvider bearerTokenProvider;
+    private final AuthTokenProvider bearerTokenProvider;
 
     @PostMapping("/api/users")
     public ModelAndView signup(HttpServletRequest httpServletRequest, @RequestBody SignupRequest request) {
@@ -57,20 +58,20 @@ class UserController {
         var password = request.user().password();
 
         var user = userService.login(email, password);
-        var accessToken = bearerTokenProvider.getToken(user);
+        var authToken = bearerTokenProvider.createAuthToken(user);
 
-        return UsersResponse.from(user, accessToken.getTokenValue());
+        return UsersResponse.from(user, authToken);
     }
 
     @GetMapping("/api/user")
-    public UsersResponse getUser(RealWorldAuthenticationToken actorsToken) {
+    public UsersResponse getUser(AuthToken actorsToken) {
         var actor = userService.getUser(actorsToken.userId());
 
         return UsersResponse.from(actor, actorsToken.tokenValue());
     }
 
     @PutMapping("/api/user")
-    public UsersResponse updateUser(RealWorldAuthenticationToken actorsToken, @RequestBody UpdateUserRequest request) {
+    public UsersResponse updateUser(AuthToken actorsToken, @RequestBody UpdateUserRequest request) {
         User actor = userService.updateUserDetails(
                 actorsToken.userId(),
                 request.user().email(),

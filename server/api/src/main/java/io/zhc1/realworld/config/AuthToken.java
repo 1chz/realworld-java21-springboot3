@@ -11,10 +11,10 @@ import org.springframework.security.oauth2.server.resource.authentication.Abstra
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @Transient
-public final class RealWorldAuthenticationToken extends AbstractOAuth2TokenAuthenticationToken<Jwt> {
+public final class AuthToken extends AbstractOAuth2TokenAuthenticationToken<Jwt> {
     private final JwtAuthenticationToken delegate;
 
-    public RealWorldAuthenticationToken(Jwt jwt, JwtAuthenticationToken delegate) {
+    public AuthToken(Jwt jwt, JwtAuthenticationToken delegate) {
         super(jwt);
         this.delegate = delegate;
     }

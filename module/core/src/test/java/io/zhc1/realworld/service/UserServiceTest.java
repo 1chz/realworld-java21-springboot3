@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +24,7 @@ import io.zhc1.realworld.model.UserRegistry;
 import io.zhc1.realworld.model.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("User - User Authentication, Registration, and Profile Management Operations")
 class UserServiceTest {
     @InjectMocks
     UserService sut;
@@ -34,7 +36,8 @@ class UserServiceTest {
     PasswordEncoder passwordEncoder;
 
     @Test
-    void getUserByIdValidUser() {
+    @DisplayName("Get user by ID should return user when user exists")
+    void whenGetUserByIdWithValidId_thenShouldReturnUser() {
         // given
         UUID testUuid = UUID.randomUUID();
         User testUser = new User("email", "username", "password");
@@ -48,7 +51,8 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserByIdInValidUser() {
+    @DisplayName("Get user by ID should throw exception when user does not exist")
+    void whenGetUserByIdWithInvalidId_thenShouldThrowException() {
         // given
         UUID testUuid = UUID.randomUUID();
         when(userRepository.findById(testUuid)).thenReturn(Optional.empty());
@@ -58,7 +62,8 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserByUsernameValidUser() {
+    @DisplayName("Get user by username should return user when user exists")
+    void whenGetUserByUsernameWithValidUsername_thenShouldReturnUser() {
         // given
         String testUsername = "sampleUsername";
         User testUser = new User("email", "username", "password");
@@ -72,7 +77,8 @@ class UserServiceTest {
     }
 
     @Test
-    void getUserByUsernameInvalidUser() {
+    @DisplayName("Get user by username should throw exception when user does not exist")
+    void whenGetUserByUsernameWithInvalidUsername_thenShouldThrowException() {
         // given
         String testUsername = "sampleUsername";
         when(userRepository.findByUsername(testUsername)).thenReturn(Optional.empty());
@@ -82,7 +88,8 @@ class UserServiceTest {
     }
 
     @Test
-    void signupUserAlreadyExists() {
+    @DisplayName("Signup should throw exception when user already exists")
+    void whenSignupWithExistingUser_thenShouldThrowException() {
         // given
         UserRegistry testRegistry = new UserRegistry("email", "username", "password");
         when(userRepository.existsBy(testRegistry.email(), testRegistry.username()))
@@ -93,7 +100,8 @@ class UserServiceTest {
     }
 
     @Test
-    void signupValidUser() {
+    @DisplayName("Signup should succeed with valid user information")
+    void whenSignupWithValidUserInfo_thenShouldSucceed() {
         // given
         UserRegistry testRegistry = new UserRegistry("email", "username", "password");
         when(userRepository.existsBy(testRegistry.email(), testRegistry.username()))
@@ -111,7 +119,8 @@ class UserServiceTest {
     }
 
     @Test
-    void loginUserSuccess() {
+    @DisplayName("Login should succeed with valid credentials")
+    void whenLoginWithValidCredentials_thenShouldSucceed() {
         // given
         String testEmail = "testEmail";
         String testPassword = "testPassword";
@@ -128,12 +137,14 @@ class UserServiceTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void loginUserNullOrEmptyEmail(String email) {
+    @DisplayName("Login should throw exception when email is null or empty")
+    void whenLoginWithNullOrEmptyEmail_thenShouldThrowException(String email) {
         assertThrows(IllegalArgumentException.class, () -> sut.login(email, "testPassword"));
     }
 
     @Test
-    void loginUserInvalidEmail() {
+    @DisplayName("Login should throw exception when email is invalid")
+    void whenLoginWithInvalidEmail_thenShouldThrowException() {
         // given
         String testEmail = "invalidEmail";
         String testPassword = "testPassword";
@@ -145,12 +156,14 @@ class UserServiceTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void loginUserNullOrEmptyPassword(String password) {
+    @DisplayName("Login should throw exception when password is null or empty")
+    void whenLoginWithNullOrEmptyPassword_thenShouldThrowException(String password) {
         assertThrows(IllegalArgumentException.class, () -> sut.login("testEmail", password));
     }
 
     @Test
-    void loginUserInvalidPassword() {
+    @DisplayName("Login should throw exception when password is invalid")
+    void whenLoginWithInvalidPassword_thenShouldThrowException() {
         // given
         String testEmail = "testEmail";
         String invalidPassword = "invalidPassword";
@@ -163,7 +176,8 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUserDetailsSuccessScenario() {
+    @DisplayName("Update user details should succeed with valid inputs")
+    void whenUpdateUserDetailsWithValidInputs_thenShouldSucceed() {
         // given
         UUID testUuid = UUID.randomUUID();
         String testEmail = "testEmail";
@@ -187,7 +201,8 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUserDetailsWithNullID() {
+    @DisplayName("Update user details should throw exception when ID is null")
+    void whenUpdateUserDetailsWithNullId_thenShouldThrowException() {
         // given & when & then
         assertThrows(
                 IllegalArgumentException.class,

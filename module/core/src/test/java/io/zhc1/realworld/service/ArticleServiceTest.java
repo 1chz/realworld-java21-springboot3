@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,21 +34,22 @@ import io.zhc1.realworld.model.ArticleFacets;
 import io.zhc1.realworld.model.ArticleFavorite;
 import io.zhc1.realworld.model.ArticleFavoriteRepository;
 import io.zhc1.realworld.model.ArticleRepository;
-import io.zhc1.realworld.model.SocialRepository;
 import io.zhc1.realworld.model.Tag;
 import io.zhc1.realworld.model.TestArticle;
 import io.zhc1.realworld.model.TestUser;
 import io.zhc1.realworld.model.User;
 import io.zhc1.realworld.model.UserFollow;
+import io.zhc1.realworld.model.UserRelationshipRepository;
 
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Article - Article Management, Retrieval, and Interaction Operations")
 class ArticleServiceTest {
     @InjectMocks
     ArticleService sut;
 
     @Mock
-    SocialRepository socialRepository;
+    UserRelationshipRepository userRelationshipRepository;
 
     @Mock
     ArticleRepository articleRepository;
@@ -65,7 +67,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testGetArticle_articleExists_success() {
+    @DisplayName("Get article should succeed when article exists")
+    void whenGetArticleWithExistingSlug_thenShouldReturnArticle() {
         // given
         String slug = "test-article";
         Article expectedArticle = new Article(testUser1, "title", "desc", "content");
@@ -80,7 +83,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testGetArticle_articleDoesNotExist_throwsException() {
+    @DisplayName("Get article should throw exception when article does not exist")
+    void whenGetArticleWithNonExistingSlug_thenShouldThrowException() {
         // given
         String slug = "test-article";
         when(articleRepository.findBySlug(slug)).thenReturn(Optional.empty());
@@ -93,7 +97,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testGetArticles_withFacets_returnsExpectedArticleDetails() {
+    @DisplayName("Get articles with facets should return expected article details")
+    void whenGetArticlesWithFacets_thenShouldReturnExpectedArticleDetails() {
         // given
         ArticleFacets facets = new ArticleFacets(1, 5);
         Article article = new Article(testUser1, "title", "desc", "content");
@@ -110,7 +115,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testGetArticles_withUserAndFacets_returnsExpectedArticleDetails() {
+    @DisplayName("Get articles with user and facets should return expected article details")
+    void whenGetArticlesWithUserAndFacets_thenShouldReturnExpectedArticleDetails() {
         // given
         User requester = new User("requesterEmail", "requesterUsername", "requesterPassword");
         ArticleFacets facets = new ArticleFacets(1, 5);
@@ -128,7 +134,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void getArticles_AllValid_ReturnsArticles() {
+    @DisplayName("Get articles should return articles when all parameters are valid")
+    void whenGetArticlesWithValidParameters_thenShouldReturnArticles() {
         // given
         ArticleFacets facets = new ArticleFacets(1, 10);
         Article article = new Article(testUser1, "title", "bef", "content");
@@ -147,7 +154,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void getArticles_ReturnsEmptyList_whenNoArticlesFound() {
+    @DisplayName("Get articles should return empty list when no articles are found")
+    void whenGetArticlesWithNoArticlesFound_thenShouldReturnEmptyList() {
         // given
         ArticleFacets facets = new ArticleFacets(1, 10);
         when(articleRepository.findAll(facets)).thenReturn(List.of());
@@ -161,12 +169,14 @@ class ArticleServiceTest {
     }
 
     @Test
-    void getFeeds_withUserAndFacets_returnsExpectedArticleDetails() {
+    @DisplayName("Get feeds with user and facets should return expected article details")
+    void whenGetFeedsWithUserAndFacets_thenShouldReturnExpectedArticleDetails() {
         ArticleFacets facets = new ArticleFacets(1, 5);
         Article article = new Article(testUser1, "title", "desc", "content");
         ArticleDetails expectedDetails = ArticleDetails.unauthenticated(article, 0);
         List<ArticleDetails> expectedDetailsList = List.of(expectedDetails);
-        when(socialRepository.findByFollower(testUser2)).thenReturn(List.of(new UserFollow(testUser2, testUser1)));
+        when(userRelationshipRepository.findByFollower(testUser2))
+                .thenReturn(List.of(new UserFollow(testUser2, testUser1)));
         when(articleRepository.findByAuthors(List.of(testUser1), facets)).thenReturn(List.of(article));
         when(articleRepository.findArticleDetails(testUser2, article)).thenReturn(expectedDetails);
 
@@ -178,11 +188,12 @@ class ArticleServiceTest {
     }
 
     @Test
-    void getFeeds_emptyFollowings_returnsEmptyList() {
+    @DisplayName("Get feeds should return empty list when user has no followings")
+    void whenGetFeedsWithEmptyFollowings_thenShouldReturnEmptyList() {
         // given
         User user = new User("email", "username", "password");
         ArticleFacets facets = new ArticleFacets(1, 10);
-        when(socialRepository.findByFollower(user)).thenReturn(List.of());
+        when(userRelationshipRepository.findByFollower(user)).thenReturn(List.of());
         when(articleRepository.findByAuthors(List.of(), facets)).thenReturn(List.of());
 
         // when
@@ -193,7 +204,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testWriteArticle_success() {
+    @DisplayName("Write article should succeed with valid inputs")
+    void whenWriteArticleWithValidInputs_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         Set<Tag> tags = new HashSet<>(List.of(new Tag("tag1"), new Tag("tag2")));
@@ -209,7 +221,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testWriteArticle_nullTags_success() {
+    @DisplayName("Write article should succeed with null tags")
+    void whenWriteArticleWithNullTags_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         when(articleRepository.existsBy(article.getTitle())).thenReturn(false);
@@ -224,7 +237,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testWriteArticle_titleExists_throwsException() {
+    @DisplayName("Write article should throw exception when title already exists")
+    void whenWriteArticleWithExistingTitle_thenShouldThrowException() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         Set<Tag> tags = new HashSet<>(List.of(new Tag("tag1"), new Tag("tag2")));
@@ -238,7 +252,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditDescription_success() {
+    @DisplayName("Edit description should succeed with valid inputs")
+    void whenEditDescriptionWithValidInputs_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         String newDescription = "new_description";
@@ -253,7 +268,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditDescription_UserNotAuthor_throwsException() {
+    @DisplayName("Edit description should throw exception when user is not the author")
+    void whenEditDescriptionByNonAuthor_thenShouldThrowException() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         String newDescription = "new_description";
@@ -266,7 +282,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditContent_success() {
+    @DisplayName("Edit content should succeed with valid inputs")
+    void whenEditContentWithValidInputs_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         String newContent = "new_content";
@@ -281,7 +298,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditContent_UserNotAuthor_throwsException() {
+    @DisplayName("Edit content should throw exception when user is not the author")
+    void whenEditContentByNonAuthor_thenShouldThrowException() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         String newContent = "new_content";
@@ -291,7 +309,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void delete_success() {
+    @DisplayName("Delete article should succeed when user is the author")
+    void whenDeleteArticleByAuthor_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         doNothing().when(articleRepository).delete(article);
@@ -302,7 +321,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void delete_RequesterNotAuthor_throwsException() {
+    @DisplayName("Delete article should throw exception when user is not the author")
+    void whenDeleteArticleByNonAuthor_thenShouldThrowException() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
 
@@ -312,7 +332,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testIsFavorite_favoriteExists_returnTrue() {
+    @DisplayName("Is favorite should return true when favorite exists")
+    void whenIsFavoriteAndFavoriteExists_thenShouldReturnTrue() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(true);
@@ -326,7 +347,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testIsFavorite_favoriteDoesNotExist_returnFalse() {
+    @DisplayName("Is favorite should return false when favorite does not exist")
+    void whenIsFavoriteAndFavoriteDoesNotExist_thenShouldReturnFalse() {
         // given
         Article article = new Article(testUser1, "title1", "desc1", "content1");
         when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(false);
@@ -340,7 +362,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testFavorite_Success() {
+    @DisplayName("Favorite article should succeed when not already favorited")
+    void whenFavoriteArticleNotAlreadyFavorited_thenShouldSucceed() {
         // given
         Article article = new TestArticle(1, testUser1, "title1", "desc1", "content1");
         when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(false);
@@ -353,7 +376,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testFavorite_AlreadyFavorited_ThrowsException() {
+    @DisplayName("Favorite article should throw exception when already favorited")
+    void whenFavoriteArticleAlreadyFavorited_thenShouldThrowException() {
         // given
         Article article = new TestArticle(1, testUser1, "title1", "desc1", "content1");
         when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(true);
@@ -365,7 +389,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testUnfavorite_Success() {
+    @DisplayName("Unfavorite article should succeed when already favorited")
+    void whenUnfavoriteArticleAlreadyFavorited_thenShouldSucceed() {
         // given
         Article article = new TestArticle(1, testUser1, "title1", "desc1", "content1");
         when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(true);
@@ -378,7 +403,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testUnfavorite_AlreadyUnfavorited_ThrowsException() {
+    @DisplayName("Unfavorite article should throw exception when not favorited")
+    void whenUnfavoriteArticleNotFavorited_thenShouldThrowException() {
         // given
         Article article = new TestArticle(1, testUser1, "title1", "desc1", "content1");
         when(articleFavoriteRepository.existsBy(testUser1, article)).thenReturn(false);
@@ -390,7 +416,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testGetArticleDetails_LoggedInUser_successful() {
+    @DisplayName("Get article details should succeed for logged in user")
+    void whenGetArticleDetailsForLoggedInUser_thenShouldSucceed() {
         // given
         User requester = new User("requesterEmail", "requesterUsername", "requesterPassword");
         Article article = new Article(testUser1, "title", "desc", "content");
@@ -406,7 +433,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testGetArticleDetails_NotLoggedInUser_successful() {
+    @DisplayName("Get article details should succeed for non-logged in user")
+    void whenGetArticleDetailsForNonLoggedInUser_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title", "desc", "content");
         ArticleDetails expectedDetails = ArticleDetails.unauthenticated(article, 0);
@@ -421,7 +449,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditTitle_success() {
+    @DisplayName("Edit title should succeed with valid inputs")
+    void whenEditTitleWithValidInputs_thenShouldSucceed() {
         // given
         Article article = new Article(testUser1, "title", "description", "content");
         String newTitle = "new_title";
@@ -437,7 +466,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditTitle_UserNotAuthor_throwsException() {
+    @DisplayName("Edit title should throw exception when user is not the author")
+    void whenEditTitleByNonAuthor_thenShouldThrowException() {
         // given
         Article article = new Article(testUser1, "title", "description", "content");
         String newTitle = "new_title";
@@ -450,7 +480,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void testEditTitle_ExistingTitle_throwsException() {
+    @DisplayName("Edit title should throw exception when title already exists")
+    void whenEditTitleWithExistingTitle_thenShouldThrowException() {
         // given
         String newTitle = "new_title";
         Article article = new Article(testUser1, "title", "description", "content");

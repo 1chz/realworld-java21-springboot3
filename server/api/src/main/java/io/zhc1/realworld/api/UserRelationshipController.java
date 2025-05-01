@@ -9,20 +9,19 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import io.zhc1.realworld.api.response.ProfilesResponse;
-import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.config.AuthToken;
 import io.zhc1.realworld.mixin.AuthenticationAwareMixin;
-import io.zhc1.realworld.service.SocialService;
+import io.zhc1.realworld.service.UserRelationshipService;
 import io.zhc1.realworld.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-class SocialController implements AuthenticationAwareMixin {
+class UserRelationshipController implements AuthenticationAwareMixin {
     private final UserService userService;
-    private final SocialService socialService;
+    private final UserRelationshipService userRelationshipService;
 
     @GetMapping("/api/profiles/{username}")
-    ProfilesResponse getUserProfile(
-            RealWorldAuthenticationToken profileViewersToken, @PathVariable("username") String targetUsername) {
+    ProfilesResponse getUserProfile(AuthToken profileViewersToken, @PathVariable("username") String targetUsername) {
         var targetUser = userService.getUser(targetUsername);
 
         if (this.isAnonymousUser(profileViewersToken)) {
@@ -30,29 +29,27 @@ class SocialController implements AuthenticationAwareMixin {
         }
 
         var viewer = userService.getUser(profileViewersToken.userId());
-        var isFollowing = socialService.isFollowing(viewer, targetUser);
+        var isFollowing = userRelationshipService.isFollowing(viewer, targetUser);
 
         return ProfilesResponse.from(targetUser, isFollowing);
     }
 
     @PostMapping("/api/profiles/{username}/follow")
-    ProfilesResponse follow(
-            RealWorldAuthenticationToken followersToken, @PathVariable("username") String targetUsername) {
+    ProfilesResponse follow(AuthToken followersToken, @PathVariable("username") String targetUsername) {
         var follower = userService.getUser(followersToken.userId());
         var following = userService.getUser(targetUsername);
 
-        socialService.follow(follower, following);
+        userRelationshipService.follow(follower, following);
 
         return ProfilesResponse.from(following, true);
     }
 
     @DeleteMapping("/api/profiles/{username}/follow")
-    ProfilesResponse unfollow(
-            RealWorldAuthenticationToken followersToken, @PathVariable("username") String targetUsername) {
+    ProfilesResponse unfollow(AuthToken followersToken, @PathVariable("username") String targetUsername) {
         var follower = userService.getUser(followersToken.userId());
         var following = userService.getUser(targetUsername);
 
-        socialService.unfollow(follower, following);
+        userRelationshipService.unfollow(follower, following);
 
         return ProfilesResponse.from(following, false);
     }

@@ -7,13 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import io.zhc1.realworld.model.SocialRepository;
 import io.zhc1.realworld.model.User;
 import io.zhc1.realworld.model.UserFollow;
+import io.zhc1.realworld.model.UserRelationshipRepository;
 
 @Repository
 @RequiredArgsConstructor
-class SocialRepositoryAdapter implements SocialRepository {
+class UserRelationshipRepositoryAdapter implements UserRelationshipRepository {
     private final UserFollowJpaRepository userFollowJpaRepository;
 
     @Override

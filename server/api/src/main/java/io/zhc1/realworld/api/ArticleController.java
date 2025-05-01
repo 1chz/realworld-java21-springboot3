@@ -21,7 +21,7 @@ import io.zhc1.realworld.api.request.WriteArticleRequest;
 import io.zhc1.realworld.api.response.ArticleResponse;
 import io.zhc1.realworld.api.response.MultipleArticlesResponse;
 import io.zhc1.realworld.api.response.SingleArticleResponse;
-import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.config.AuthToken;
 import io.zhc1.realworld.mixin.AuthenticationAwareMixin;
 import io.zhc1.realworld.model.Article;
 import io.zhc1.realworld.model.ArticleDetails;
@@ -36,8 +36,7 @@ class ArticleController implements AuthenticationAwareMixin {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles")
-    SingleArticleResponse postArticle(
-            RealWorldAuthenticationToken authorsToken, @RequestBody WriteArticleRequest request) {
+    SingleArticleResponse postArticle(AuthToken authorsToken, @RequestBody WriteArticleRequest request) {
         var author = userService.getUser(authorsToken.userId());
         var article = articleService.write(
                 new Article(
@@ -54,7 +53,7 @@ class ArticleController implements AuthenticationAwareMixin {
 
     @GetMapping("/api/articles")
     MultipleArticlesResponse getArticles(
-            RealWorldAuthenticationToken readersToken,
+            AuthToken readersToken,
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "favorited", required = false) String favorited,
@@ -71,7 +70,7 @@ class ArticleController implements AuthenticationAwareMixin {
     }
 
     @GetMapping("/api/articles/{slug}")
-    SingleArticleResponse getArticle(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
+    SingleArticleResponse getArticle(AuthToken readersToken, @PathVariable String slug) {
         var article = articleService.getArticle(slug);
 
         if (this.isAnonymousUser(readersToken)) {
@@ -84,9 +83,7 @@ class ArticleController implements AuthenticationAwareMixin {
 
     @PutMapping("/api/articles/{slug}")
     SingleArticleResponse updateArticle(
-            RealWorldAuthenticationToken authorsToken,
-            @PathVariable String slug,
-            @RequestBody EditArticleRequest request) {
+            AuthToken authorsToken, @PathVariable String slug, @RequestBody EditArticleRequest request) {
         var author = userService.getUser(authorsToken.userId());
         var article = articleService.getArticle(slug);
 
@@ -109,7 +106,7 @@ class ArticleController implements AuthenticationAwareMixin {
     }
 
     @DeleteMapping("/api/articles/{slug}")
-    void deleteArticle(RealWorldAuthenticationToken authorsToken, @PathVariable String slug) {
+    void deleteArticle(AuthToken authorsToken, @PathVariable String slug) {
         var author = userService.getUser(authorsToken.userId());
         var article = articleService.getArticle(slug);
 
@@ -118,7 +115,7 @@ class ArticleController implements AuthenticationAwareMixin {
 
     @GetMapping("/api/articles/feed")
     MultipleArticlesResponse getArticleFeeds(
-            RealWorldAuthenticationToken readersToken, // Must be verified
+            AuthToken readersToken, // Must be verified
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "limit", required = false, defaultValue = "20") int limit) {
         var reader = userService.getUser(readersToken.userId());

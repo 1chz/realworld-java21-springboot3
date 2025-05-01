@@ -16,15 +16,15 @@ import io.zhc1.realworld.model.ArticleFacets;
 import io.zhc1.realworld.model.ArticleFavorite;
 import io.zhc1.realworld.model.ArticleFavoriteRepository;
 import io.zhc1.realworld.model.ArticleRepository;
-import io.zhc1.realworld.model.SocialRepository;
 import io.zhc1.realworld.model.Tag;
 import io.zhc1.realworld.model.User;
 import io.zhc1.realworld.model.UserFollow;
+import io.zhc1.realworld.model.UserRelationshipRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
-    private final SocialRepository socialRepository;
+    private final UserRelationshipRepository userRelationshipRepository;
     private final ArticleRepository articleRepository;
     private final ArticleFavoriteRepository articleFavoriteRepository;
 
@@ -71,7 +71,7 @@ public class ArticleService {
      * @return Returns articles with information
      */
     public List<ArticleDetails> getFeeds(User user, ArticleFacets facets) {
-        List<User> following = socialRepository.findByFollower(user).stream()
+        List<User> following = userRelationshipRepository.findByFollower(user).stream()
                 .map(UserFollow::getFollowing)
                 .toList();
 

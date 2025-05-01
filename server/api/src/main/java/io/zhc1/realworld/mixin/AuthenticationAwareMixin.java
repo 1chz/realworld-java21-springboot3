@@ -1,6 +1,6 @@
 package io.zhc1.realworld.mixin;
 
-import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.config.AuthToken;
 
 /**
  * A mixin interface that provides authentication-related capabilities. It can be implemented by classes requiring the
@@ -17,7 +17,7 @@ public interface AuthenticationAwareMixin {
      * @param token the authentication token to evaluate, can be null
      * @return true if the token is null or not authenticated, false otherwise
      */
-    default boolean isAnonymousUser(RealWorldAuthenticationToken token) {
+    default boolean isAnonymousUser(AuthToken token) {
         return token == null || !token.isAuthenticated();
     }
 }

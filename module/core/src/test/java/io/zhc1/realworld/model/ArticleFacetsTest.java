@@ -2,21 +2,26 @@ package io.zhc1.realworld.model;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Article Facets - Pagination and Filtering Validation")
 class ArticleFacetsTest {
     @Test
-    void page_can_not_be_negative() {
+    @DisplayName("Creating facets with negative page should throw exception")
+    void whenCreateFacetsWithNegativePage_thenShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> new ArticleFacets(null, null, null, -1, 0));
     }
 
     @Test
-    void page_size_can_not_be_negative() {
+    @DisplayName("Creating facets with negative page size should throw exception")
+    void whenCreateFacetsWithNegativePageSize_thenShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> new ArticleFacets(null, null, null, 0, -1));
     }
 
     @Test
-    void page_size_can_not_be_greater_then_50() {
+    @DisplayName("Creating facets with page size greater than 50 should throw exception")
+    void whenCreateFacetsWithPageSizeGreaterThan50_thenShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> new ArticleFacets(null, null, null, 0, 51));
     }
 }

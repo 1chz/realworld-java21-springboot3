@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenResolv
 import org.springframework.util.StringUtils;
 
 /** Change the prefix of the Authorization token from 'Bearer' to 'Token'. */
-class RealWorldBearerTokenResolver implements BearerTokenResolver {
+class AuthTokenResolver implements BearerTokenResolver {
     private static final Pattern AUTHORIZATION_PATTERN =
             Pattern.compile("^Token (?<token>[a-zA-Z0-9-._~+/]+=*)$", Pattern.CASE_INSENSITIVE);
 

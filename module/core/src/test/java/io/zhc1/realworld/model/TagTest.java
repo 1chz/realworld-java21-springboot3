@@ -3,19 +3,23 @@ package io.zhc1.realworld.model;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
+@DisplayName("Tag - Creation and Equality Validation")
 class TagTest {
     @ParameterizedTest
     @NullAndEmptySource
-    void should_throw_exception_if_null_or_empty_tag_names(String tagName) {
+    @DisplayName("Creating tag with null or empty name should throw exception")
+    void whenCreateTagWithNullOrEmptyName_thenShouldThrowException(String tagName) {
         assertThrows(IllegalArgumentException.class, () -> new Tag(tagName));
     }
 
     @Test
-    void equals_is_return_true_if_are_names_same() {
+    @DisplayName("Tags with same name should be equal")
+    void whenComparingTagsWithSameName_thenShouldBeEqual() {
         // given
         Tag tag1 = new TestTag();
         Tag tag2 = new TestTag();
@@ -28,7 +32,8 @@ class TagTest {
     }
 
     @Test
-    void hashCode_is_return_true_if_are_names_same() {
+    @DisplayName("Tags with same name should have same hash code")
+    void whenComparingHashCodesOfTagsWithSameName_thenShouldBeEqual() {
         // given
         Tag tag1 = new TestTag();
         Tag tag2 = new TestTag();

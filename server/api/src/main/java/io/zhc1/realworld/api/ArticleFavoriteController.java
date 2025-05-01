@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import io.zhc1.realworld.api.response.SingleArticleResponse;
-import io.zhc1.realworld.config.RealWorldAuthenticationToken;
+import io.zhc1.realworld.config.AuthToken;
 import io.zhc1.realworld.service.ArticleService;
 import io.zhc1.realworld.service.UserService;
 
@@ -19,7 +19,7 @@ class ArticleFavoriteController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles/{slug}/favorite")
-    SingleArticleResponse like(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
+    SingleArticleResponse like(AuthToken readersToken, @PathVariable String slug) {
         var reader = userService.getUser(readersToken.userId());
         var article = articleService.getArticle(slug);
 
@@ -29,7 +29,7 @@ class ArticleFavoriteController {
     }
 
     @DeleteMapping("/api/articles/{slug}/favorite")
-    SingleArticleResponse unlike(RealWorldAuthenticationToken readersToken, @PathVariable String slug) {
+    SingleArticleResponse unlike(AuthToken readersToken, @PathVariable String slug) {
         var reader = userService.getUser(readersToken.userId());
         var article = articleService.getArticle(slug);
 

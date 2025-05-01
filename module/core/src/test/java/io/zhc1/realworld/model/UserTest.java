@@ -7,15 +7,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
+@DisplayName("User - Identity, Authentication, and Profile Management Operations")
 class UserTest {
     @ParameterizedTest
     @CsvSource({"email, true", "unknown email, false"})
-    void equalsEmail(String email, boolean expected) {
+    @DisplayName(
+            "When comparing email with equalsEmail method, then should return true for matching email and false otherwise")
+    void whenComparingEmail_thenShouldReturnCorrectResult(String email, boolean expected) {
         // given
         User sut = new User("email", "username", "password");
 
@@ -28,7 +32,9 @@ class UserTest {
 
     @ParameterizedTest
     @CsvSource({"username, true", "unknown username, false"})
-    void equalsUsername(String username, boolean expected) {
+    @DisplayName(
+            "When comparing username with equalsUsername method, then should return true for matching username and false otherwise")
+    void whenComparingUsername_thenShouldReturnCorrectResult(String username, boolean expected) {
         // given
         User sut = new User("email", "username", "password");
 
@@ -40,7 +46,8 @@ class UserTest {
     }
 
     @Test
-    void setEmail() {
+    @DisplayName("When setting a new email, then email should be updated")
+    void whenSettingNewEmail_thenEmailShouldBeUpdated() {
         // given
         User sut = new User("email", "username", "password");
 
@@ -53,7 +60,8 @@ class UserTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void if_email_is_null_or_blank_then_not_modify_email(String email) {
+    @DisplayName("When setting email with null or empty value, then email should not be modified")
+    void whenSettingEmailWithNullOrEmptyValue_thenEmailShouldNotBeModified(String email) {
         // given
         User sut = new User("email", "username", "password");
 
@@ -65,7 +73,8 @@ class UserTest {
     }
 
     @Test
-    void setUsername() {
+    @DisplayName("When setting a new username, then username should be updated")
+    void whenSettingNewUsername_thenUsernameShouldBeUpdated() {
         // given
         User sut = new User("email", "username", "password");
 
@@ -78,7 +87,8 @@ class UserTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void if_username_is_null_or_blank_then_not_modify_username(String username) {
+    @DisplayName("When setting username with null or empty value, then username should not be modified")
+    void whenSettingUsernameWithNullOrEmptyValue_thenUsernameShouldNotBeModified(String username) {
         // given
         User sut = new User("email", "username", "password");
 
@@ -90,7 +100,8 @@ class UserTest {
     }
 
     @Test
-    void encryptPassword() {
+    @DisplayName("When encrypting password, then password should be encoded")
+    void whenEncryptingPassword_thenPasswordShouldBeEncoded() {
         // given
         User sut = new User("email", "username", "password");
         PasswordEncoder passwordEncoder = new PasswordEncoder() {
@@ -114,7 +125,8 @@ class UserTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void if_raw_password_is_null_or_blank_then_not_modify_password(String rawPassword) {
+    @DisplayName("When encrypting password with null or empty value, then password should not be modified")
+    void whenEncryptingPasswordWithNullOrEmptyValue_thenPasswordShouldNotBeModified(String rawPassword) {
         // given
         User sut = new User("email", "username", "password");
         PasswordEncoder passwordEncoder = new PasswordEncoder() {
@@ -137,7 +149,8 @@ class UserTest {
     }
 
     @Test
-    void if_passwordEncoder_is_null_then_throw_Exception() {
+    @DisplayName("When encrypting password with null encoder, then should throw IllegalArgumentException")
+    void whenEncryptingPasswordWithNullEncoder_thenShouldThrowIllegalArgumentException() {
         User sut = new User("email", "username", "password");
         assertThatThrownBy(() -> sut.encryptPassword(null, "new password"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -145,7 +158,8 @@ class UserTest {
     }
 
     @Test
-    void setBio() {
+    @DisplayName("When setting a new bio, then bio should be updated")
+    void whenSettingNewBio_thenBioShouldBeUpdated() {
         // given
         User sut = new User("email", "username", "password");
 
@@ -157,7 +171,8 @@ class UserTest {
     }
 
     @Test
-    void setImageUrl() {
+    @DisplayName("When setting a new image URL, then image URL should be updated")
+    void whenSettingNewImageUrl_thenImageUrlShouldBeUpdated() {
         // given
         User sut = new User("email", "username", "password");
 
@@ -169,7 +184,8 @@ class UserTest {
     }
 
     @Test
-    void equals_is_return_true_if_are_ids_same() {
+    @DisplayName("When comparing users with same ID, then equals should return true")
+    void whenComparingUsersWithSameId_thenEqualsShouldReturnTrue() {
         // given
         UUID id = UUID.randomUUID();
         User user1 = new TestUser(id);
@@ -183,7 +199,8 @@ class UserTest {
     }
 
     @Test
-    void equals_is_return_false_if_are_ids_difference() {
+    @DisplayName("When comparing users with different IDs, then equals should return false")
+    void whenComparingUsersWithDifferentIds_thenEqualsShouldReturnFalse() {
         // given
         User user1 = new TestUser();
         User user2 = new TestUser();
@@ -196,7 +213,8 @@ class UserTest {
     }
 
     @Test
-    void hashCode_is_return_true_if_are_ids_same() {
+    @DisplayName("When comparing hashCode of users with same ID, then hashCodes should be equal")
+    void whenComparingHashCodeOfUsersWithSameId_thenHashCodesShouldBeEqual() {
         // given
         UUID id = UUID.randomUUID();
         User user1 = new TestUser(id);

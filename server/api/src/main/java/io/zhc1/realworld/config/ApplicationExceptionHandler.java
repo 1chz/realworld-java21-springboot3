@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-class InterceptorsExceptionHandler extends ResponseEntityExceptionHandler {
+class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     ProblemDetail handle(IllegalArgumentException e) {
         log.info(e.getMessage(), e);

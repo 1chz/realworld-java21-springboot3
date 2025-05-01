@@ -6,10 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@DisplayName("Object Mapper Configuration - DateTime Serialization and Deserialization")
 class ObjectMapperConfigurationTest {
     ObjectMapper sut;
 
@@ -19,12 +21,14 @@ class ObjectMapperConfigurationTest {
     }
 
     @Test
-    void canSerialize_LocalDateTime() {
+    @DisplayName("When checking serialization capability, then should be able to serialize LocalDateTime")
+    void whenCheckingSerializationCapability_thenShouldBeAbleToSerializeLocalDateTime() {
         assertTrue(sut.canSerialize(LocalDateTime.class));
     }
 
     @Test
-    void convert_ISO8601String_toLocalDateTime() {
+    @DisplayName("When converting ISO8601 string to LocalDateTime, then should convert correctly")
+    void whenConvertingISO8601StringToLocalDateTime_thenShouldConvertCorrectly() {
         // given
         String iso8601String = "2021-08-01T00:00:00.000Z";
 
@@ -36,7 +40,8 @@ class ObjectMapperConfigurationTest {
     }
 
     @Test
-    void convert_LocalDateTime_toISO8601String() {
+    @DisplayName("When converting LocalDateTime to ISO8601 string, then should convert correctly")
+    void whenConvertingLocalDateTimeToISO8601String_thenShouldConvertCorrectly() {
         // given
         LocalDateTime localDateTime = LocalDateTime.of(2021, 8, 1, 0, 0, 0, 0);
 
