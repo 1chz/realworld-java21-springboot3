@@ -1,6 +1,6 @@
 [versions]
 java = "25"
-spotless = "7.0.3"
+spotless = "7.2.1"
 
 spring-boot = "3.3.0"
 spring-dependency-management = "1.1.5"
