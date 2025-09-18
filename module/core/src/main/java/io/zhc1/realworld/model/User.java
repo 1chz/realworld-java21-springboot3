@@ -73,8 +73,13 @@ public class User {
     }
 
     public void setEmail(String email) {
-        if (email == null || email.isBlank() || this.email.equals(email)) {
-            log.warn("not set because the email is empty or equals. email={}", email);
+        if (email == null || email.isBlank()) {
+            log.info("not set because the email is blank");
+            return;
+        }
+
+        if (hasId() && this.email.equals(email)) {
+            log.info("not set because the email is same as current email. email=`{}`", email);
             return;
         }
 
@@ -83,8 +88,12 @@ public class User {
     }
 
     public void setUsername(String username) {
-        if (username == null || username.isBlank() || this.username.equals(username)) {
-            log.warn("not set because the username is empty or equals. username={}", username);
+        if (username == null || username.isBlank()) {
+            log.info("not set because the username is empty or equals. username={}", username);
+            return;
+        }
+        if (hasId() && this.username.equals(username)) {
+            log.info("not set because the username is same as current username. username=`{}`", username);
             return;
         }
 
@@ -98,12 +107,12 @@ public class User {
         }
 
         if (plainPassword == null || plainPassword.isBlank()) {
-            log.warn("not set because the rawPassword is empty.");
+            log.info("not set because the rawPassword is empty.");
             return;
         }
 
-        if (passwordEncoder.matches(plainPassword, this.password)) {
-            log.warn("not set because the rawPassword is same as current password.");
+        if (hasId() && passwordEncoder.matches(plainPassword, this.password)) {
+            log.info("not set because the rawPassword is same as current password.");
             return;
         }
 
@@ -112,8 +121,8 @@ public class User {
     }
 
     public void setBio(String bio) {
-        if (bio != null && bio.isBlank()) {
-            log.warn("not set because the bio is empty. bio={}", bio);
+        if (bio == null || bio.isBlank()) {
+            log.info("not set because the bio is blank.");
             return;
         }
 
@@ -121,12 +130,16 @@ public class User {
     }
 
     public void setImageUrl(String imageUrl) {
-        if (imageUrl != null && imageUrl.isBlank()) {
-            log.warn("not set because the imageUrl is empty. imageUrl={}", imageUrl);
+        if (imageUrl == null || imageUrl.isBlank()) {
+            log.info("not set because the imageUrl is blank.");
             return;
         }
 
         this.imageUrl = imageUrl;
+    }
+
+    private boolean hasId() {
+        return id != null;
     }
 
     @Override
