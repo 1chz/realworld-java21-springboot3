@@ -1,6 +1,7 @@
 package io.zhc1.realworld.model;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "tag")
 @SuppressWarnings("JpaDataSourceORMInspection")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag {
+public class Tag implements Comparable<Tag> {
     @Id
     @Column(length = 20)
     private String name;
@@ -41,5 +42,10 @@ public class Tag {
     @Override
     public int hashCode() {
         return Objects.hash(this.getName());
+    }
+
+    @Override
+    public int compareTo(Tag other) {
+        return Comparator.comparing(Tag::getName).compare(this, other);
     }
 }

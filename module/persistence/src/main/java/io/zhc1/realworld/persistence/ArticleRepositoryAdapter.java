@@ -35,6 +35,7 @@ class ArticleRepositoryAdapter implements ArticleRepository {
     @Override
     @Transactional
     public Article save(Article article, Collection<Tag> tags) {
+        tags = tags.stream().distinct().sorted().toList();
         var savedArticle = save(article);
         for (var tag : tagJpaRepository.saveAll(tags)) {
             savedArticle.addTag(new ArticleTag(savedArticle, tag));
@@ -45,9 +46,10 @@ class ArticleRepositoryAdapter implements ArticleRepository {
     @Override
     public List<Article> findAll(ArticleFacets facets) {
         var pageable = PageRequest.of(facets.page(), facets.size());
-        var spec = Specification.where(ArticleSpecifications.hasAuthorName(facets.author()))
-                .or(ArticleSpecifications.hasTagName(facets.tag()))
-                .or(ArticleSpecifications.hasFavoritedUsername(facets.favorited()));
+        var spec = Specification.anyOf(
+                ArticleSpecifications.hasAuthorName(facets.author()),
+                ArticleSpecifications.hasTagName(facets.tag()),
+                ArticleSpecifications.hasFavoritedUsername(facets.favorited()));
 
         return articleJpaRepository.findAll(spec, pageable).getContent();
     }

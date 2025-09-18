@@ -36,7 +36,8 @@ allprojects {
 
     spotless {
         java {
-            palantirJavaFormat().formatJavadoc(true)
+            // https://github.com/palantir/palantir-java-format/releases/tag/2.71.0
+            palantirJavaFormat("2.71.0").formatJavadoc(true)
 
             formatAnnotations()
             removeUnusedImports()
