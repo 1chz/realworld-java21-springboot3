@@ -6,8 +6,3 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create-drop
-
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: true
