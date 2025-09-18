@@ -1,10 +1,10 @@
 # ![RealWorld Example App](logo.png)
 
-> ### **Java 21 + Spring Boot 3** codebase containing real-world examples (CRUD, authentication, advanced patterns, etc.) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) specification and API.
+> ### **Java 25 + Spring Boot 4** codebase containing real-world examples (CRUD, authentication, advanced patterns, etc.) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) specification and API.
 
 ### [Demo](https://demo.realworld.io/) &nbsp;&nbsp;&nbsp;&nbsp; [RealWorld](https://github.com/gothinkster/realworld)
 
-This codebase demonstrates a fully-fledged fullstack application built with **Java 21 + Spring Boot 3**, including CRUD operations, authentication, routing, pagination, and more.
+This codebase demonstrates a fully-fledged fullstack application built with **Java 25 + Spring Boot 4**, including CRUD operations, authentication, routing, pagination, and more.
 
 If you want to see the API documentation related to this, please refer to https://1chz.github.io/realworld-java21-springboot3
 
@@ -65,9 +65,9 @@ This application provides the following key features:
 
 ### Project Structure
 
-The project is implemented using Java 21 and Spring Boot 3, leveraging technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database and JUnit 5 for testing.
+The project is implemented using Java 25 and Spring Boot 4, leveraging technologies such as Spring MVC, Spring Data JPA, and Spring Security. It uses H2 DB (in-memory, MySQL mode) as the database and JUnit 5 for testing.
 
-To run the project, ensure that JDK (or JRE) 21 is installed. Then, execute the following command in the project root directory:
+To run the project, ensure that JDK (or JRE) 25 is installed. Then, execute the following command in the project root directory:
 
 ```shell
 ./gradlew realworld:bootRun
@@ -110,7 +110,7 @@ Many developers using JPA tend to use `Long` as the ID type. However, consider w
 
 ## Getting Started
 
-> **Note:** Ensure JDK 21 is installed.
+> **Note:** Ensure JDK 25 is installed.
 >
 > **Note:** If you encounter a permission denied error when running Gradle tasks, run `chmod +x gradlew` to grant execution permission.
 
