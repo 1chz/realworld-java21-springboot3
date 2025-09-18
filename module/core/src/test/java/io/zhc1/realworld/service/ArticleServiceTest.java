@@ -194,7 +194,6 @@ class ArticleServiceTest {
         User user = new User("email", "username", "password");
         ArticleFacets facets = new ArticleFacets(1, 10);
         when(userRelationshipRepository.findByFollower(user)).thenReturn(List.of());
-        when(articleRepository.findByAuthors(List.of(), facets)).thenReturn(List.of());
 
         // when
         List<ArticleDetails> actualArticleDetailsList = sut.getFeeds(user, facets);

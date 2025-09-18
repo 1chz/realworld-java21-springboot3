@@ -75,6 +75,10 @@ public class ArticleService {
                 .map(UserFollow::getFollowing)
                 .toList();
 
+        if (following.isEmpty()) {
+            return List.of();
+        }
+
         return articleRepository.findByAuthors(following, facets).stream()
                 .map(article -> articleRepository.findArticleDetails(user, article))
                 .toList();
