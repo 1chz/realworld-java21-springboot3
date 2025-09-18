@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 /org.gradle.api.internal*
+/.tool-versions
+/CLAUDE.md
