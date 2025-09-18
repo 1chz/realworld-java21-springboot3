@@ -101,7 +101,6 @@ public class User {
         this.username = username;
     }
 
-
     public void encryptPassword(PasswordEncoder passwordEncoder, String plainPassword) {
         if (passwordEncoder == null) {
             throw new IllegalArgumentException("passwordEncoder is required.");
